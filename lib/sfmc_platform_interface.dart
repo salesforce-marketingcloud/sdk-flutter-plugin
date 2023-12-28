@@ -10,16 +10,42 @@ abstract class SfmcPlatform extends PlatformInterface {
 
   static SfmcPlatform _instance = MethodChannelSfmc();
 
-  /// The default instance of [SfmcPlatform] to use.
-  ///
-  /// Defaults to [MethodChannelSfmc].
   static SfmcPlatform get instance => _instance;
 
-  /// Platform-specific implementations should set this with their own
-  /// platform-specific class that extends [SfmcPlatform] when
-  /// they register themselves.
   static set instance(SfmcPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
+  }
+
+  Future<String?> getSystemToken() {
+    throw UnimplementedError('getSystemToken() has not been implemented.');
+  }
+
+  Future<bool?> isPushEnabled() {
+    throw UnimplementedError('isPushEnabled() has not been implemented.');
+  }
+
+  Future<void> enablePush() {
+    throw UnimplementedError('enablePush() has not been implemented.');
+  }
+
+  Future<void> disablePush() {
+    throw UnimplementedError('disablePush() has not been implemented.');
+  }
+
+  Future<void> enableLogging() {
+    throw UnimplementedError('enableLogging() has not been implemented.');
+  }
+
+  Future<void> disableLogging() {
+    throw UnimplementedError('disableLogging() has not been implemented.');
+  }
+
+  Future<void> logSdkState() {
+    throw UnimplementedError('logSdkState() has not been implemented.');
+  }
+  
+  Future<String?> getDeviceId() {
+    throw UnimplementedError('getDeviceId() has not been implemented.');
   }
 }
