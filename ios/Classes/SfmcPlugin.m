@@ -45,6 +45,34 @@ const int LOG_LENGTH = 800;
         [self isPushEnabledWithResult:result];
     } else if ([@"getDeviceId" isEqualToString:call.method]) {
         [self getDeviceIdWithResult:result];
+    } else if ([@"setContactKey" isEqualToString:call.method]) {
+        NSString* contactKey = call.arguments[@"contactKey"];
+        [self setContactKey:contactKey];
+        result(nil);
+    } else if ([@"getContactKey" isEqualToString:call.method]) {
+        [self getContactKeyWithResult:result];
+    } else if ([@"addTag" isEqualToString:call.method]) {
+        NSString* tag = call.arguments[@"tag"];
+        [self addTag:tag];
+        result(nil);
+    } else if ([@"removeTag" isEqualToString:call.method]) {
+        NSString* tag = call.arguments[@"tag"];
+        [self removeTag:tag];
+        result(nil);
+    } else if ([@"getTags" isEqualToString:call.method]) {
+        [self getTagsWithResult:result];
+    } else if ([@"setAttribute" isEqualToString:call.method]) {
+        NSDictionary* args = call.arguments;
+        NSString* name = args[@"key"];
+        NSString* value = args[@"value"];
+        [self setAttributeWithName:name value:value];
+        result(nil);
+    } else if ([@"clearAttribute" isEqualToString:call.method]) {
+        NSString* name = call.arguments[@"key"];
+        [self clearAttributeWithName:name];
+        result(nil);
+    } else if ([@"getAttributes" isEqualToString:call.method]) {
+        [self getAttributesWithResult:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -98,6 +126,41 @@ const int LOG_LENGTH = 800;
         NSString* deviceId =  [mp deviceIdentifier];
         result(deviceId);
     }];
+}
+
+- (void)setContactKey:(NSString* _Nonnull)contactKey {
+    [[SFMCSdk identity] setProfileId:contactKey];
+}
+
+- (void)getContactKeyWithResult:(FlutterResult)result {
+    NSString* contactKey = [[SFMCSdk mp] contactKey];
+    result(contactKey);
+}
+
+- (void)addTag:(NSString* _Nonnull)tag {
+    [[SFMCSdk mp] addTag:tag];
+}
+
+- (void)removeTag:(NSString* _Nonnull)tag {
+    [[SFMCSdk mp] removeTag:tag];
+}
+
+- (void)getTagsWithResult:(FlutterResult)result {
+    NSArray* tags = [[[SFMCSdk mp] tags] allObjects];
+    result(tags);
+}
+
+- (void)setAttributeWithName:(NSString* _Nonnull)name value:(NSString* _Nonnull)value {
+    [[SFMCSdk identity] setProfileAttributes:@{name: value}];
+}
+
+- (void)clearAttributeWithName:(NSString* _Nonnull)name {
+    [[SFMCSdk identity] clearProfileAttributeWithKey:name];
+}
+
+- (void)getAttributesWithResult:(FlutterResult)result {
+    NSDictionary* attributes = [[SFMCSdk mp] attributes];
+    result((attributes != nil) ? attributes : @{});
 }
 
 @end

@@ -38,10 +38,19 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "enablePush" -> enablePush(result)
             "disablePush" -> disablePush(result)
             "getDeviceId" -> getDeviceId(result)
+            "getTags" -> getTags(result)
+            "addTag" -> addTag(call, result)
+            "removeTag" -> removeTag(call, result)
+            "getContactKey" -> getContactKey(result)
+            "setContactKey" -> setContactKey(call, result)
+            "getAttributes" -> getAttributes(result)
+            "setAttribute" -> setAttribute(call, result)
+            "clearAttribute" -> clearAttribute(call, result)
             // For track method, you need to implement conversion from Map to Event
             else -> result.notImplemented()
         }
     }
+
 
     private fun getPlatformVersion(result: Result) {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
@@ -110,6 +119,79 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             sdk.mp {
                 val deviceId = it.registrationManager.getDeviceId()
                 result.success(deviceId)
+            }
+        }
+    }
+
+        private fun getContactKey(result: Result) {
+        SFMCSdk.requestSdk { sdk ->
+            sdk.mp {
+                val contactKey = it.registrationManager.getContactKey()
+                result.success(contactKey)
+            }
+        }
+    }
+
+    private fun setContactKey(call: MethodCall, result: Result) {
+        val contactKey: String? = call.argument("contactKey")
+        SFMCSdk.requestSdk { sdk ->
+            sdk.identity.setProfileId(contactKey ?: "")
+            result.success(null)
+        }
+    }
+
+    private fun getAttributes(result: Result) {
+        SFMCSdk.requestSdk { sdk ->
+            sdk.mp {
+                val attributes = it.registrationManager.getAttributes()
+                result.success(attributes)
+            }
+        }
+    }
+
+    private fun setAttribute(call: MethodCall, result: Result) {
+        val key: String? = call.argument("key")
+        val value: String? = call.argument("value")
+        SFMCSdk.requestSdk { sdk ->
+            sdk.identity.setProfileAttribute(key ?: "", value ?: "")
+            result.success(null)
+        }
+    }
+
+    private fun clearAttribute(call: MethodCall, result: Result) {
+        val key: String? = call.argument("key")
+        SFMCSdk.requestSdk { sdk ->
+            sdk.identity.clearProfileAttribute(key ?: "")
+            result.success(null)
+        }
+    }
+
+    private fun getTags(result: Result) {
+        SFMCSdk.requestSdk { sdk ->
+            sdk.mp {
+                val tags = it.registrationManager.getTags()
+                result.success(tags.toList())
+            }
+        }
+    }
+
+    private fun addTag(call: MethodCall, result: Result) {
+        val tag: String? = call.argument("tag")
+        SFMCSdk.requestSdk { sdk ->
+            sdk.mp {
+                it.registrationManager.edit().addTag(tag ?: "").commit()
+                result.success(null)
+            }
+        }
+    }
+
+    private fun removeTag(call: MethodCall, result: Result) {
+        val tag: String? = call.argument("tag")
+            Log.d("~#ddd", tag ?: "nothing")
+        SFMCSdk.requestSdk { sdk ->
+            sdk.mp {
+                it.registrationManager.edit().removeTag(tag ?: "").commit()
+                result.success(null)
             }
         }
     }
