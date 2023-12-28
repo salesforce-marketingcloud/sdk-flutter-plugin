@@ -96,7 +96,6 @@ class _MyAppState extends State<MyApp> {
       _showToast('Attribute set successfully!');
       initPlatformState();
     } catch (e) {
-      print('Error setting attribute: $e');
       _showToast('Error setting attribute.');
     }
   }
@@ -107,7 +106,6 @@ class _MyAppState extends State<MyApp> {
       _showToast('Attribute cleared successfully!');
       initPlatformState();
     } catch (e) {
-      print('Error setting attribute: $e');
       _showToast('Error removing attribute.');
     }
   }
@@ -119,7 +117,6 @@ class _MyAppState extends State<MyApp> {
       _showToast('Tags set successfully!');
       initPlatformState();
     } catch (e) {
-      print('Error setting attribute: $e');
       Fluttertoast.showToast(msg: 'Error setting tags.');
     }
   }
@@ -131,7 +128,6 @@ class _MyAppState extends State<MyApp> {
       _showToast('Tag removed successfully!');
       initPlatformState();
     } catch (e) {
-      print('Error setting attribute: $e');
       _showToast('Error setting tags.');
     }
   }
@@ -143,7 +139,6 @@ class _MyAppState extends State<MyApp> {
       _showToast('Contact key is set.');
       initPlatformState();
     } catch (e) {
-      print('Error setting attribute: $e');
       _showToast('Error setting contact key.');
     }
   }
