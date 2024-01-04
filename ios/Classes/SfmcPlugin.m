@@ -30,22 +30,17 @@ const int LOG_LENGTH = 800;
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"logSdkState" isEqualToString:call.method]) {
-        [self logSdkState];
-        result(nil);
+        [self logSdkStateWithResult:result];
     } else if ([@"getSystemToken" isEqualToString:call.method]) {
         [self getSystemTokenWithResult:result];
     } else if ([@"enableLogging" isEqualToString:call.method]) {
-        [self enableLogging];
-        result(nil);
+        [self enableLoggingWithResult:result];
     } else if ([@"disableLogging" isEqualToString:call.method]) {
-        [self disableLogging];
-        result(nil);
+        [self disableLoggingWithResult:result];
     } else if ([@"enablePush" isEqualToString:call.method]) {
-        [self enablePush];
-        result(nil);
+        [self enablePushWithResult:result];
     } else if ([@"disablePush" isEqualToString:call.method]) {
-        [self disablePush];
-        result(nil);
+        [self disablePushWithResult:result];
     } else if ([@"isPushEnabled" isEqualToString:call.method]) {
         [self isPushEnabledWithResult:result];
     } else if ([@"getDeviceId" isEqualToString:call.method]) {
@@ -55,39 +50,54 @@ const int LOG_LENGTH = 800;
     }
 }
 
-- (void)logSdkState {
+- (void)logSdkStateWithResult:(FlutterResult)result {
     [self splitLog:[SFMCSdk state]];
+    result(nil);
 }
 
 - (void)getSystemTokenWithResult:(FlutterResult)result {
-    NSString* deviceToken = [[SFMCSdk mp] deviceToken];
-    result(deviceToken);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSString* deviceToken = [mp deviceToken];
+        result(deviceToken);
+    }];
 }
 
-- (void)enableLogging {
+- (void)enableLoggingWithResult:(FlutterResult)result {
     [SFMCSdk setLoggerWithLogLevel:SFMCSdkLogLevelDebug logOutputter:[[SFMCSdkLogOutputter alloc] init]];
+    result(nil);
 }
 
-- (void)disableLogging {
+- (void)disableLoggingWithResult:(FlutterResult)result {
     [SFMCSdk setLoggerWithLogLevel:SFMCSdkLogLevelFault logOutputter:[[SFMCSdkLogOutputter alloc] init]];
+    result(nil);
 }
 
-- (void)enablePush {
-    [[SFMCSdk mp] setPushEnabled:YES];
+- (void)enablePushWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [mp setPushEnabled:YES];
+        result(nil);
+    }];
 }
 
-- (void)disablePush {
-    [[SFMCSdk mp] setPushEnabled:NO];
+- (void)disablePushWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [mp setPushEnabled:NO];
+        result(nil);
+    }];
 }
 
 - (void)isPushEnabledWithResult:(FlutterResult)result {
-    BOOL status = [[SFMCSdk mp] pushEnabled];
-    result(@(status));
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL status = [mp pushEnabled];
+        result(@(status));
+    }];
 }
 
 - (void)getDeviceIdWithResult:(FlutterResult)result {
-    NSString* deviceId = [[SFMCSdk mp] deviceIdentifier];
-    result(deviceId);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSString* deviceId =  [mp deviceIdentifier];
+        result(deviceId);
+    }];
 }
 
 @end

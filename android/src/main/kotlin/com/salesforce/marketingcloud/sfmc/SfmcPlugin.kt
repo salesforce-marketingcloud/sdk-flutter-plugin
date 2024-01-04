@@ -59,7 +59,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun enableLogging(result: Result) {
-        // SFMCSdk.setLogging(LogLevel.DEBUG, LogListener.AndroidLogger())
         MarketingCloudSdk.setLogLevel(MCLogListener.VERBOSE)
         MarketingCloudSdk.setLogListener(MCLogListener.AndroidLogListener())
         result.success(null)

@@ -88,8 +88,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "System Token",
                 "Get the system token from the SFMC SDK using SFMCSdk.getSystemToken().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("System Token Updated");
                 },
                 'GET SYSTEM TOKEN',
@@ -98,8 +98,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Device ID",
                 "Get the device ID from the SFMC SDK using SFMCSdk.getDeviceId().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("Device ID Updated");
                 },
                 'GET DEVICE ID',
@@ -108,8 +108,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Check Push Status",
                 "Check if push notifications are enabled or disabled using SFMCSdk.isPushEnabled().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("Push Status Updated");
                 },
                 'UPDATE PUSH STATUS',
@@ -118,8 +118,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Enable Push",
                 "Enable push notifications using SFMCSdk.enablePush().",
-                () {
-                  SFMCSdk.enablePush();
+                () async {
+                  await SFMCSdk.enablePush();
                   _showToast("Push Enabled");
                 },
                 'ENABLE PUSH',
@@ -127,8 +127,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Disable Push",
                 "Disable push notifications using SFMCSdk.disablePush().",
-                () {
-                  SFMCSdk.disablePush();
+                () async {
+                  await SFMCSdk.disablePush();
                   _showToast("Push Disabled");
                 },
                 'DISABLE PUSH',
@@ -136,8 +136,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Enable Logging",
                 "Enable logging for the SFMC SDK using SFMCSdk.enableLogging().",
-                () {
-                  SFMCSdk.enableLogging();
+                () async {
+                  await SFMCSdk.enableLogging();
                   _showToast("Logging Enabled");
                 },
                 'ENABLE LOGGING',
@@ -145,8 +145,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Disable Logging",
                 "Disable logging for the SFMC SDK using SFMCSdk.disableLogging().",
-                () {
-                  SFMCSdk.disableLogging();
+                () async {
+                  await SFMCSdk.disableLogging();
                   _showToast("Logging Disabled");
                 },
                 'DISABLE LOGGING',
@@ -154,8 +154,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Log SDK State",
                 "Log the state of the SFMC SDK using SFMCSdk.logSdkState().",
-                () {
-                  SFMCSdk.logSdkState();
+                () async {
+                  await SFMCSdk.logSdkState();
                   _showToast("SDK state logged.");
                 },
                 'LOG SDK STATE',
