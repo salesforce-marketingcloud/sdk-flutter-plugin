@@ -16,7 +16,6 @@
     [pushConfigBuilder setMid:@"MC_MID"];
     [pushConfigBuilder setAnalyticsEnabled:YES];
 
-
     [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(SFMCSdkOperationResult result) {
       if (result == SFMCSdkOperationResultSuccess) {
         [self pushSetup];
@@ -33,11 +32,8 @@
   dispatch_async(dispatch_get_main_queue(), ^{
     // set the UNUserNotificationCenter delegate - the delegate must be set here in
     // didFinishLaunchingWithOptions
-    [[SFMCSdk identity] setProfileId:@"abc@gmail.com"];
-      
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     [[UIApplication sharedApplication] registerForRemoteNotifications];
-    [[SFMCSdk mp] setURLHandlingDelegate:self];
 
     [[UNUserNotificationCenter currentNotificationCenter]
      requestAuthorizationWithOptions:UNAuthorizationOptionAlert |
@@ -55,7 +51,9 @@
 
 - (void)application:(UIApplication *)application
     didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    [[SFMCSdk mp] setDeviceToken:deviceToken];
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
+        [mp setDeviceToken:deviceToken];
+    }];
 }
 
 - (void)application:(UIApplication *)application
@@ -70,8 +68,9 @@
     didReceiveNotificationResponse:(UNNotificationResponse *)response
              withCompletionHandler:(void (^)(void))completionHandler {
     // tell the MarketingCloudSDK about the notification
-    [[SFMCSdk mp] setNotificationRequest:response.notification.request];
-
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
+        [mp setNotificationRequest:response.notification.request];
+    }];
     if (completionHandler != nil) {
         completionHandler();
     }
@@ -81,7 +80,6 @@
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:
              (void (^)(UNNotificationPresentationOptions options))completionHandler {
-    NSLog(@"User Info : %@", notification.request.content.userInfo);
     completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert |
                       UNAuthorizationOptionBadge);
 }
@@ -89,8 +87,9 @@
 - (void)application:(UIApplication *)application
     didReceiveRemoteNotification:(NSDictionary *)userInfo
           fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-    [[SFMCSdk mp] setNotificationUserInfo:userInfo];
-
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
+        [mp setNotificationUserInfo:userInfo];
+    }];
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
