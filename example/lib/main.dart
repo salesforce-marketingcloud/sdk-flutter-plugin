@@ -219,8 +219,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Contact Key",
                 "Get the contact key from the SFMC SDK using SFMCSdk.getContactKey().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("Contact Key Updated");
                 },
                 'GET CONTACT KEY',
@@ -235,8 +235,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Tags",
                 "Get tags from the SFMC SDK using SFMCSdk.getTags().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("Tags Updated");
                 },
                 'GET TAGS',
@@ -257,8 +257,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Attributes",
                 "Get attributes from the SFMC SDK using SFMCSdk.getAttributes().",
-                () {
-                  initPlatformState();
+                () async {
+                  await initPlatformState();
                   _showToast("Attributes Updated");
                 },
                 'GET ATTRIBUTES',

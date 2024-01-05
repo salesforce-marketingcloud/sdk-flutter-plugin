@@ -47,30 +47,26 @@ const int LOG_LENGTH = 800;
         [self getDeviceIdWithResult:result];
     } else if ([@"setContactKey" isEqualToString:call.method]) {
         NSString* contactKey = call.arguments[@"contactKey"];
-        [self setContactKey:contactKey];
-        result(nil);
+        [self setContactKey:contactKey result:result];
     } else if ([@"getContactKey" isEqualToString:call.method]) {
         [self getContactKeyWithResult:result];
     } else if ([@"addTag" isEqualToString:call.method]) {
         NSString* tag = call.arguments[@"tag"];
-        [self addTag:tag];
-        result(nil);
+        [self addTag:tag result:result];
     } else if ([@"removeTag" isEqualToString:call.method]) {
         NSString* tag = call.arguments[@"tag"];
-        [self removeTag:tag];
-        result(nil);
+        [self removeTag:tag result:result];
     } else if ([@"getTags" isEqualToString:call.method]) {
         [self getTagsWithResult:result];
     } else if ([@"setAttribute" isEqualToString:call.method]) {
         NSDictionary* args = call.arguments;
-        NSString* name = args[@"key"];
+        NSString* key = args[@"key"];
         NSString* value = args[@"value"];
-        [self setAttributeWithName:name value:value];
+        [self setAttributeWithKey:key value:value result:result];
         result(nil);
     } else if ([@"clearAttribute" isEqualToString:call.method]) {
-        NSString* name = call.arguments[@"key"];
-        [self clearAttributeWithName:name];
-        result(nil);
+        NSString* key = call.arguments[@"key"];
+        [self clearAttributeWithKey:key result:result];
     } else if ([@"getAttributes" isEqualToString:call.method]) {
         [self getAttributesWithResult:result];
     } else {
@@ -128,39 +124,54 @@ const int LOG_LENGTH = 800;
     }];
 }
 
-- (void)setContactKey:(NSString* _Nonnull)contactKey {
+- (void)setContactKey:(NSString* _Nonnull)contactKey result:(FlutterResult)result {
     [[SFMCSdk identity] setProfileId:contactKey];
+    result(nil);
 }
 
 - (void)getContactKeyWithResult:(FlutterResult)result {
-    NSString* contactKey = [[SFMCSdk mp] contactKey];
-    result(contactKey);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSString* contactKey = [mp contactKey];
+        result(contactKey);
+    }];
 }
 
-- (void)addTag:(NSString* _Nonnull)tag {
-    [[SFMCSdk mp] addTag:tag];
+- (void)addTag:(NSString* _Nonnull)tag result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL ignore = [mp addTag:tag];
+        result(nil);
+    }];
 }
 
-- (void)removeTag:(NSString* _Nonnull)tag {
-    [[SFMCSdk mp] removeTag:tag];
+- (void)removeTag:(NSString* _Nonnull)tag result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL ignore = [mp removeTag:tag];
+        result(nil);
+    }];
 }
 
 - (void)getTagsWithResult:(FlutterResult)result {
-    NSArray* tags = [[[SFMCSdk mp] tags] allObjects];
-    result(tags);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSArray* tags = [[mp tags] allObjects];
+        result(tags);
+    }];
 }
 
-- (void)setAttributeWithName:(NSString* _Nonnull)name value:(NSString* _Nonnull)value {
-    [[SFMCSdk identity] setProfileAttributes:@{name: value}];
+- (void)setAttributeWithKey:(NSString* _Nonnull)key value:(NSString* _Nonnull)value result:(FlutterResult)result {
+    [[SFMCSdk identity] setProfileAttributes:@{key: value}];
+    result(nil);
 }
 
-- (void)clearAttributeWithName:(NSString* _Nonnull)name {
-    [[SFMCSdk identity] clearProfileAttributeWithKey:name];
+- (void)clearAttributeWithKey:(NSString* _Nonnull)key result:(FlutterResult)result {
+    [[SFMCSdk identity] clearProfileAttributeWithKey:key];
+    result(nil);
 }
 
 - (void)getAttributesWithResult:(FlutterResult)result {
-    NSDictionary* attributes = [[SFMCSdk mp] attributes];
-    result((attributes != nil) ? attributes : @{});
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSDictionary* attributes = [mp attributes];
+        result((attributes != nil) ? attributes : @{});
+    }];
 }
 
 @end
