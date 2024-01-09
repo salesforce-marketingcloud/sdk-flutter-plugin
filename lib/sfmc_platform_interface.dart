@@ -44,8 +44,40 @@ abstract class SfmcPlatform extends PlatformInterface {
   Future<void> logSdkState() {
     throw UnimplementedError('logSdkState() has not been implemented.');
   }
-  
+
   Future<String?> getDeviceId() {
     throw UnimplementedError('getDeviceId() has not been implemented.');
+  }
+
+  Future<Map<Object?, Object?>?> getAttributes() {
+    throw UnimplementedError('getAttributes() has not been implemented.');
+  }
+
+  Future<void> setAttribute(String key, String value) {
+    throw UnimplementedError('setAttribute() has not been implemented.');
+  }
+
+  Future<void> clearAttribute(String key) {
+    throw UnimplementedError('clearAttribute() has not been implemented.');
+  }
+
+  Future<void> addTag(String tag) {
+    throw UnimplementedError('addTag() has not been implemented.');
+  }
+
+  Future<void> removeTag(String tag) {
+    throw UnimplementedError('removeTag() has not been implemented.');
+  }
+
+  Future<List<Object?>?> getTags() {
+    throw UnimplementedError('getTags() has not been implemented.');
+  }
+
+  Future<void> setContactKey(String contactKey) {
+    throw UnimplementedError('setContactKey() has not been implemented.');
+  }
+
+  Future<String?> getContactKey() {
+    throw UnimplementedError('getContactKey() has not been implemented.');
   }
 }

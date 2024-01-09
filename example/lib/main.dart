@@ -20,6 +20,9 @@ class _MyAppState extends State<MyApp> {
   String _systemToken = 'Not available';
   String _deviceId = 'Not available';
   String _pushStatus = 'Not available';
+  String _attributes = "Not aviailable";
+  List<String> _tags = [];
+  String _contactKey = 'Not available';
 
   @override
   void initState() {
@@ -51,13 +54,93 @@ class _MyAppState extends State<MyApp> {
       pushStatus = 'Failed to get Push Status.';
     }
 
+    String attributes = "Not available";
+    try {
+      var response = await SFMCSdk.getAttributes();
+      if (response != null) {
+        attributes = jsonEncode(response);
+      }
+    } on PlatformException {
+      attributes = "Error getting attributes.";
+    }
+
+    List<String> tags;
+    try {
+      tags = (await SFMCSdk.getTags())?.cast<String>() ?? [];
+    } on PlatformException {
+      tags = [];
+    }
+
+    String contactKey;
+    try {
+      contactKey = await SFMCSdk.getContactKey() ?? 'Not Available';
+    } on PlatformException {
+      contactKey = 'Failed to get contact key.';
+    }
+
     if (!mounted) return;
 
     setState(() {
       _systemToken = systemToken;
       _deviceId = deviceId;
       _pushStatus = pushStatus;
+      _attributes = attributes;
+      _tags = tags;
+      _contactKey = contactKey;
     });
+  }
+
+  void _onSetAttributesClicked(String key, String value) async {
+    try {
+      await SFMCSdk.setAttribute(key, value);
+      _showToast('Attribute set successfully!');
+      initPlatformState();
+    } catch (e) {
+      _showToast('Error setting attribute.');
+    }
+  }
+
+  void _onClarAttributesClicked(String key) async {
+    try {
+      await SFMCSdk.clearAttribute(key);
+      _showToast('Attribute cleared successfully!');
+      initPlatformState();
+    } catch (e) {
+      _showToast('Error removing attribute.');
+    }
+  }
+
+  void _onSetTagsClicked(tag) async {
+    // Replace this dummy value with the actual logic to set tags
+    try {
+      await SFMCSdk.addTag(tag);
+      _showToast('Tags set successfully!');
+      initPlatformState();
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error setting tags.');
+    }
+  }
+
+  void _onRemoveTagsClicked(tag) async {
+    // Replace this dummy value with the actual logic to set tags
+    try {
+      await SFMCSdk.removeTag(tag);
+      _showToast('Tag removed successfully!');
+      initPlatformState();
+    } catch (e) {
+      _showToast('Error setting tags.');
+    }
+  }
+
+  void _onSetContactKeyClicked(value) async {
+    // Replace this dummy value with the actual logic to set the contact key
+    try {
+      await SFMCSdk.setContactKey(value);
+      _showToast('Contact key is set.');
+      initPlatformState();
+    } catch (e) {
+      _showToast('Error setting contact key.');
+    }
   }
 
   void _showToast(String message) {
@@ -134,6 +217,69 @@ class _MyAppState extends State<MyApp> {
                 'DISABLE PUSH',
               ),
               buildCard(
+                "Get Contact Key",
+                "Get the contact key from the SFMC SDK using SFMCSdk.getContactKey().",
+                () async {
+                  await initPlatformState();
+                  _showToast("Contact Key Updated");
+                },
+                'GET CONTACT KEY',
+                content: _contactKey,
+              ),
+              buildCardWithInput(
+                "Set Contact Key",
+                "Set the contact key for the SFMC SDK using SFMCSdk.setContactKey(key).",
+                _onSetContactKeyClicked,
+                'SET CONTACT KEY',
+              ),
+              buildCard(
+                "Get Tags",
+                "Get tags from the SFMC SDK using SFMCSdk.getTags().",
+                () async {
+                  await initPlatformState();
+                  _showToast("Tags Updated");
+                },
+                'GET TAGS',
+                content: _tags.isNotEmpty ? _tags.join(', ') : 'No tags found.',
+              ),
+              buildCardWithInput(
+                "Add Tag",
+                "Add a tag to the SFMC SDK using SFMCSdk.addTag(tag).",
+                _onSetTagsClicked,
+                'ADD TAG',
+              ),
+              buildCardWithInput(
+                "Remove Tag",
+                "Remove a tag from the SFMC SDK using SFMCSdk.removeTag(tag).",
+                _onRemoveTagsClicked,
+                'REMOVE TAG',
+              ),
+              buildCard(
+                "Get Attributes",
+                "Get attributes from the SFMC SDK using SFMCSdk.getAttributes().",
+                () async {
+                  await initPlatformState();
+                  _showToast("Attributes Updated");
+                },
+                'GET ATTRIBUTES',
+                content: _attributes.isNotEmpty
+                    ? _attributes
+                    : 'No attributes found.',
+              ),
+              buildCardWithInput(
+                "Set Attribute",
+                "Set an attribute for the SFMC SDK using SFMCSdk.setAttribute(key, value).",
+                _onSetAttributesClicked,
+                'SET ATTRIBUTE',
+                isTwoInputs: true,
+              ),
+              buildCardWithInput(
+                "Clear Attribute",
+                "Clear an attribute from the SFMC SDK using SFMCSdk.clearAttribute(key).",
+                _onClarAttributesClicked,
+                'CLEAR ATTRIBUTE',
+              ),
+              buildCard(
                 "Enable Logging",
                 "Enable logging for the SFMC SDK using SFMCSdk.enableLogging().",
                 () async {
@@ -189,14 +335,14 @@ class _MyAppState extends State<MyApp> {
                 TextFormField(
                   controller: controller1,
                   decoration: const InputDecoration(
-                    labelText: 'Enter value',
+                    labelText: 'Enter key',
                   ),
                 ),
                 if (isTwoInputs)
                   TextFormField(
                     controller: controller2,
                     decoration: const InputDecoration(
-                      labelText: 'Enter second value',
+                      labelText: 'Enter value',
                     ),
                   ),
                 const SizedBox(height: 20),

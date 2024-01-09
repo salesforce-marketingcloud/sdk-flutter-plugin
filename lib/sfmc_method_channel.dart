@@ -46,4 +46,46 @@ class MethodChannelSfmc extends SfmcPlatform {
   Future<String?> getDeviceId() {
     return methodChannel.invokeMethod<String>('getDeviceId');
   }
+
+  @override
+  Future<Map<Object?, Object?>?> getAttributes() async {
+    return methodChannel.invokeMethod<Map<Object?, Object?>>('getAttributes');
+  }
+
+  @override
+  Future<void> setAttribute(String key, String value) {
+    return methodChannel
+        .invokeMethod('setAttribute', {"key": key, "value": value});
+  }
+
+  @override
+  Future<void> clearAttribute(String key) {
+    return methodChannel.invokeMethod('clearAttribute', {"key": key});
+  }
+
+  @override
+  Future<void> addTag(String tag) {
+    return methodChannel.invokeMethod('addTag', {"tag": tag});
+  }
+
+  @override
+  Future<void> removeTag(String tag) {
+    return methodChannel.invokeMethod('removeTag', {"tag": tag});
+  }
+
+  @override
+  Future<List<Object?>?> getTags() {
+    return methodChannel.invokeMethod<List<Object?>>('getTags');
+  }
+
+  @override
+  Future<void> setContactKey(String contactKey) {
+    return methodChannel
+        .invokeMethod('setContactKey', {"contactKey": contactKey});
+  }
+
+  @override
+  Future<String?> getContactKey() {
+    return methodChannel.invokeMethod<String>('getContactKey');
+  }
 }
