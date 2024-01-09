@@ -1,6 +1,7 @@
 #import "SfmcPlugin.h"
 #import <SFMCSDK/SFMCSDK.h>
 #import <MarketingCloudSDK/MarketingCloudSDK.h>
+#import "NSDictionary+SFMCEvent.h"
 
 @implementation SfmcPlugin
 const int LOG_LENGTH = 800;
@@ -69,6 +70,9 @@ const int LOG_LENGTH = 800;
         [self clearAttributeWithKey:key result:result];
     } else if ([@"getAttributes" isEqualToString:call.method]) {
         [self getAttributesWithResult:result];
+    } else if ([@"trackEvent" isEqualToString:call.method]) {
+        NSDictionary* eventJson = call.arguments;
+        [self trackEventWithJson:eventJson result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -178,6 +182,11 @@ const int LOG_LENGTH = 800;
         NSDictionary* attributes = [mp attributes];
         result((attributes != nil) ? attributes : @{});
     }];
+}
+
+- (void)trackEventWithJson:(NSDictionary *)eventJson result:(FlutterResult)result {
+    [SFMCSdk trackWithEvent:[NSDictionary SFMCEvent:eventJson]];    
+    result(nil);
 }
 
 @end

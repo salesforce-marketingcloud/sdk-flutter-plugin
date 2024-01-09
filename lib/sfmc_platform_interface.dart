@@ -80,4 +80,8 @@ abstract class SfmcPlatform extends PlatformInterface {
   Future<String?> getContactKey() {
     throw UnimplementedError('getContactKey() has not been implemented.');
   }
+
+  Future<void> trackEvent(Map<String, dynamic> eventJson) {
+    throw UnimplementedError('trackEvent() has not been implemented.');
+  }
 }

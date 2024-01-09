@@ -88,4 +88,9 @@ class MethodChannelSfmc extends SfmcPlatform {
   Future<String?> getContactKey() {
     return methodChannel.invokeMethod<String>('getContactKey');
   }
+
+  @override
+  Future<void> trackEvent(Map<String, dynamic> eventJson) {
+    return methodChannel.invokeMethod('trackEvent', eventJson);
+  }
 }

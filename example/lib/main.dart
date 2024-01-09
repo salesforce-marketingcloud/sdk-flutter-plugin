@@ -111,7 +111,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onSetTagsClicked(tag) async {
-    // Replace this dummy value with the actual logic to set tags
     try {
       await SFMCSdk.addTag(tag);
       _showToast('Tags set successfully!');
@@ -122,7 +121,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onRemoveTagsClicked(tag) async {
-    // Replace this dummy value with the actual logic to set tags
     try {
       await SFMCSdk.removeTag(tag);
       _showToast('Tag removed successfully!');
@@ -133,7 +131,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onSetContactKeyClicked(value) async {
-    // Replace this dummy value with the actual logic to set the contact key
     try {
       await SFMCSdk.setContactKey(value);
       _showToast('Contact key is set.');
@@ -143,8 +140,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void _trackCustomEvent() async {
+    try {
+      var customEvent = CustomEvent('CustomEventName',
+          attributes: {'key1': 'trackCustomEvent'});
+      await SFMCSdk.trackEvent(customEvent);
+      _showToast("Event tracked successfully");
+    } catch (e) {
+      _showToast('Error tracking event.');
+    }
+  }
+
   void _showToast(String message) {
-    // Implement your toast display logic here.
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -305,6 +312,12 @@ class _MyAppState extends State<MyApp> {
                   _showToast("SDK state logged.");
                 },
                 'LOG SDK STATE',
+              ),
+              buildCard(
+                "Track Custom Event",
+                "Track custom event using SFMCSdk.trackEvent(event).",
+                _trackCustomEvent,
+                'TRACK EVENT',
               ),
             ],
           ),

@@ -1,4 +1,7 @@
 import 'sfmc_platform_interface.dart';
+import 'events.dart';
+
+export 'events.dart';
 
 /// Salesforce Marketing Cloud SDK for Flutter.
 class SFMCSdk {
@@ -168,5 +171,18 @@ class SFMCSdk {
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)contactKey)
   static Future<String?> getContactKey() {
     return SfmcPlatform.instance.getContactKey();
+  }
+
+  /// This method helps to track events, which could result in actions such as an InApp Message being displayed.
+  ///
+  /// @param event The event to be tracked.
+  ///
+  /// See:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/event-tracking/event-tracking-event-tracking.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/event-tracking/event-tracking-event-tracking.html)
+
+  static Future<void> trackEvent(CustomEvent event) {
+    // Implement event tracking logic
+    return SfmcPlatform.instance.trackEvent(event.toJson());
   }
 }
