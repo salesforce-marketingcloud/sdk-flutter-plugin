@@ -125,8 +125,10 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)setContactKey:(NSString* _Nonnull)contactKey result:(FlutterResult)result {
-    [[SFMCSdk identity] setProfileId:contactKey];
-    result(nil);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [[SFMCSdk identity] setProfileId:contactKey];
+        result(nil);
+    }];
 }
 
 - (void)getContactKeyWithResult:(FlutterResult)result {
@@ -158,13 +160,17 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)setAttributeWithKey:(NSString* _Nonnull)key value:(NSString* _Nonnull)value result:(FlutterResult)result {
-    [[SFMCSdk identity] setProfileAttributes:@{key: value}];
-    result(nil);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [[SFMCSdk identity] setProfileAttributes:@{key: value}];
+        result(nil);
+    }];
 }
 
 - (void)clearAttributeWithKey:(NSString* _Nonnull)key result:(FlutterResult)result {
-    [[SFMCSdk identity] clearProfileAttributeWithKey:key];
-    result(nil);
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [[SFMCSdk identity] clearProfileAttributeWithKey:key];
+        result(nil);
+    }];
 }
 
 - (void)getAttributesWithResult:(FlutterResult)result {

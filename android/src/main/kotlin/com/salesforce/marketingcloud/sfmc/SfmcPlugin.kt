@@ -123,7 +123,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-        private fun getContactKey(result: Result) {
+    private fun getContactKey(result: Result) {
         SFMCSdk.requestSdk { sdk ->
             sdk.mp {
                 val contactKey = it.registrationManager.getContactKey()
@@ -187,7 +187,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun removeTag(call: MethodCall, result: Result) {
         val tag: String? = call.argument("tag")
-            Log.d("~#ddd", tag ?: "nothing")
         SFMCSdk.requestSdk { sdk ->
             sdk.mp {
                 it.registrationManager.edit().removeTag(tag ?: "").commit()
