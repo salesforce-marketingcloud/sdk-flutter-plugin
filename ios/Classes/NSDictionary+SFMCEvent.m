@@ -1,4 +1,4 @@
-    // RCTConvert+SFMCEvent.m
+    // NSDictionary+SFMCEvent.m
     //
     // Copyright (c) 2024 Salesforce, Inc
     //
