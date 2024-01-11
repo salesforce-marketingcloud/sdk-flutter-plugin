@@ -1,3 +1,30 @@
+// main.dart
+//
+// Copyright (c) 2024 Salesforce, Inc
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// Redistributions of source code must retain the above copyright notice, this
+// list of conditions and the following disclaimer. Redistributions in binary
+// form must reproduce the above copyright notice, this list of conditions and
+// the following disclaimer in the documentation and/or other materials
+// provided with the distribution. Neither the name of the nor the names of
+// its contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -111,7 +138,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onSetTagsClicked(tag) async {
-    // Replace this dummy value with the actual logic to set tags
     try {
       await SFMCSdk.addTag(tag);
       _showToast('Tags set successfully!');
@@ -122,7 +148,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onRemoveTagsClicked(tag) async {
-    // Replace this dummy value with the actual logic to set tags
     try {
       await SFMCSdk.removeTag(tag);
       _showToast('Tag removed successfully!');
@@ -133,7 +158,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onSetContactKeyClicked(value) async {
-    // Replace this dummy value with the actual logic to set the contact key
     try {
       await SFMCSdk.setContactKey(value);
       _showToast('Contact key is set.');
@@ -143,8 +167,18 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void _trackCustomEvent() async {
+    try {
+      var customEvent = CustomEvent('CustomEventName',
+          attributes: {'key1': 'trackCustomEvent'});
+      await SFMCSdk.trackEvent(customEvent);
+      _showToast("Event tracked successfully");
+    } catch (e) {
+      _showToast('Error tracking event.');
+    }
+  }
+
   void _showToast(String message) {
-    // Implement your toast display logic here.
     Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_SHORT,
@@ -305,6 +339,12 @@ class _MyAppState extends State<MyApp> {
                   _showToast("SDK state logged.");
                 },
                 'LOG SDK STATE',
+              ),
+              buildCard(
+                "Track Custom Event",
+                "Track custom event using SFMCSdk.trackEvent(event).",
+                _trackCustomEvent,
+                'TRACK EVENT',
               ),
             ],
           ),

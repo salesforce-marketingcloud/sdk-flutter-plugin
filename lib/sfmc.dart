@@ -1,4 +1,34 @@
+// sfmc.dart
+//
+// Copyright (c) 2024 Salesforce, Inc
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// Redistributions of source code must retain the above copyright notice, this
+// list of conditions and the following disclaimer. Redistributions in binary
+// form must reproduce the above copyright notice, this list of conditions and
+// the following disclaimer in the documentation and/or other materials
+// provided with the distribution. Neither the name of the nor the names of
+// its contributors may be used to endorse or promote products derived from
+// this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
 import 'sfmc_platform_interface.dart';
+import 'events.dart';
+
+export 'events.dart';
 
 /// Salesforce Marketing Cloud SDK for Flutter.
 class SFMCSdk {
@@ -168,5 +198,18 @@ class SFMCSdk {
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)contactKey)
   static Future<String?> getContactKey() {
     return SfmcPlatform.instance.getContactKey();
+  }
+
+  /// This method helps to track events, which could result in actions such as an InApp Message being displayed.
+  ///
+  /// @param event The event to be tracked.
+  ///
+  /// See:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/event-tracking/event-tracking-event-tracking.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/event-tracking/event-tracking-event-tracking.html)
+
+  static Future<void> trackEvent(CustomEvent event) {
+    // Implement event tracking logic
+    return SfmcPlatform.instance.trackEvent(event.toJson());
   }
 }

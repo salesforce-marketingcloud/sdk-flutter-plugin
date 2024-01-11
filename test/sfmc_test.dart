@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sfmc/sfmc.dart';
 import 'package:sfmc/sfmc_platform_interface.dart';
-import 'package:sfmc/sfmc_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
@@ -9,6 +8,7 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   final Map<Object?, Object?> mockAttributes = {};
   final List<Object?> mockTags = [];
   String? mockContactKey;
+  Map<String, dynamic>? lastTrackedEvent;
 
   void _logCall(String methodName) {
     recentCalledMethod = methodName;
@@ -103,6 +103,11 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   Future<String?> getContactKey() {
     _logCall('getContactKey');
     return Future.value(mockContactKey);
+  }
+
+  @override
+  Future<void> trackEvent(Map<String, dynamic> event) async {
+    lastTrackedEvent = event;
   }
 }
 
@@ -211,5 +216,299 @@ void main() {
     mockPlatform.mockContactKey = testContactKey;
     expect(await SFMCSdk.getContactKey(), equals(testContactKey));
     expect(mockPlatform.recentCalledMethod, 'getContactKey');
+  });
+
+  group('SFMCSdk trackEvent Tests', () {
+    late MockSfmcPlatform mockPlatform;
+
+    setUp(() {
+      mockPlatform = MockSfmcPlatform();
+      SfmcPlatform.instance = mockPlatform;
+    });
+
+    test('trackEvent sends correct data', () async {
+      var customEvent = CustomEvent('TestEvent',
+          attributes: {'key': 'value'}, category: EventCategory.engagement);
+      await SFMCSdk.trackEvent(customEvent);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['category'], 'engagement');
+      expect(mockPlatform.lastTrackedEvent!['name'], 'TestEvent');
+      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key': 'value'});
+    });
+  });
+
+  group('CustomEvent Tests', () {
+    test('CustomEvent Initialization and JSON Conversion', () async {
+      var event = CustomEvent('TestEvent',
+          attributes: {'key1': 'value1'}, category: EventCategory.system);
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], 'TestEvent');
+      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key1': 'value1'});
+      expect(mockPlatform.lastTrackedEvent!['category'], 'system');
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'CustomEvent');
+    });
+  });
+
+  group('EngagementEvent Tests', () {
+    test('EngagementEvent Initialization and JSON Conversion', () async {
+      var event =
+          EngagementEvent('EngageEvent', attributes: {'key2': 'value2'});
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], 'EngageEvent');
+      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key2': 'value2'});
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'EngagementEvent');
+    });
+  });
+
+  group('SystemEvent Tests', () {
+    test('SystemEvent Initialization and JSON Conversion', () async {
+      var event = SystemEvent('SystemEvent', attributes: {'key3': 'value3'});
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], 'SystemEvent');
+      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key3': 'value3'});
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'SystemEvent');
+    });
+  });
+
+  group('IdentityEvent Tests', () {
+    test('IdentityEvent Initialization and JSON Conversion', () async {
+      var event = IdentityEvent.attributes({'key4': 'value4'});
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], 'IdentityEvent');
+      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key4': 'value4'});
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'IdentityEvent');
+    });
+
+    test('IdentityEvent Profile Attributes', () async {
+      var event =
+          IdentityEvent.profileAttributes({'profileKey': 'profileValue'});
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['profileAttributes'],
+          {'profileKey': 'profileValue'});
+    });
+
+    test('IdentityEvent Profile  ID', () async {
+      var event = IdentityEvent.profileId("abc123");
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['profileId'], 'abc123');
+    });
+  });
+
+  group('CartEvent Tests', () {
+    void testCartEvent(CartEvent event, String expectedEventName,
+        List<LineItem> lineItems) async {
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], expectedEventName);
+      expect(
+          mockPlatform.lastTrackedEvent!['lineItems'].length, lineItems.length);
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'CartEvent');
+    }
+
+    test('CartEvent Add To Cart and JSON Conversion', () async {
+      var lineItem = LineItem('type', 'id', 2, 10.0, 'USD');
+      var event = CartEvent.addToCart(lineItem);
+      testCartEvent(event, CartEventType.add.name, [lineItem]);
+    });
+
+    test('CartEvent Remove From Cart and JSON Conversion', () async {
+      var lineItem = LineItem('type', 'id', 2, 10.0, 'USD');
+      var event = CartEvent.removeFromCart(lineItem);
+      testCartEvent(event, CartEventType.remove.name, [lineItem]);
+    });
+
+    test('CartEvent Replace Cart and JSON Conversion', () async {
+      var lineItems = [
+        LineItem('type1', 'id1', 3, 15.0, 'USD'),
+        LineItem('type2', 'id2', 1, 20.0, 'USD')
+      ];
+      var event = CartEvent.replaceCart(lineItems);
+      testCartEvent(event, CartEventType.replace.name, lineItems);
+    });
+  });
+
+  group('CatalogObjectEvent Tests', () {
+    var catalogObject = CatalogObject('type', 'id', {
+      "key": "value"
+    }, {
+      "relatedKey": ["value1", "value2"]
+    });
+
+    testCatalogEvent(CatalogObjectEvent event, String expectedEventName,
+        CatalogObject order) async {
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], expectedEventName);
+      expect(mockPlatform.lastTrackedEvent!['catalogObject']['id'], 'id');
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'CatalogObjectEvent');
+      var jsonCatalogObject = mockPlatform.lastTrackedEvent!['catalogObject'];
+      expect(jsonCatalogObject['type'], 'type');
+      expect(jsonCatalogObject['id'], 'id');
+      expect(jsonCatalogObject['attributes'], {'key': 'value'});
+      expect(jsonCatalogObject['relatedCatalogObjects'], {
+        "relatedKey": ["value1", "value2"]
+      });
+    }
+
+    test('CatalogObjectEvent Comment and JSON Conversion', () async {
+      var event = CatalogObjectEvent.commentCatalog(catalogObject);
+      testCatalogEvent(
+          event, CatalogObjectEventName.comment.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent Detail and JSON Conversion', () async {
+      var event = CatalogObjectEvent.detailCatalog(catalogObject);
+      testCatalogEvent(
+          event, CatalogObjectEventName.detail.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent Favorite and JSON Conversion', () async {
+      var event = CatalogObjectEvent.favoriteCatalog(catalogObject);
+      testCatalogEvent(
+          event, CatalogObjectEventName.favorite.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent Share and JSON Conversion', () async {
+      var event = CatalogObjectEvent.shareCatalog(catalogObject);
+      testCatalogEvent(event, CatalogObjectEventName.share.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent Review and JSON Conversion', () async {
+      var event = CatalogObjectEvent.reviewCatalog(catalogObject);
+      testCatalogEvent(
+          event, CatalogObjectEventName.review.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent View and JSON Conversion', () async {
+      var event = CatalogObjectEvent.viewCatalog(catalogObject);
+      testCatalogEvent(event, CatalogObjectEventName.view.name, catalogObject);
+    });
+
+    test('CatalogObjectEvent QuickView and JSON Conversion', () async {
+      var event = CatalogObjectEvent.quickViewCatalog(catalogObject);
+      testCatalogEvent(
+          event, CatalogObjectEventName.quickView.name, catalogObject);
+    });
+  });
+
+  group('OrderEvent Tests', () {
+    var lineItem = LineItem('type', 'id', 1, 20.0, 'USD');
+    var order = Order('orderId', [lineItem], 20.0, 'USD');
+    void testOrderEvent(
+        OrderEvent event, String expectedEventName, Order order) async {
+      await SFMCSdk.trackEvent(event);
+
+      expect(mockPlatform.lastTrackedEvent, isNotNull);
+      expect(mockPlatform.lastTrackedEvent!['name'], expectedEventName);
+      expect(mockPlatform.lastTrackedEvent!['order']['id'], 'orderId');
+      expect(mockPlatform.lastTrackedEvent!['objType'], 'OrderEvent');
+      expect(mockPlatform.lastTrackedEvent!['order']['totalValue'], 20.0);
+      expect(mockPlatform.lastTrackedEvent!['order']['currency'], 'USD');
+      var jsonLineItem =
+          mockPlatform.lastTrackedEvent!['order']['lineItems'][0];
+      expect(jsonLineItem['catalogObjectType'], 'type');
+      expect(jsonLineItem['catalogObjectId'], 'id');
+      expect(jsonLineItem['quantity'], 1);
+      expect(jsonLineItem['price'], 20.0);
+      expect(jsonLineItem['currency'], 'USD');
+    }
+
+    test('OrderEvent Purchase and JSON Conversion', () async {
+      var event = OrderEvent.purchase(order);
+      testOrderEvent(event, OrderEventName.purchase.name, order);
+    });
+
+    test('OrderEvent Preorder and JSON Conversion', () async {
+      var event = OrderEvent.preorder(order);
+      testOrderEvent(event, OrderEventName.preorder.name, order);
+    });
+
+    test('OrderEvent Cancel and JSON Conversion', () async {
+      var event = OrderEvent.cancel(order);
+      testOrderEvent(event, OrderEventName.cancel.name, order);
+    });
+
+    test('OrderEvent Ship and JSON Conversion', () async {
+      var event = OrderEvent.ship(order);
+      testOrderEvent(event, OrderEventName.ship.name, order);
+    });
+
+    test('OrderEvent Deliver and JSON Conversion', () async {
+      var event = OrderEvent.deliver(order);
+      testOrderEvent(event, OrderEventName.deliver.name, order);
+    });
+
+    test('OrderEvent ReturnOrder and JSON Conversion', () async {
+      var event = OrderEvent.returnOrder(order);
+      testOrderEvent(event, OrderEventName.returnOrder.name, order);
+    });
+
+    test('OrderEvent Exchange and JSON Conversion', () async {
+      var event = OrderEvent.exchange(order);
+      testOrderEvent(event, OrderEventName.exchange.name, order);
+    });
+  });
+
+  group('LineItem Tests', () {
+    test('LineItem Initialization and JSON Conversion', () {
+      var lineItem = LineItem(
+          'type', 'id', 3, 15.0, 'USD', {'attributeKey': 'attributeValue'});
+      var json = lineItem.toJson();
+
+      expect(json['catalogObjectType'], 'type');
+      expect(json['catalogObjectId'], 'id');
+      expect(json['quantity'], 3);
+      expect(json['price'], 15.0);
+      expect(json['currency'], 'USD');
+      expect(json['attributes'], {'attributeKey': 'attributeValue'});
+    });
+  });
+
+  group('Order Tests', () {
+    test('Order Initialization and JSON Conversion', () {
+      var lineItems = [LineItem('type', 'id', 3, 15.0, 'USD')];
+      var order = Order('orderId', lineItems, 45.0, 'USD',
+          {'attributeKey': 'attributeValue'});
+      var json = order.toJson();
+
+      expect(json['id'], 'orderId');
+      expect(json['lineItems'].length, 1);
+      expect(json['totalValue'], 45.0);
+      expect(json['currency'], 'USD');
+      expect(json['attributes'], {'attributeKey': 'attributeValue'});
+    });
+  });
+
+  group('CatalogObject Tests', () {
+    test('CatalogObject Initialization and JSON Conversion', () {
+      var catalogObject = CatalogObject('type', 'id', {
+        'attributeKey': 'attributeValue'
+      }, {
+        "key": ["value1", "value2"]
+      });
+      var json = catalogObject.toJson();
+
+      expect(json['type'], 'type');
+      expect(json['id'], 'id');
+      expect(json['attributes'], {'attributeKey': 'attributeValue'});
+      expect(json['relatedCatalogObjects'], {
+        "key": ["value1", "value2"]
+      });
+    });
   });
 }

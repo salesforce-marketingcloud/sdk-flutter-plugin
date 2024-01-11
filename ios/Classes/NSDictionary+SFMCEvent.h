@@ -1,4 +1,4 @@
-// MainActivity.kt
+// NSDictionary+SFMCEvent.h
 //
 // Copyright (c) 2024 Salesforce, Inc
 //
@@ -25,9 +25,13 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-package com.salesforce.marketingcloud.sfmc_example
+#import <Foundation/Foundation.h>
+#import <SFMCSDK/SFMCSDK.h>
 
-import io.flutter.embedding.android.FlutterActivity
+NS_ASSUME_NONNULL_BEGIN
 
-class MainActivity: FlutterActivity() {
-}
+@interface NSDictionary (SFMCEvent)
++ (id<SFMCSdkEvent>)SFMCEvent: (NSDictionary *)eventJson;
+@end
+
+NS_ASSUME_NONNULL_END
