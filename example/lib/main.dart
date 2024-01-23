@@ -50,6 +50,8 @@ class _MyAppState extends State<MyApp> {
   String _attributes = "Not aviailable";
   List<String> _tags = [];
   String _contactKey = 'Not available';
+  bool _analyticsEnabled = false;
+  bool _piAnalyticsEnabled = false;
 
   @override
   void initState() {
@@ -103,6 +105,15 @@ class _MyAppState extends State<MyApp> {
       contactKey = await SFMCSdk.getContactKey() ?? 'Not Available';
     } on PlatformException {
       contactKey = 'Failed to get contact key.';
+    }
+
+    try {
+      _analyticsEnabled = await SFMCSdk.isAnalyticsEnabled() ?? false;
+      _piAnalyticsEnabled = await SFMCSdk.isPiAnalyticsEnabled() ?? false;
+    } on PlatformException {
+      // Handle exceptions or set default values
+      _analyticsEnabled = false;
+      _piAnalyticsEnabled = false;
     }
 
     if (!mounted) return;
@@ -184,7 +195,7 @@ class _MyAppState extends State<MyApp> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: const Color.fromARGB(56, 0, 0, 0),
+        backgroundColor: Color.fromARGB(249, 0, 0, 0),
         textColor: Colors.white,
         fontSize: 16.0);
   }
@@ -346,6 +357,28 @@ class _MyAppState extends State<MyApp> {
                 _trackCustomEvent,
                 'TRACK EVENT',
               ),
+              buildToggleCard(
+                "Analytics Enabled",
+                "Enable/Disable analytics using SFMCSdk.setAnalyticsEnabled().",
+                _analyticsEnabled,
+                (bool value) async {
+                  await SFMCSdk.setAnalyticsEnabled(value);
+                  setState(() {
+                    _analyticsEnabled = value;
+                  });
+                },
+              ),
+              buildToggleCard(
+                "PI Analytics Enabled",
+                "Enable/Disable PI analytics using SFMCSdk.setPiAnalyticsEnabled().",
+                _piAnalyticsEnabled,
+                (bool value) async {
+                  await SFMCSdk.setPiAnalyticsEnabled(value);
+                  setState(() {
+                    _piAnalyticsEnabled = value;
+                  });
+                },
+              ),
             ],
           ),
         ),
@@ -444,5 +477,45 @@ class _MyAppState extends State<MyApp> {
                 ),
               ],
             )));
+  }
+
+  Widget buildToggleCard(String title, String description, bool currentValue,
+      ValueChanged<bool> onChanged) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              title,
+              style: const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.bold),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Text(
+                description,
+                style: const TextStyle(color: Colors.black54),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(color: Colors.black),
+                ),
+                Switch(
+                  value: currentValue,
+                  onChanged: onChanged,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

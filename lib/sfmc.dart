@@ -212,4 +212,48 @@ class SFMCSdk {
     // Implement event tracking logic
     return SfmcPlatform.instance.trackEvent(event.toJson());
   }
+
+  /// Enables or disables analytics in the Marketing Cloud SDK.
+  ///
+  /// @param analyticsEnabled A flag indicating whether analytics should be enabled.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  static Future<void> setAnalyticsEnabled(bool analyticsEnabled) {
+    return SfmcPlatform.instance.setAnalyticsEnabled(analyticsEnabled);
+  }
+
+  /// Checks if analytics is enabled in the Marketing Cloud SDK.
+  ///
+  /// Returns a Future to the boolean representation of whether analytics is enabled.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  static Future<bool> isAnalyticsEnabled() {
+    return SfmcPlatform.instance.isAnalyticsEnabled();
+  }
+
+  /// Enables or disables Predictive Intelligence analytics in the Marketing Cloud SDK.
+  ///
+  /// [analyticsEnabled] A flag indicating whether PI analytics should be enabled.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  static Future<void> setPiAnalyticsEnabled(bool analyticsEnabled) {
+    return SfmcPlatform.instance.setPiAnalyticsEnabled(analyticsEnabled);
+  }
+
+  /// Checks if Predictive Intelligence analytics is enabled in the Marketing Cloud SDK.
+  ///
+  /// Returns a Future to the boolean representation of whether PI analytics is enabled.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  static Future<bool> isPiAnalyticsEnabled() {
+    return SfmcPlatform.instance.isPiAnalyticsEnabled();
+  }
 }

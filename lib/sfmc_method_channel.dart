@@ -120,4 +120,28 @@ class MethodChannelSfmc extends SfmcPlatform {
   Future<void> trackEvent(Map<String, dynamic> eventJson) {
     return methodChannel.invokeMethod('trackEvent', eventJson);
   }
+
+  @override
+  Future<void> setAnalyticsEnabled(bool analyticsEnabled) {
+    return methodChannel.invokeMethod(
+        'setAnalyticsEnabled', {'analyticsEnabled': analyticsEnabled});
+  }
+
+  @override
+  Future<bool> isAnalyticsEnabled() async {
+    return await methodChannel.invokeMethod<bool>('isAnalyticsEnabled') ??
+        false;
+  }
+
+  @override
+  Future<void> setPiAnalyticsEnabled(bool analyticsEnabled) {
+    return methodChannel.invokeMethod(
+        'setPiAnalyticsEnabled', {'analyticsEnabled': analyticsEnabled});
+  }
+
+  @override
+  Future<bool> isPiAnalyticsEnabled() async {
+    return await methodChannel.invokeMethod<bool>('isPiAnalyticsEnabled') ??
+        false;
+  }
 }

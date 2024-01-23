@@ -21,6 +21,10 @@ void main() {
             return true;
           case 'getDeviceId':
             return 'device_123';
+          case 'isAnalyticsEnabled':
+            return true;
+          case 'isPiAnalyticsEnabled':
+            return true;
           default:
             return null;
         }
@@ -526,6 +530,44 @@ void main() {
       var order = createTestOrder();
       var event = OrderEvent.exchange(order);
       testOrderEvent(event, OrderEventName.exchange.name);
+    });
+  });
+
+  group('Runtime Toggle Tests', () {
+    test('setAnalyticsEnabled', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'setAnalyticsEnabled') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.setAnalyticsEnabled(true);
+      expect(methodCalled, true);
+    });
+
+    test('isAnalyticsEnabled', () async {
+      expect(await platform.isAnalyticsEnabled(), true);
+    });
+
+    test('setPiAnalyticsEnabled', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'setPiAnalyticsEnabled') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.setPiAnalyticsEnabled(true);
+      expect(methodCalled, true);
+    });
+
+    test('isPiAnalyticsEnabled', () async {
+      expect(await platform.isPiAnalyticsEnabled(), true);
     });
   });
 }
