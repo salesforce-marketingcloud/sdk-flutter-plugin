@@ -9,6 +9,8 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   final List<Object?> mockTags = [];
   String? mockContactKey;
   Map<String, dynamic>? lastTrackedEvent;
+  bool mockAnalyticsEnabled = false;
+  bool mockPiAnalyticsEnabled = false;
 
   void _logCall(String methodName) {
     recentCalledMethod = methodName;
@@ -108,6 +110,30 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   @override
   Future<void> trackEvent(Map<String, dynamic> event) async {
     lastTrackedEvent = event;
+  }
+
+  @override
+  Future<void> setAnalyticsEnabled(bool analyticsEnabled) async {
+    _logCall('setAnalyticsEnabled');
+    mockAnalyticsEnabled = analyticsEnabled;
+  }
+
+  @override
+  Future<bool> isAnalyticsEnabled() {
+    _logCall('isAnalyticsEnabled');
+    return Future.value(mockAnalyticsEnabled);
+  }
+
+  @override
+  Future<void> setPiAnalyticsEnabled(bool analyticsEnabled) async {
+    _logCall('setPiAnalyticsEnabled');
+    mockPiAnalyticsEnabled = analyticsEnabled;
+  }
+
+  @override
+  Future<bool> isPiAnalyticsEnabled() {
+    _logCall('isPiAnalyticsEnabled');
+    return Future.value(mockPiAnalyticsEnabled);
   }
 }
 
@@ -509,6 +535,32 @@ void main() {
       expect(json['relatedCatalogObjects'], {
         "key": ["value1", "value2"]
       });
+    });
+  });
+
+  group('Runtime Toggle Tests', () {
+    test('setAnalyticsEnabled', () async {
+      await SFMCSdk.setAnalyticsEnabled(true);
+      expect(mockPlatform.mockAnalyticsEnabled, isTrue);
+      expect(mockPlatform.recentCalledMethod, 'setAnalyticsEnabled');
+    });
+
+    test('isAnalyticsEnabled', () async {
+      mockPlatform.mockAnalyticsEnabled = true;
+      expect(await SFMCSdk.isAnalyticsEnabled(), isTrue);
+      expect(mockPlatform.recentCalledMethod, 'isAnalyticsEnabled');
+    });
+
+    test('setPiAnalyticsEnabled', () async {
+      await SFMCSdk.setPiAnalyticsEnabled(true);
+      expect(mockPlatform.mockPiAnalyticsEnabled, isTrue);
+      expect(mockPlatform.recentCalledMethod, 'setPiAnalyticsEnabled');
+    });
+
+    test('isPiAnalyticsEnabled', () async {
+      mockPlatform.mockPiAnalyticsEnabled = true;
+      expect(await SFMCSdk.isPiAnalyticsEnabled(), isTrue);
+      expect(mockPlatform.recentCalledMethod, 'isPiAnalyticsEnabled');
     });
   });
 }

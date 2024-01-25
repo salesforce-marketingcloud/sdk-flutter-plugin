@@ -1,4 +1,4 @@
-// sfmc.dart
+// sfmc_platform_interface.dart
 //
 // Copyright (c) 2024 Salesforce, Inc
 //
@@ -110,5 +110,23 @@ abstract class SfmcPlatform extends PlatformInterface {
 
   Future<void> trackEvent(Map<String, dynamic> eventJson) {
     throw UnimplementedError('trackEvent() has not been implemented.');
+  }
+
+  Future<void> setAnalyticsEnabled(bool analyticsEnabled) {
+    throw UnimplementedError('setAnalyticsEnabled() has not been implemented.');
+  }
+
+  Future<bool> isAnalyticsEnabled() {
+    throw UnimplementedError('isAnalyticsEnabled() has not been implemented.');
+  }
+
+  Future<void> setPiAnalyticsEnabled(bool analyticsEnabled) {
+    throw UnimplementedError(
+        'setPiAnalyticsEnabled() has not been implemented.');
+  }
+
+  Future<bool> isPiAnalyticsEnabled() {
+    throw UnimplementedError(
+        'isPiAnalyticsEnabled() has not been implemented.');
   }
 }

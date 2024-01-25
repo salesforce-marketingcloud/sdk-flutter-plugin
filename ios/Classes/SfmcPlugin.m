@@ -34,11 +34,11 @@
 const int LOG_LENGTH = 800;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"sfmc"
-            binaryMessenger:[registrar messenger]];
-  SfmcPlugin* instance = [[SfmcPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+    FlutterMethodChannel* channel = [FlutterMethodChannel
+                                     methodChannelWithName:@"sfmc"
+                                     binaryMessenger:[registrar messenger]];
+    SfmcPlugin* instance = [[SfmcPlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
 }
 
 - (void)log:(NSString *)msg {
@@ -100,6 +100,16 @@ const int LOG_LENGTH = 800;
     } else if ([@"trackEvent" isEqualToString:call.method]) {
         NSDictionary* eventJson = call.arguments;
         [self trackEventWithJson:eventJson result:result];
+    } else if ([@"setAnalyticsEnabled" isEqualToString:call.method]) {
+        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        [self setAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
+    } else if ([@"isAnalyticsEnabled" isEqualToString:call.method]) {
+        [self isAnalyticsEnabledWithResult:result];
+    } else if ([@"setPiAnalyticsEnabled" isEqualToString:call.method]) {
+        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        [self setPiAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
+    } else if ([@"isPiAnalyticsEnabled" isEqualToString:call.method]) {
+        [self isPiAnalyticsEnabledWithResult:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -212,8 +222,37 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)trackEventWithJson:(NSDictionary *)eventJson result:(FlutterResult)result {
-    [SFMCSdk trackWithEvent:[NSDictionary SFMCEvent:eventJson]];    
+    [SFMCSdk trackWithEvent:[NSDictionary SFMCEvent:eventJson]];
     result(nil);
+}
+
+- (void)setAnalyticsEnabled:(BOOL)enabled result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [mp setAnalyticsEnabled:enabled];
+        result(nil);
+    }];
+}
+
+- (void)isAnalyticsEnabledWithResult:(FlutterResult)result {
+    BOOL isEnabled = [[SFMCSdk mp] isAnalyticsEnabled];
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL isEnabled = [mp isAnalyticsEnabled];
+        result(@(isEnabled));
+    }];
+}
+
+- (void)setPiAnalyticsEnabled:(BOOL)enabled result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        [mp setPiAnalyticsEnabled:enabled];
+        result(nil);
+    }];
+}
+
+- (void)isPiAnalyticsEnabledWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL isEnabled = [mp isPiAnalyticsEnabled];
+        result(@(isEnabled));
+    }];
 }
 
 @end
