@@ -31,11 +31,8 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.salesforce.marketingcloud.MCLogListener
-import com.salesforce.marketingcloud.MarketingCloudConfig
 import com.salesforce.marketingcloud.MarketingCloudSdk
-import com.salesforce.marketingcloud.notifications.NotificationCustomizationOptions
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
-import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -73,7 +70,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "getAttributes" -> getAttributes(result)
             "setAttribute" -> setAttribute(call, result)
             "clearAttribute" -> clearAttribute(call, result)
-            // For track method, you need to implement conversion from Map to Event
+            "trackEvent" -> trackEvent(call, result)
             else -> result.notImplemented()
         }
     }
@@ -86,7 +83,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun logSdkState(result: Result) {
         SFMCSdk.requestSdk { sdk ->
             try {
-                Log.d("~#RNMCSdkModule", "SDK State: " + sdk.getSdkState().toString(2))
+                Log.d("SFMCPlugin", "SDK State: " + sdk.getSdkState().toString(2))
                 result.success(null)
             } catch (e: Exception) {
                 result.error("SDK_STATE_ERROR", e.message, null)
@@ -108,7 +105,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun getSystemToken(result: Result) {
         SFMCSdk.requestSdk { sdk ->
             sdk.mp {
-                var token = it.registrationManager.getSystemToken()
+                val token = it.registrationManager.getSystemToken()
                 result.success(token)
             }
         }
@@ -219,6 +216,26 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
                 it.registrationManager.edit().removeTag(tag ?: "").commit()
                 result.success(null)
             }
+        }
+    }
+
+    private fun trackEvent(call: MethodCall, result: Result) {
+        try {
+            val eventJson = call.arguments as? Map<String, Any?> ?: run {
+                result.error("INVALID_ARGUMENTS", "No event data provided", null)
+                return
+            }
+
+            val event = EventUtility.toEvent(eventJson)
+            if (event != null) {
+                SFMCSdk.track(event)
+                result.success(null)
+            } else {
+                result.error("EVENT_PARSING_ERROR", "Could not parse event data", null)
+            }
+        } catch (e: Exception) {
+            Log.e("SFMCPlugin", "Error in tracking event: ${e.message}")
+            result.error("TRACK_EVENT_ERROR", "Error tracking event: ${e.message}", null)
         }
     }
 
