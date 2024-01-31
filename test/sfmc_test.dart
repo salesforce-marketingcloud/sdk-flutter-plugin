@@ -303,36 +303,6 @@ void main() {
     });
   });
 
-  group('IdentityEvent Tests', () {
-    test('IdentityEvent Initialization and JSON Conversion', () async {
-      var event = IdentityEvent.attributes({'key4': 'value4'});
-      await SFMCSdk.trackEvent(event);
-
-      expect(mockPlatform.lastTrackedEvent, isNotNull);
-      expect(mockPlatform.lastTrackedEvent!['name'], 'IdentityEvent');
-      expect(mockPlatform.lastTrackedEvent!['attributes'], {'key4': 'value4'});
-      expect(mockPlatform.lastTrackedEvent!['objType'], 'IdentityEvent');
-    });
-
-    test('IdentityEvent Profile Attributes', () async {
-      var event =
-          IdentityEvent.profileAttributes({'profileKey': 'profileValue'});
-      await SFMCSdk.trackEvent(event);
-
-      expect(mockPlatform.lastTrackedEvent, isNotNull);
-      expect(mockPlatform.lastTrackedEvent!['profileAttributes'],
-          {'profileKey': 'profileValue'});
-    });
-
-    test('IdentityEvent Profile  ID', () async {
-      var event = IdentityEvent.profileId("abc123");
-      await SFMCSdk.trackEvent(event);
-
-      expect(mockPlatform.lastTrackedEvent, isNotNull);
-      expect(mockPlatform.lastTrackedEvent!['profileId'], 'abc123');
-    });
-  });
-
   group('CartEvent Tests', () {
     void testCartEvent(CartEvent event, String expectedEventName,
         List<LineItem> lineItems) async {

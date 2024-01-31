@@ -304,30 +304,6 @@ void main() {
     });
   });
 
-  group('IdentityEvent Tests', () {
-    test('IdentityEvent trackEvent Method Call with Correct JSON', () async {
-      var profileAttributes = {'profileAttributeKey': 'profileAttributeValue'};
-      var profileId = 'testProfileId';
-      var identityEvent = IdentityEvent.profileAttributes(profileAttributes)
-        ..profileId = profileId;
-
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'trackEvent') {
-          var json = methodCall.arguments;
-          expect(json['category'], identityEvent.category.name);
-          expect(json['name'], identityEvent.name);
-          expect(json['attributes'], identityEvent.attributes);
-          expect(json['profileAttributes'], identityEvent.profileAttributes);
-          expect(json['profileId'], identityEvent.profileId);
-        }
-        return null;
-      });
-
-      await platform.trackEvent(identityEvent.toJson());
-    });
-  });
-
   group('CartEvent Tests', () {
     test('CartEvent Add to Cart trackEvent Method Call with Correct JSON',
         () async {

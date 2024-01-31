@@ -77,42 +77,6 @@ class SystemEvent extends CustomEvent {
   }
 }
 
-class IdentityEvent extends CustomEvent {
-  Map<String, dynamic>? profileAttributes;
-  String? profileId;
-
-  IdentityEvent._(Map<String, dynamic>? attributes)
-      : super('IdentityEvent',
-            attributes: attributes, category: EventCategory.identity) {
-    _objType = 'IdentityEvent';
-  }
-
-  IdentityEvent.attributes(Map<String, dynamic> attributes)
-      : this._(attributes);
-
-  IdentityEvent.profileAttributes(this.profileAttributes)
-      : super('IdentityEvent', category: EventCategory.identity) {
-    _objType = "IdentityEvent";
-  }
-
-  IdentityEvent.profileId(this.profileId)
-      : super('IdentityEvent', category: EventCategory.identity) {
-    _objType = "IdentityEvent";
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      "category": category.name,
-      "name": name,
-      "attributes": attributes,
-      "profileAttributes": profileAttributes,
-      "profileId": profileId,
-      "objType": _objType
-    };
-  }
-}
-
 enum CartEventType { add, remove, replace }
 
 extension CartEventTypeExtension on CartEventType {
