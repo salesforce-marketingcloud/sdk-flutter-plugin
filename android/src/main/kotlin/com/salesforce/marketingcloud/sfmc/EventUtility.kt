@@ -36,17 +36,18 @@ class EventUtility {
         fun toEvent(eventMap: Map<String, Any?>): Event? {
             return when (eventMap["objType"]) {
                 "CartEvent" -> createCartEvent(eventMap)
-                "CustomEvent" -> {
-                    EventManager.customEvent(
-                            eventMap["name"] as? String ?: "CustomEvent",
-                            eventMap["attributes"] as? Map<String, Any> ?: emptyMap()
-                    )
-                }
-
+                "CustomEvent" -> createCustomEvent(eventMap)
                 "OrderEvent" -> createOrderEvent(eventMap)
                 "CatalogObjectEvent" -> createCatalogEvent(eventMap)
                 else -> checkForOtherEvents(eventMap)
             }
+        }
+
+        private fun createCustomEvent(eventMap: Map<String, Any?>): Event? {
+            return EventManager.customEvent(
+                eventMap["name"] as? String ?: "CustomEvent",
+                eventMap["attributes"] as? Map<String, Any> ?: emptyMap()
+            )
         }
 
         private fun createCartEvent(eventMap: Map<String, Any?>): CartEvent? {
@@ -94,14 +95,16 @@ class EventUtility {
             val category = when (eventMap["category"] as? String) {
                 "system" -> Event.Category.SYSTEM
                 "engagement" -> Event.Category.ENGAGEMENT
-                else -> return null
+                else -> null
             }
-            return EventManager.customEvent(
+            return category?.let {
+                EventManager.customEvent(
                     eventMap["name"] as? String ?: "",
                     eventMap["attributes"] as? Map<String, Any> ?: emptyMap(),
                     Event.Producer.PUSH,
-                    category
-            )
+                    it
+                )
+            }
         }
 
         private fun getOrder(orderMap: Map<String, Any?>): Order {
