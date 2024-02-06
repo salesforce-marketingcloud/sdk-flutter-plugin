@@ -109,9 +109,11 @@ class EventUtility {
 
         private fun getOrder(orderMap: Map<String, Any?>): Order {
             val id = orderMap["id"] as? String ?: ""
-            val currency = orderMap["currency"] as? String ?: ""
-            val totalValue = (orderMap["totalValue"] as? Number)?.toDouble() ?: 0.0
-            val lineItems = (orderMap["lineItems"] as? List<Map<String, Any?>>)?.map { getLineItem(it) } ?: emptyList()
+            val currency = orderMap["currency"] as? String
+            val totalValue = (orderMap["totalValue"] as? Number)?.toDouble()
+            val lineItems =
+                (orderMap["lineItems"] as? List<Map<String, Any?>>)?.map { getLineItem(it) }
+                    ?: emptyList()
             val attributes = orderMap["attributes"] as? Map<String, Any> ?: emptyMap()
             return Order(id, lineItems, totalValue, currency, attributes)
         }
@@ -120,17 +122,25 @@ class EventUtility {
             val catalogObjectType = lineItemMap["catalogObjectType"] as? String ?: ""
             val catalogObjectId = lineItemMap["catalogObjectId"] as? String ?: ""
             val quantity = (lineItemMap["quantity"] as? Number)?.toInt() ?: 0
-            val price = (lineItemMap["price"] as? Number)?.toDouble() ?: 0.0
-            val currency = lineItemMap["currency"] as? String ?: ""
+            val price = (lineItemMap["price"] as? Number)?.toDouble()
+            val currency = lineItemMap["currency"] as? String
             val attributes = lineItemMap["attributes"] as? Map<String, Any> ?: emptyMap()
-            return LineItem(catalogObjectType, catalogObjectId, quantity, price, currency, attributes)
+            return LineItem(
+                catalogObjectType,
+                catalogObjectId,
+                quantity,
+                price,
+                currency,
+                attributes
+            )
         }
 
         private fun getCatalogObject(catalogObjectMap: Map<String, Any?>): CatalogObject {
             val type = catalogObjectMap["type"] as? String ?: ""
             val id = catalogObjectMap["id"] as? String ?: ""
             val attributes = catalogObjectMap["attributes"] as? Map<String, Any> ?: emptyMap()
-            val relatedCatalogObjects = getRelatedCatalogObjects(catalogObjectMap["relatedCatalogObjects"] as? Map<String, Any?>)
+            val relatedCatalogObjects =
+                getRelatedCatalogObjects(catalogObjectMap["relatedCatalogObjects"] as? Map<String, Any?>)
             return CatalogObject(type, id, attributes, relatedCatalogObjects)
         }
 

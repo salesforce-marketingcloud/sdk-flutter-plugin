@@ -27,19 +27,21 @@
 
 package com.salesforce.marketingcloud.sfmc_example
 
-import io.flutter.app.FlutterApplication
-import com.salesforce.marketingcloud.MCLogListener
+import android.util.Log
 import com.salesforce.marketingcloud.MarketingCloudConfig
-import com.salesforce.marketingcloud.MarketingCloudSdk
 import com.salesforce.marketingcloud.notifications.NotificationCustomizationOptions
+import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
-import android.util.Log
+import io.flutter.app.FlutterApplication
 
 class MainApplication : FlutterApplication() {
+    companion object {
+        private const val SFMC_APP_TAG = "~&SFMC Example App"
+    }
+
     override fun onCreate() {
         super.onCreate()
-
         SFMCSdk.configure(
                 applicationContext,
                 SFMCSdkModuleConfig.build {
@@ -56,7 +58,19 @@ class MainApplication : FlutterApplication() {
                                     .build(applicationContext)
                 }
         ) { initStatus ->
-           Log.d("SFMCSdk Initialization ", initStatus.status.toString())
+            when (initStatus.status) {
+                InitializationStatus.SUCCESS -> Log.d(
+                    SFMC_APP_TAG,
+                    "SFMC SDK Initialization Successful"
+                )
+
+                InitializationStatus.FAILURE -> Log.d(
+                    SFMC_APP_TAG,
+                    "SFMC SDK Initialization Failed"
+                )
+
+                else -> Log.d(SFMC_APP_TAG, "SFMC SDK Initialization Status: Unknown")
+            }
         }
     }
 }

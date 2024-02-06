@@ -33,6 +33,11 @@ import androidx.annotation.NonNull
 import com.salesforce.marketingcloud.MCLogListener
 import com.salesforce.marketingcloud.MarketingCloudSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
+import com.salesforce.marketingcloud.sfmcsdk.components.events.Event
+import com.salesforce.marketingcloud.sfmcsdk.components.identity.Identity
+import com.salesforce.marketingcloud.sfmcsdk.components.logging.LogLevel
+import com.salesforce.marketingcloud.sfmcsdk.components.logging.LogListener
+import com.salesforce.marketingcloud.sfmcsdk.modules.push.PushModuleInterface
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -42,10 +47,10 @@ import io.flutter.plugin.common.MethodChannel.Result
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
-    companion object {
-        private const val SFMC_LOG_TAG = "~#SFMCPlugin"
-    }
 
+    companion object {
+        private const val SFMC_LOG_TAG = "~&SFMCPlugin"
+    }
 
     override fun onAttachedToEngine(
         @NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding
@@ -79,15 +84,14 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun getPlatformVersion(result: Result) {
         result.success("Android ${android.os.Build.VERSION.RELEASE}")
     }
 
     private fun logSdkState(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
+        handleSFMCAction {
             try {
-                Log.d(SFMC_LOG_TAG, "SDK State: " + sdk.getSdkState().toString(2))
+                Log.d(SFMC_LOG_TAG, "SDK State: " + it.getSdkState().toString(2))
                 result.success(null)
             } catch (e: Exception) {
                 result.error("SDK_STATE_ERROR", e.message, null)
@@ -96,130 +100,113 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun enableLogging(result: Result) {
+        SFMCSdk.setLogging(LogLevel.DEBUG, LogListener.AndroidLogger())
         MarketingCloudSdk.setLogLevel(MCLogListener.VERBOSE)
         MarketingCloudSdk.setLogListener(MCLogListener.AndroidLogListener())
         result.success(null)
     }
 
     private fun disableLogging(result: Result) {
+        SFMCSdk.setLogging(LogLevel.NONE, null)
         MarketingCloudSdk.setLogListener(null)
         result.success(null)
     }
 
     private fun getSystemToken(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val token = it.registrationManager.getSystemToken()
-                result.success(token)
-            }
+        handlePushAction {
+            val token = it.registrationManager.getSystemToken()
+            result.success(token)
         }
     }
 
     private fun isPushEnabled(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val isPushEnabled = it.pushMessageManager.isPushEnabled()
-                result.success(isPushEnabled)
-            }
+        handlePushAction {
+            val isPushEnabled = it.pushMessageManager.isPushEnabled()
+            result.success(isPushEnabled)
         }
     }
 
     private fun enablePush(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                it.pushMessageManager.enablePush()
-                result.success(null)
-            }
+        handlePushAction {
+            it.pushMessageManager.enablePush()
+            result.success(null)
         }
     }
 
     private fun disablePush(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                it.pushMessageManager.disablePush()
-                result.success(null)
-            }
+        handlePushAction {
+            it.pushMessageManager.disablePush()
+            result.success(null)
         }
     }
 
     private fun getDeviceId(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val deviceId = it.registrationManager.getDeviceId()
-                result.success(deviceId)
-            }
+        handlePushAction {
+            val deviceId = it.registrationManager.getDeviceId()
+            result.success(deviceId)
+
         }
     }
 
     private fun getContactKey(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val contactKey = it.registrationManager.getContactKey()
-                result.success(contactKey)
-            }
+        handlePushAction {
+            val contactKey = it.registrationManager.getContactKey()
+            result.success(contactKey)
         }
     }
 
     private fun setContactKey(call: MethodCall, result: Result) {
         val contactKey: String? = call.argument("contactKey")
-        SFMCSdk.requestSdk { sdk ->
-            sdk.identity.setProfileId(contactKey ?: "")
+        handleIdentityAction {
+            it.setProfileId(contactKey ?: "")
             result.success(null)
         }
     }
 
     private fun getAttributes(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val attributes = it.registrationManager.getAttributes()
-                result.success(attributes)
-            }
+        handlePushAction {
+            val attributes = it.registrationManager.getAttributes()
+            result.success(attributes)
         }
     }
 
     private fun setAttribute(call: MethodCall, result: Result) {
         val key: String? = call.argument("key")
         val value: String? = call.argument("value")
-        SFMCSdk.requestSdk { sdk ->
-            sdk.identity.setProfileAttribute(key ?: "", value ?: "")
+        handleIdentityAction {
+            it.setProfileAttribute(key ?: "", value ?: "")
             result.success(null)
         }
     }
 
     private fun clearAttribute(call: MethodCall, result: Result) {
         val key: String? = call.argument("key")
-        SFMCSdk.requestSdk { sdk ->
-            sdk.identity.clearProfileAttribute(key ?: "")
+        handleIdentityAction {
+            it.clearProfileAttribute(key ?: "")
             result.success(null)
         }
     }
 
     private fun getTags(result: Result) {
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                val tags = it.registrationManager.getTags()
-                result.success(tags.toList())
-            }
+        handlePushAction {
+            val tags = it.registrationManager.getTags()
+            result.success(tags.toList())
         }
     }
 
     private fun addTag(call: MethodCall, result: Result) {
         val tag: String? = call.argument("tag")
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                it.registrationManager.edit().addTag(tag ?: "").commit()
-                result.success(null)
-            }
+        handlePushAction {
+            it.registrationManager.edit().addTag(tag ?: "").commit()
+            result.success(null)
         }
     }
 
     private fun removeTag(call: MethodCall, result: Result) {
         val tag: String? = call.argument("tag")
-        SFMCSdk.requestSdk { sdk ->
-            sdk.mp {
-                it.registrationManager.edit().removeTag(tag ?: "").commit()
-                result.success(null)
-            }
+        handlePushAction {
+            it.registrationManager.edit().removeTag(tag ?: "").commit()
+            result.success(null)
         }
     }
 
@@ -230,16 +217,36 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
                 return
             }
 
-            val event = EventUtility.toEvent(eventJson)
-            if (event != null) {
-                SFMCSdk.track(event)
+            val event: Event? = EventUtility.toEvent(eventJson)
+            event?.let {
+                SFMCSdk.track(it)
                 result.success(null)
-            } else {
+            } ?: run {
                 result.error("EVENT_PARSING_ERROR", "Could not parse event data", null)
             }
         } catch (e: Exception) {
             Log.e(SFMC_LOG_TAG, "Error in tracking event: ${e.message}")
             result.error("TRACK_EVENT_ERROR", "Error tracking event: ${e.message}", null)
+        }
+    }
+    
+    private fun handleSFMCAction(action: (SFMCSdk) -> Unit) {
+        SFMCSdk.requestSdk { sdk ->
+            action(sdk)
+        }
+    }
+
+    private fun handlePushAction(action: (PushModuleInterface) -> Unit) {
+        handleSFMCAction {
+            it.mp { pushModule ->
+                action(pushModule)
+            }
+        }
+    }
+
+    private fun handleIdentityAction(action: (Identity) -> Unit) {
+        handleSFMCAction {
+            action(it.identity)
         }
     }
 
