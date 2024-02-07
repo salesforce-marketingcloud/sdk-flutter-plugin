@@ -49,7 +49,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var context: Context
 
     companion object {
-        private const val SFMC_LOG_TAG = "~&SFMCPlugin"
+        private const val TAG = "~&SFMCPlugin"
     }
 
     override fun onAttachedToEngine(
@@ -91,7 +91,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun logSdkState(result: Result) {
         handleSFMCAction {
             try {
-                Log.d(SFMC_LOG_TAG, "SDK State: " + it.getSdkState().toString(2))
+                Log.d(TAG, "SDK State: " + it.getSdkState().toString(2))
                 result.success(null)
             } catch (e: Exception) {
                 result.error("SDK_STATE_ERROR", e.message, null)
@@ -225,7 +225,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
                 result.error("EVENT_PARSING_ERROR", "Could not parse event data", null)
             }
         } catch (e: Exception) {
-            Log.e(SFMC_LOG_TAG, "Error in tracking event: ${e.message}")
+            Log.e(TAG, "Error in tracking event: ${e.message}")
             result.error("TRACK_EVENT_ERROR", "Error tracking event: ${e.message}", null)
         }
     }

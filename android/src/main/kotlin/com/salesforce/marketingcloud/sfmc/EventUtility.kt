@@ -29,6 +29,24 @@ package com.salesforce.marketingcloud.sfmc
 
 import com.salesforce.marketingcloud.sfmcsdk.components.events.*
 
+private enum class OrderEventType(val stringValue: String) {
+    PURCHASE("Purchase"), PREORDER("Preorder"), CANCEL("Cancel"), SHIP("Ship"), DELIVER("Deliver"), RETURN(
+        "Return"
+    ),
+    EXCHANGE("Exchange")
+}
+
+private enum class CartEventType(val stringValue: String) {
+    ADD("Add To Cart"), REMOVE("Remove From Cart"), REPLACE("Replace Cart")
+}
+
+private enum class CatalogEventType(val stringValue: String) {
+    COMMENT("Comment Catalog Object"), VIEW("View Catalog Object"), QUICK_VIEW("Quick View Catalog Object"), DETAIL(
+        "View Catalog Object Detail"
+    ),
+    FAVORITE("Favorite Catalog Object"), SHARE("Share Catalog Object"), REVIEW("Review Catalog Object")
+}
+
 @Suppress("UNCHECKED_CAST")
 class EventUtility {
 
@@ -56,37 +74,41 @@ class EventUtility {
             val lineItem = getLineItem(lineItemsList.first())
 
             return when (eventMap["name"]) {
-                "Add To Cart" -> CartEvent.add(lineItem)
-                "Remove From Cart" -> CartEvent.remove(lineItem)
-                "Replace Cart" -> CartEvent.replace(lineItemsList.map { getLineItem(it) })
+                CartEventType.ADD.stringValue -> CartEvent.add(lineItem)
+                CartEventType.REMOVE.stringValue -> CartEvent.remove(lineItem)
+                CartEventType.REPLACE.stringValue -> CartEvent.replace(
+                    lineItemsList.map { getLineItem(it) }
+                )
+
                 else -> null
             }
         }
 
         private fun createOrderEvent(eventMap: Map<String, Any?>): OrderEvent? {
-            val order = getOrder(eventMap["order"] as Map<String, Any?>)
+            val order = getOrder(eventMap["order"] as? Map<String, Any?> ?: emptyMap())
             return when (eventMap["name"]) {
-                "Purchase" -> OrderEvent.purchase(order)
-                "Preorder" -> OrderEvent.preorder(order)
-                "Cancel" -> OrderEvent.cancel(order)
-                "Ship" -> OrderEvent.ship(order)
-                "Deliver" -> OrderEvent.deliver(order)
-                "Return" -> OrderEvent.returnOrder(order)
-                "Exchange" -> OrderEvent.exchange(order)
+                OrderEventType.PURCHASE.stringValue -> OrderEvent.purchase(order)
+                OrderEventType.PREORDER.stringValue -> OrderEvent.preorder(order)
+                OrderEventType.CANCEL.stringValue -> OrderEvent.cancel(order)
+                OrderEventType.SHIP.stringValue -> OrderEvent.ship(order)
+                OrderEventType.DELIVER.stringValue -> OrderEvent.deliver(order)
+                OrderEventType.RETURN.stringValue -> OrderEvent.returnOrder(order)
+                OrderEventType.EXCHANGE.stringValue -> OrderEvent.exchange(order)
                 else -> null
             }
         }
 
         private fun createCatalogEvent(eventMap: Map<String, Any?>): CatalogEvent? {
-            val catalogObject = getCatalogObject(eventMap["catalogObject"] as Map<String, Any?>)
+            val catalogObject =
+                getCatalogObject(eventMap["catalogObject"] as? Map<String, Any?> ?: emptyMap())
             return when (eventMap["name"]) {
-                "Comment Catalog Object" -> CatalogEvent.comment(catalogObject)
-                "View Catalog Object" -> CatalogEvent.view(catalogObject)
-                "Quick View Catalog Object" -> CatalogEvent.quickView(catalogObject)
-                "View Catalog Object Detail" -> CatalogEvent.viewDetail(catalogObject)
-                "Favorite Catalog Object" -> CatalogEvent.favorite(catalogObject)
-                "Share Catalog Object" -> CatalogEvent.share(catalogObject)
-                "Review Catalog Object" -> CatalogEvent.review(catalogObject)
+                CatalogEventType.COMMENT.stringValue -> CatalogEvent.comment(catalogObject)
+                CatalogEventType.VIEW.stringValue -> CatalogEvent.view(catalogObject)
+                CatalogEventType.QUICK_VIEW.stringValue -> CatalogEvent.quickView(catalogObject)
+                CatalogEventType.DETAIL.stringValue -> CatalogEvent.viewDetail(catalogObject)
+                CatalogEventType.FAVORITE.stringValue -> CatalogEvent.favorite(catalogObject)
+                CatalogEventType.SHARE.stringValue -> CatalogEvent.share(catalogObject)
+                CatalogEventType.REVIEW.stringValue -> CatalogEvent.review(catalogObject)
                 else -> null
             }
         }
