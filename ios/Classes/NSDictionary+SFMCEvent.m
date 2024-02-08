@@ -47,14 +47,6 @@
         return [[SFMCSdkCustomEvent  alloc]
                 initWithName:json[@"name"]
                 attributes:json[@"attributes"]];
-    } else if ([name isEqualToString:@"IdentityEvent"]) {
-        if (json[@"profileId"] != nil) {
-            return [[SFMCSdkIdentityEvent alloc] initWithProfileId:json[@"profileId"]];
-        } else if (json[@"profileAttributes"] != nil) {
-            return [[SFMCSdkIdentityEvent alloc] initWithProfileAttributes:json[@"profileAttributes"]];
-        } else if (json[@"attributes"] != nil) {
-            return [[SFMCSdkIdentityEvent alloc] initWithAttributes:json[@"attributes"]];
-        }
     } else if (json[@"category"] != nil) {
         return [[[self eventClassFromCategory:json] alloc]
                 initWithName:json[@"name"]

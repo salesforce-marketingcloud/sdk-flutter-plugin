@@ -30,6 +30,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:sfmc/sfmc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 
 void main() {
@@ -60,6 +61,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initPlatformState() async {
+    if (kDebugMode) {
+      await SFMCSdk.enableLogging();
+    }
+
     String systemToken;
     try {
       systemToken = await SFMCSdk.getSystemToken() ?? 'Not Available';
@@ -108,8 +113,8 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      _analyticsEnabled = await SFMCSdk.isAnalyticsEnabled() ?? false;
-      _piAnalyticsEnabled = await SFMCSdk.isPiAnalyticsEnabled() ?? false;
+      _analyticsEnabled = await SFMCSdk.isAnalyticsEnabled();
+      _piAnalyticsEnabled = await SFMCSdk.isPiAnalyticsEnabled();
     } on PlatformException {
       // Handle exceptions or set default values
       _analyticsEnabled = false;
@@ -128,9 +133,9 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _onSetAttributesClicked(String key, String value) async {
+  void _onSetAttributesClicked(String key, String value) {
     try {
-      await SFMCSdk.setAttribute(key, value);
+      SFMCSdk.setAttribute(key, value);
       _showToast('Attribute set successfully!');
       initPlatformState();
     } catch (e) {
@@ -138,9 +143,9 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _onClarAttributesClicked(String key) async {
+  void _onClarAttributesClicked(String key) {
     try {
-      await SFMCSdk.clearAttribute(key);
+      SFMCSdk.clearAttribute(key);
       _showToast('Attribute cleared successfully!');
       initPlatformState();
     } catch (e) {
@@ -148,9 +153,9 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _onSetTagsClicked(tag) async {
+  void _onSetTagsClicked(tag) {
     try {
-      await SFMCSdk.addTag(tag);
+      SFMCSdk.addTag(tag);
       _showToast('Tags set successfully!');
       initPlatformState();
     } catch (e) {
@@ -158,9 +163,9 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _onRemoveTagsClicked(tag) async {
+  void _onRemoveTagsClicked(tag) {
     try {
-      await SFMCSdk.removeTag(tag);
+      SFMCSdk.removeTag(tag);
       _showToast('Tag removed successfully!');
       initPlatformState();
     } catch (e) {
@@ -168,9 +173,9 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _onSetContactKeyClicked(value) async {
+  void _onSetContactKeyClicked(value) {
     try {
-      await SFMCSdk.setContactKey(value);
+      SFMCSdk.setContactKey(value);
       _showToast('Contact key is set.');
       initPlatformState();
     } catch (e) {
@@ -178,11 +183,11 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _trackCustomEvent() async {
+  void _trackCustomEvent() {
     try {
       var customEvent = CustomEvent('CustomEventName',
           attributes: {'key1': 'trackCustomEvent'});
-      await SFMCSdk.trackEvent(customEvent);
+      SFMCSdk.trackEvent(customEvent);
       _showToast("Event tracked successfully");
     } catch (e) {
       _showToast('Error tracking event.');
@@ -246,8 +251,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Enable Push",
                 "Enable push notifications using SFMCSdk.enablePush().",
-                () async {
-                  await SFMCSdk.enablePush();
+                () {
+                  SFMCSdk.enablePush();
                   _showToast("Push Enabled");
                 },
                 'ENABLE PUSH',
@@ -255,8 +260,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Disable Push",
                 "Disable push notifications using SFMCSdk.disablePush().",
-                () async {
-                  await SFMCSdk.disablePush();
+                () {
+                  SFMCSdk.disablePush();
                   _showToast("Push Disabled");
                 },
                 'DISABLE PUSH',
@@ -327,8 +332,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Enable Logging",
                 "Enable logging for the SFMC SDK using SFMCSdk.enableLogging().",
-                () async {
-                  await SFMCSdk.enableLogging();
+                () {
+                  SFMCSdk.enableLogging();
                   _showToast("Logging Enabled");
                 },
                 'ENABLE LOGGING',
@@ -336,8 +341,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Disable Logging",
                 "Disable logging for the SFMC SDK using SFMCSdk.disableLogging().",
-                () async {
-                  await SFMCSdk.disableLogging();
+                () {
+                  SFMCSdk.disableLogging();
                   _showToast("Logging Disabled");
                 },
                 'DISABLE LOGGING',
@@ -345,8 +350,8 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Log SDK State",
                 "Log the state of the SFMC SDK using SFMCSdk.logSdkState().",
-                () async {
-                  await SFMCSdk.logSdkState();
+                () {
+                  SFMCSdk.logSdkState();
                   _showToast("SDK state logged.");
                 },
                 'LOG SDK STATE',
@@ -361,8 +366,8 @@ class _MyAppState extends State<MyApp> {
                 "Analytics Enabled",
                 "Enable/Disable analytics using SFMCSdk.setAnalyticsEnabled().",
                 _analyticsEnabled,
-                (bool value) async {
-                  await SFMCSdk.setAnalyticsEnabled(value);
+                (bool value) {
+                  SFMCSdk.setAnalyticsEnabled(value);
                   setState(() {
                     _analyticsEnabled = value;
                   });
@@ -372,8 +377,8 @@ class _MyAppState extends State<MyApp> {
                 "PI Analytics Enabled",
                 "Enable/Disable PI analytics using SFMCSdk.setPiAnalyticsEnabled().",
                 _piAnalyticsEnabled,
-                (bool value) async {
-                  await SFMCSdk.setPiAnalyticsEnabled(value);
+                (bool value) {
+                  SFMCSdk.setPiAnalyticsEnabled(value);
                   setState(() {
                     _piAnalyticsEnabled = value;
                   });

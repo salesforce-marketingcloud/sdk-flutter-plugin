@@ -25,9 +25,25 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def min_sdk_version = 21
+def target_sdk_version = flutter.targetSdkVersion
+def compile_sdk_Version = 34
+
+def appplication_id = "com.salesforce.marketingcloud.sfmc_example"
+
+def marketingcloud_sdk_version = '8.+'
+
+// SFMC Sdk Config Values.
+// It first try to retrieve each value from the `local.properties` file.
+// If a value is not specified in `local.properties`, it then tries to fetch it from the system's environment variables.
+def PUSH_APP_ID = localProperties.getProperty('PUSH_APP_ID') ?: System.getenv('PUSH_APP_ID')
+def PUSH_SENDER_ID = localProperties.getProperty('PUSH_SENDER_ID') ?: System.getenv('PUSH_SENDER_ID')
+def PUSH_ACCESS_TOKEN = localProperties.getProperty('PUSH_ACCESS_TOKEN') ?: System.getenv('PUSH_ACCESS_TOKEN')
+def PUSH_TSE = localProperties.getProperty('PUSH_TSE') ?: System.getenv('PUSH_TSE')
+
 android {
     namespace "com.salesforce.marketingcloud.sfmc_example"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion compile_sdk_Version
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -44,14 +60,22 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.salesforce.marketingcloud.sfmc_example"
+        applicationId appplication_id
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 21
-        targetSdkVersion flutter.targetSdkVersion
+
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        // SFMC config values setup.
+        // Attempt to fetch these values from local.properties. If not found, fall back to system environment variables.
+        // Ensure these keys are defined either in your project's local.properties file or as environment variables on your system.
+        buildConfigField "String", "PUSH_APP_ID", "\"${PUSH_APP_ID}\""
+        buildConfigField "String", "PUSH_SENDER_ID", "\"${PUSH_SENDER_ID}\""
+        buildConfigField "String", "PUSH_ACCESS_TOKEN", "\"${PUSH_ACCESS_TOKEN}\""
+        buildConfigField "String", "PUSH_TSE", "\"${PUSH_TSE}\""
     }
 
     buildTypes {
@@ -68,9 +92,9 @@ flutter {
 }
 
 dependencies {
-    implementation ("com.salesforce.marketingcloud:marketingcloudsdk:8.0.8")  
+    implementation "com.salesforce.marketingcloud:marketingcloudsdk:$marketingcloud_sdk_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation platform('com.google.firebase:firebase-bom:29.0.0')  
+    implementation platform('com.google.firebase:firebase-bom:29.0.0')
 }
 
 apply plugin: 'com.google.gms.google-services'
