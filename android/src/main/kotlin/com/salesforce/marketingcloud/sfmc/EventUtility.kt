@@ -30,21 +30,29 @@ package com.salesforce.marketingcloud.sfmc
 import com.salesforce.marketingcloud.sfmcsdk.components.events.*
 
 private enum class OrderEventType(val stringValue: String) {
-    PURCHASE("Purchase"), PREORDER("Preorder"), CANCEL("Cancel"), SHIP("Ship"), DELIVER("Deliver"), RETURN(
-        "Return"
-    ),
+    PURCHASE("Purchase"),
+    PREORDER("Preorder"),
+    CANCEL("Cancel"),
+    SHIP("Ship"),
+    DELIVER("Deliver"),
+    RETURN("Return"),
     EXCHANGE("Exchange")
 }
 
 private enum class CartEventType(val stringValue: String) {
-    ADD("Add To Cart"), REMOVE("Remove From Cart"), REPLACE("Replace Cart")
+    ADD("Add To Cart"),
+    REMOVE("Remove From Cart"),
+    REPLACE("Replace Cart")
 }
 
 private enum class CatalogEventType(val stringValue: String) {
-    COMMENT("Comment Catalog Object"), VIEW("View Catalog Object"), QUICK_VIEW("Quick View Catalog Object"), DETAIL(
-        "View Catalog Object Detail"
-    ),
-    FAVORITE("Favorite Catalog Object"), SHARE("Share Catalog Object"), REVIEW("Review Catalog Object")
+    COMMENT("Comment Catalog Object"),
+    VIEW("View Catalog Object"),
+    QUICK_VIEW("Quick View Catalog Object"),
+    DETAIL("View Catalog Object Detail"),
+    FAVORITE("Favorite Catalog Object"),
+    SHARE("Share Catalog Object"),
+    REVIEW("Review Catalog Object")
 }
 
 @Suppress("UNCHECKED_CAST")
