@@ -238,7 +238,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val isEnabled = it.analyticsManager.areAnalyticsEnabled()
             result.success(isEnabled)
-
         }
     }
 
@@ -251,7 +250,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
                 it.analyticsManager.disableAnalytics()
             }
             result.success(null)
-
         }
     }
 
@@ -259,7 +257,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val isEnabled = it.analyticsManager.arePiAnalyticsEnabled()
             result.success(isEnabled)
-
         }
     }
 
