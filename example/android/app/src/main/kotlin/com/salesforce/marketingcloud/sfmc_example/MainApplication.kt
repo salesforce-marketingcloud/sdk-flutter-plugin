@@ -27,13 +27,21 @@
 
 package com.salesforce.marketingcloud.sfmc_example
 
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.util.Log
 import com.salesforce.marketingcloud.MarketingCloudConfig
 import com.salesforce.marketingcloud.notifications.NotificationCustomizationOptions
+import com.salesforce.marketingcloud.notifications.NotificationManager
+import com.salesforce.marketingcloud.notifications.NotificationMessage
 import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
 import io.flutter.app.FlutterApplication
+import java.util.Random
 
 class MainApplication : FlutterApplication() {
     companion object {
@@ -42,30 +50,59 @@ class MainApplication : FlutterApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        SFMCSdk.configure(
-            applicationContext,
-            SFMCSdkModuleConfig.build {
-                pushModuleConfig =
-                    MarketingCloudConfig.builder()
-                        .apply {
-                            setApplicationId(BuildConfig.PUSH_APP_ID)
-                            setAccessToken(BuildConfig.PUSH_ACCESS_TOKEN)
-                            setMarketingCloudServerUrl(BuildConfig.PUSH_TSE)
-                            setSenderId(BuildConfig.PUSH_SENDER_ID)
-                            setNotificationCustomizationOptions(
-                                NotificationCustomizationOptions.create(
-                                    R.mipmap.ic_launcher
+        SFMCSdk.configure(applicationContext, SFMCSdkModuleConfig.build {
+            pushModuleConfig = MarketingCloudConfig.builder().apply {
+                setApplicationId(BuildConfig.PUSH_APP_ID)
+                setAccessToken(BuildConfig.PUSH_ACCESS_TOKEN)
+                setMarketingCloudServerUrl(BuildConfig.PUSH_TSE)
+                setSenderId(BuildConfig.PUSH_SENDER_ID)
+                setAnalyticsEnabled(true)
+                setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
+                    NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
+                        NotificationManager.getDefaultNotificationBuilder(
+                            context,
+                            notificationMessage,
+                            channelId,
+                            R.mipmap.ic_launcher
+                        ).apply {
+                            setContentIntent(
+                                NotificationManager.redirectIntentForAnalytics(
+                                    context,
+                                    getPendingIntent(context, notificationMessage),
+                                    notificationMessage,
+                                    true
                                 )
                             )
                         }
-                        .build(applicationContext)
-            }
-        ) { initStatus ->
+                    }
+                })
+            }.build(applicationContext)
+        }) { initStatus ->
             when (initStatus.status) {
                 InitializationStatus.SUCCESS -> Log.d(TAG, "SFMC SDK Initialization Successful")
                 InitializationStatus.FAILURE -> Log.d(TAG, "SFMC SDK Initialization Failed")
                 else -> Log.d(TAG, "SFMC SDK Initialization Status: Unknown")
             }
         }
+    }
+
+    private fun provideIntentFlags(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+    }
+
+    private fun getPendingIntent(
+        context: Context,
+        notificationMessage: NotificationMessage
+    ): PendingIntent {
+        val intent = if (notificationMessage.url.isNullOrEmpty()) {
+            context.packageManager.getLaunchIntentForPackage(context.packageName)
+        } else {
+            Intent(Intent.ACTION_VIEW, Uri.parse(notificationMessage.url))
+        }
+        return PendingIntent.getActivity(context, Random().nextInt(), intent, provideIntentFlags())
     }
 }
