@@ -200,7 +200,7 @@ class _MyAppState extends State<MyApp> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Color.fromARGB(249, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(249, 0, 0, 0),
         textColor: Colors.white,
         fontSize: 16.0);
   }
@@ -210,11 +210,18 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('SFMC Flutter SDK Example'),
-          backgroundColor: const Color.fromARGB(255, 2, 172, 240),
+          title: const Text(
+            'SFMC Flutter SDK Example',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         ),
         body: Container(
-          color: const Color(0xFFF8F8F8), // Set background color for ListView
+          color:const Color.fromARGB(255, 210, 229, 248), // Set background color for ListView
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             children: <Widget>[
@@ -397,6 +404,7 @@ class _MyAppState extends State<MyApp> {
     final controller1 = TextEditingController();
     final controller2 = TextEditingController();
     return Card(
+        color: Colors.white,
         margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Padding(
             padding: const EdgeInsets.all(20),
@@ -405,22 +413,43 @@ class _MyAppState extends State<MyApp> {
               children: <Widget>[
                 Text(title,
                     style: const TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold)),
+                        color: Color.fromARGB(255, 0, 18, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 30),
                     child: Text(description,
-                        style: const TextStyle(color: Colors.black54))),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 120, 119, 119),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12))),
                 TextFormField(
                   controller: controller1,
+                  style: const TextStyle(
+                      color: Color.fromARGB(255, 0, 18, 52),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12),
                   decoration: const InputDecoration(
                     labelText: 'Enter key',
+                    labelStyle: TextStyle(
+                        color: Color.fromARGB(255, 120, 119, 119),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
                   ),
                 ),
                 if (isTwoInputs)
                   TextFormField(
                     controller: controller2,
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 18, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
                     decoration: const InputDecoration(
                       labelText: 'Enter value',
+                      labelStyle: TextStyle(
+                          color: Color.fromARGB(255, 120, 119, 119),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
                     ),
                   ),
                 const SizedBox(height: 20),
@@ -434,12 +463,11 @@ class _MyAppState extends State<MyApp> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    // Set the desired background color here(0,158,219)
-                    backgroundColor: const Color.fromARGB(255, 2, 172,
-                        240), // Change this color to your desired color
+                    backgroundColor: const Color.fromARGB(255, 11, 95, 200),
                   ),
                   child: Text(buttonText,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white)),
                 )),
               ],
             )));
@@ -449,6 +477,7 @@ class _MyAppState extends State<MyApp> {
       String buttonText,
       {String content = ''}) {
     return Card(
+        color: Colors.white,
         margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
         child: Padding(
             padding: const EdgeInsets.all(20),
@@ -457,27 +486,34 @@ class _MyAppState extends State<MyApp> {
               children: <Widget>[
                 Text(title,
                     style: const TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.bold)),
+                        color: Color.fromARGB(255, 0, 18, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
                 Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 30),
                     child: Text(description,
-                        style: const TextStyle(color: Colors.black54))),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 120, 119, 119),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12))),
                 if (content.isNotEmpty)
                   SelectableText(
                     content,
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 0, 18, 52),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
                   ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
                     onPressed: buttonAction,
                     style: ElevatedButton.styleFrom(
-                      // Set the desired background color here(0,158,219)
-                      backgroundColor: const Color.fromARGB(255, 2, 172,
-                          240), // Change this color to your desired color
+                      backgroundColor: const Color.fromARGB(255, 11, 95, 200),
                     ),
                     child: Text(buttonText,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white)),
                   ),
                 ),
               ],
@@ -487,6 +523,7 @@ class _MyAppState extends State<MyApp> {
   Widget buildToggleCard(String title, String description, bool currentValue,
       ValueChanged<bool> onChanged) {
     return Card(
+      color: Colors.white,
       margin: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -496,13 +533,18 @@ class _MyAppState extends State<MyApp> {
             Text(
               title,
               style: const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.bold),
+                  color: Color.fromARGB(255, 0, 18, 52),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15),
               child: Text(
                 description,
-                style: const TextStyle(color: Colors.black54),
+                style: const TextStyle(
+                    color: Color.fromARGB(255, 120, 119, 119),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
               ),
             ),
             Row(
@@ -510,9 +552,16 @@ class _MyAppState extends State<MyApp> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(
+                      color: Color.fromARGB(255, 0, 18, 52),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
                 ),
                 Switch(
+                  activeTrackColor: const Color.fromARGB(255, 11, 95, 200),
+                  inactiveTrackColor: Colors.white,
+                  inactiveThumbColor: const Color.fromARGB(255, 11, 95, 200),
+                  activeColor: Colors.white,
                   value: currentValue,
                   onChanged: onChanged,
                 ),
