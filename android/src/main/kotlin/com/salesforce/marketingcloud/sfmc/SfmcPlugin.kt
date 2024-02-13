@@ -80,6 +80,10 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "setAttribute" -> setAttribute(call, result)
             "clearAttribute" -> clearAttribute(call, result)
             "trackEvent" -> trackEvent(call, result)
+            "isAnalyticsEnabled" -> isAnalyticsEnabled(result)
+            "setAnalyticsEnabled" -> setAnalyticsEnabled(call, result)
+            "isPiAnalyticsEnabled" -> isPiAnalyticsEnabled(result)
+            "setPiAnalyticsEnabled" -> setPiAnalyticsEnabled(call, result)
             else -> result.notImplemented()
         }
     }
@@ -229,7 +233,45 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             result.error("TRACK_EVENT_ERROR", "Error tracking event: ${e.message}", null)
         }
     }
-    
+
+    private fun isAnalyticsEnabled(result: Result) {
+        handlePushAction {
+            val isEnabled = it.analyticsManager.areAnalyticsEnabled()
+            result.success(isEnabled)
+        }
+    }
+
+    private fun setAnalyticsEnabled(call: MethodCall, result: Result) {
+        val enable: Boolean = call.argument("analyticsEnabled") ?: false
+        handlePushAction {
+            if (enable) {
+                it.analyticsManager.enableAnalytics()
+            } else {
+                it.analyticsManager.disableAnalytics()
+            }
+            result.success(null)
+        }
+    }
+
+    private fun isPiAnalyticsEnabled(result: Result) {
+        handlePushAction {
+            val isEnabled = it.analyticsManager.arePiAnalyticsEnabled()
+            result.success(isEnabled)
+        }
+    }
+
+    private fun setPiAnalyticsEnabled(call: MethodCall, result: Result) {
+        val enable: Boolean = call.argument("analyticsEnabled") ?: false
+        handlePushAction {
+            if (enable) {
+                it.analyticsManager.enablePiAnalytics()
+            } else {
+                it.analyticsManager.disablePiAnalytics()
+            }
+            result.success(null)
+        }
+    }
+
     private fun handleSFMCAction(action: (SFMCSdk) -> Unit) {
         SFMCSdk.requestSdk { sdk ->
             action(sdk)
