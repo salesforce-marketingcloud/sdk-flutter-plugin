@@ -218,6 +218,7 @@ class _MyAppState extends State<MyApp> {
               fontSize: 18,
             ),
           ),
+          centerTitle: true,
           backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         ),
         body: Container(
