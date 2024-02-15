@@ -39,6 +39,7 @@ const int LOG_LENGTH = 800;
                                      binaryMessenger:[registrar messenger]];
     SfmcPlugin* instance = [[SfmcPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
+    [registrar addApplicationDelegate:instance];
 }
 
 - (void)log:(NSString *)msg {
@@ -234,7 +235,6 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)isAnalyticsEnabledWithResult:(FlutterResult)result {
-    BOOL isEnabled = [[SFMCSdk mp] isAnalyticsEnabled];
     [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL isEnabled = [mp isAnalyticsEnabled];
         result(@(isEnabled));
@@ -253,6 +253,14 @@ const int LOG_LENGTH = 800;
         BOOL isEnabled = [mp isPiAnalyticsEnabled];
         result(@(isEnabled));
     }];
+}
+
+// https://github.com/flutter/flutter/issues/52895
+// Flutter overrides `respondToSelector` and does shady things. There is issue in flutter where `didReceiveRemoteNotification`
+// not getting called on AppDelegate. This is workaround to make sure AppDeleage `didReceiveRemoteNotification` gets called.
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
+    completionHandler(UIBackgroundFetchResultNoData);
+    return YES;
 }
 
 @end
