@@ -28,7 +28,8 @@
 #import <Flutter/Flutter.h>
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
+#import <SFMCSDK/SFMCSDK.h>
 
-@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate>
+@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate, SFMCSdkURLHandlingDelegate>
 
 @end
