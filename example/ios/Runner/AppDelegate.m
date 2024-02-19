@@ -45,7 +45,6 @@
         if (result == SFMCSdkOperationResultSuccess) {
             [self pushSetup];
         } else {
-            // SFMC sdk configuration failed.
             NSLog(@"SFMC sdk configuration failed.");
         }
     }] build]];
@@ -115,7 +114,6 @@
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
-//URL Handling
 - (void)sfmc_handleURL:(NSURL * _Nonnull)url type:(NSString * _Nonnull)type {
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
