@@ -4,14 +4,19 @@
 
 ## 1. Installation
 
-> This plugin is compatible with Flutter version 3.30 and above.
+> This plugin is compatible with Flutter version 3.3.0 and above.
 
-Add plugin to your application via [pub](https://www.npmjs.com/package/react-native-marketingcloudsdk)
-
-# TODO: Update this section after release
+Add plugin to your application via [pub](https://pub.dev/packages/sfmc)
 
 ```shell
-pub
+flutter pub add sfmc
+```
+
+This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
+
+```shell
+dependencies:
+  sfmc: ^8.1.0
 ```
 
 ## 2. Add Marketing Cloud SDK repository
@@ -33,7 +38,7 @@ Navigate to `android/app/build.gradle` and update the `dependencies` section to 
 
 ```groovy
 dependencies {
-    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.1.4"
+    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.+"
 
     //rest of dependencies
 }
@@ -131,8 +136,8 @@ class MainApplication : FlutterApplication() {
                 //Update these details based on your MC config
                 setApplicationId("{MC_APP_ID}")
                 setAccessToken("{MC_ACCESS_TOKEN}")
-                setMarketingCloudServerUrl("{FCM_SENDER_ID_FOR_MC_APP}")
-                setSenderId("{MC_APP_SERVER_URL}")
+                setMarketingCloudServerUrl("{MC_APP_SERVER_URL}")
+                setSenderId("{FCM_SENDER_ID_FOR_MC_APP}")
                 setAnalyticsEnabled(true)
                 setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
                     NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
@@ -187,6 +192,21 @@ class MainApplication : FlutterApplication() {
 
     //rest of MainApplication...
 }
+```
+
+## 8. Declare the notification permission
+
+Update the `AndroidManifest.xml` to declare the notification permission.
+
+```xml
+//AndroidManifest.xml
+<manifest ...>
+    //Add this line to declare the notification permission.
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <application ...>
+        ...
+    </application>
+</manifest>
 ```
 
 # Troubleshooting

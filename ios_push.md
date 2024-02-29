@@ -2,14 +2,19 @@
 
 ## 1. Installation
 
-> This plugin requires 3.30 or higher version of Flutter.
+> This plugin is compatible with Flutter version 3.3.0 and above.
 
-Add plugin to your application via [pub](https://www.npmjs.com/package/react-native-marketingcloudsdk)
-
-# TODO: Update this section after release
+Add plugin to your application via [pub](https://pub.dev/packages/sfmc)
 
 ```shell
-pub
+flutter pub add sfmc
+```
+
+This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
+
+```shell
+dependencies:
+  sfmc: ^8.1.0
 ```
 
 ## 2. Enable Push in Capabilities

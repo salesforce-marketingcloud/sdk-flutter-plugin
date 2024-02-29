@@ -8,9 +8,20 @@ Please refer [CHANGELOG.md](./CHANGELOG.md) for release notes.
 
 ## Installation
 
-> This plugin is compatible with Flutter version 3.30 and above.
+> This plugin is compatible with Flutter version 3.3.0 and above.
 
-# TODO: UPDATE THIS SECTION AFTER RELEASE
+Add plugin to your application via [pub](https://pub.dev/packages/sfmc)
+
+```shell
+flutter pub add sfmc
+```
+
+This will add a line like this to your package's pubspec.yaml (and run an implicit flutter pub get):
+
+```shell
+dependencies:
+  sfmc: ^8.1.0
+```
 
 ## Example Implementation
 
@@ -33,7 +44,19 @@ allprojects {
 }
 ```
 
-#### 2. FCM credentials
+#### 2. Adding the MarketingCloud SDK dependency
+
+Navigate to `android/app/build.gradle` and update the `dependencies` section to include `marketingcloudsdk` dependency.
+
+```groovy
+dependencies {
+    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.+"
+
+    //rest of dependencies
+}
+```
+
+#### 3. FCM credentials
 
 1. To enable push support for the Android platform, you will need to include the google-services.json file. Download the file from your Firebase console and place it in the `android/app` directory.
 
@@ -64,19 +87,7 @@ pluginManagement {
 apply plugin: 'com.google.gms.google-services'
 ```
 
-4. Adding the MarketingCloud SDK dependency
-
-Navigate to `android/app/build.gradle` and update the `dependencies` section to include `marketingcloudsdk` dependency.
-
-```groovy
-dependencies {
-    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.1.4"
-
-    //rest of dependencies
-}
-```
-
-#### 5. Configure the SDK in your `MainApplication.kt` class
+#### 4. Configure the SDK in your `MainApplication.kt` class
 
 > Note: If MainApplication.kt is not there in app. Please create the `MainApplication.kt` in your app. For more detailed setup please check [step-by-step guide](./Android.md).
 
@@ -89,10 +100,11 @@ override fun onCreate() {
             pushModuleConfig =
                 MarketingCloudConfig.builder()
                     .apply {
-                        setApplicationId(BuildConfig.PUSH_APP_ID)
-                        setAccessToken(BuildConfig.PUSH_ACCESS_TOKEN)
-                        setMarketingCloudServerUrl(BuildConfig.PUSH_TSE)
-                        setSenderId(BuildConfig.PUSH_SENDER_ID)
+                        //Update these details based on your MC config
+                        setApplicationId("{MC_APP_ID}")
+                        setAccessToken("{MC_ACCESS_TOKEN}")
+                        setMarketingCloudServerUrl("{MC_APP_SERVER_URL}")
+                        setSenderId("{FCM_SENDER_ID_FOR_MC_APP}")
                         setNotificationCustomizationOptions(
                             NotificationCustomizationOptions.create(
                                 R.mipmap.ic_launcher
@@ -103,9 +115,9 @@ override fun onCreate() {
         }
     ) { initStatus ->
         when (initStatus.status) {
-            InitializationStatus.SUCCESS -> Log.d(TAG, "SFMC SDK Initialization Successful")
-            InitializationStatus.FAILURE -> Log.d(TAG, "SFMC SDK Initialization Failed")
-            else -> Log.d(TAG, "SFMC SDK Initialization Status: Unknown")
+            InitializationStatus.SUCCESS -> Log.d("SFMC", "SFMC SDK Initialization Successful")
+            InitializationStatus.FAILURE -> Log.d("SFMC", "SFMC SDK Initialization Failed")
+            else -> Log.d("SFMC", "SFMC SDK Initialization Status: Unknown")
         }
     }
     // ... The rest of the onCreate method
@@ -171,6 +183,20 @@ The SDK doesn’t automatically present URLs from these sources.
 To handle URLs from push notifications, please follow [iOS step by step guide](./ios_push.md) and [Android step by step guide](./Android.md).
 
 Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html) and [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
+
+## Using APIs
+
+In your app `import` the package and utilize the `SFMCSdk` APIs.
+
+```
+// Import the SFMC package into your application
+import 'package:sfmc/sfmc.dart';
+
+// Utilize the APIs
+SFMCSdk.getSystemToken();
+```
+
+Please find the [API Refrences](#refrence) below.
 
 ## API Reference <a name="reference"></a>
 
