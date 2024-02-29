@@ -27,10 +27,12 @@ Enable push notifications in your target’s Capabilities settings in Xcode.
 
 #### 1. Naviagte to the `YOUR_APP/ios` directory and open `Runner.xcworkspace`.
 
-#### 2. Update the `AppDelegate to configure and enable push
+#### 2. Update the `AppDelegate` to configure and enable push
+
+Navigate to the `AppDelegate.h` and update the file.
 
 ```objc
-//AppDelegate.h ----
+//AppDelegate.h
 
 #import <Flutter/Flutter.h>
 #import <UIKit/UIKit.h>
@@ -42,7 +44,17 @@ Enable push notifications in your target’s Capabilities settings in Xcode.
 
 @end
 
-//AppDelegate.m ----
+```
+
+Navigate to the `AppDelegate.m` and update the file.
+
+```objc
+//AppDelegate.m
+
+#import "AppDelegate.h"
+#import "GeneratedPluginRegistrant.h"
+#import <MarketingCloudSDK/MarketingCloudSDK.h>
+//Other imports...
 
 @implementation AppDelegate
 
@@ -62,10 +74,10 @@ Enable push notifications in your target’s Capabilities settings in Xcode.
 
     [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(SFMCSdkOperationResult result) {
         if (result == SFMCSdkOperationResultSuccess) {
-        [self pushSetup];
+            //Enable Push
+            [self pushSetup];
         } else {
-        // SFMC sdk configuration failed.
-        NSLog(@"SFMC sdk configuration failed.");
+            NSLog(@"SFMC sdk configuration failed.");
         }
     }] build]];
 
@@ -74,7 +86,6 @@ Enable push notifications in your target’s Capabilities settings in Xcode.
 }
 
 - (void)pushSetup {
-
     // AppDelegate adheres to the SFMCSdkURLHandlingDelegate protocol
     // and handles URLs passed back from the SDK in `sfmc_handleURL`.
     // For more information, see https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html

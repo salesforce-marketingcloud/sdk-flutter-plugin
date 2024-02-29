@@ -132,8 +132,10 @@ override fun onCreate() {
 
 #### 2. Configure the SDK in your `AppDelegate` class
 
+Navigate to the `AppDelegate.h` and update the file.
+
 ```objc
-//AppDelegate.h ----
+//AppDelegate.h
 
 #import <Flutter/Flutter.h>
 #import <UIKit/UIKit.h>
@@ -143,8 +145,15 @@ override fun onCreate() {
 @interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate>
 
 @end
+```
 
-//AppDelegate.m ----
+Navigate to the `AppDelegate.m` and update the `application:didFinishLaunchingWithOptions` method.
+
+```objc
+//AppDelegate.m
+#import <MarketingCloudSDK/MarketingCloudSDK.h>
+//Other imports...
+
 
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
