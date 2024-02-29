@@ -202,7 +202,7 @@ Please find the [API Refrences](#refrence) below.
 
 **Kind**: global class
 
-- [SFMCSdk](#SFMCSdk)
+- [SFMCSdk](#SFMCSdk)<a name="SFMCSdk"></a>
   - [.isPushEnabled()](#SFMCSdk.isPushEnabled) ⇒ <code>Future&lt;bool?&gt;</code>
   - [.enablePush()](#SFMCSdk.enablePush) ⇒ <code>Future&lt;void&gt;</code>
   - [.disablePush()](#SFMCSdk.disablePush) ⇒ <code>Future&lt;void&gt;</code>
@@ -335,7 +335,7 @@ Adds a tag to the list of tags in the registration.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/add-tag.html)
-- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)addTag:>)
+- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)addTag:>)
 
 | Param | Type                | Description                              |
 | ----- | ------------------- | ---------------------------------------- |
@@ -351,7 +351,7 @@ Removes a tag from the list of tags in the registration.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/remove-tag.html)
-- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)removeTag:>)
+- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)removeTag:>)
 
 | Param | Type                | Description                                  |
 | ----- | ------------------- | -------------------------------------------- |
@@ -380,8 +380,8 @@ Sets the contact key for the device's user.
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
 **See**
 
-- [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/set-contact-key.html)
-- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)setContactKey:>)
+- [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/com.salesforce.marketingcloud.sfmcsdk.components.identity/-identity/set-profile-id.html)
+- [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)setProfileId:>)
 
 | Param      | Type                | Description                                      |
 | ---------- | ------------------- | ------------------------------------------------ |
