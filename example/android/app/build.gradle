@@ -31,7 +31,7 @@ def compile_sdk_Version = 34
 
 def appplication_id = "com.salesforce.marketingcloud.sfmc_example"
 
-def marketingcloud_sdk_version = '8.+'
+def marketingcloud_sdk_version = '8.1.+'
 
 // SFMC Sdk Config Values.
 // It first try to retrieve each value from the `local.properties` file.

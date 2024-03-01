@@ -31,7 +31,7 @@ Navigate to `android/app/build.gradle` and update the `dependencies` section to 
 
 ```groovy
 dependencies {
-    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.+"
+    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.1.+"
 
     //rest of dependencies
 }
@@ -85,10 +85,10 @@ apply plugin: 'com.google.gms.google-services'
 
 ## 7. Update `MainApplication.kt`
 
-> If `MainApplication.kt` is not there in your app create new file and also update the `AndroidManifest.xml`.
+> If `MainApplication.kt` is not there in your app create `MainApplication` extending `FlutterApplication` class and also update the `AndroidManifest.xml`.
 
 ```xml
-// main/AndroidManifest.xml
+// add ".MainApplication" entry in main/AndroidManifest.xml
 
 <application android:name=".MainApplication" ...>
 ```

@@ -43,7 +43,7 @@ Navigate to `android/app/build.gradle` and update the `dependencies` section to 
 
 ```groovy
 dependencies {
-    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.+"
+    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.1.+"
 
     //rest of dependencies
 }
@@ -119,7 +119,7 @@ override fun onCreate() {
 
 ### iOS Setup
 
-> **Please follow detailed [step by step guide](./ios_push.md) to setup iOS Platform. For basic iOS setup please follow below steps:**
+> **Please follow detailed [step by step guide](./iOS.md) to setup iOS Platform. For basic iOS setup please follow below steps:**
 
 #### 1. Naviagte to the `YOUR_APP/ios` directory and open `Runner.xcworkspace`.
 
@@ -172,7 +172,7 @@ Navigate to the `AppDelegate.m` and update the `application:didFinishLaunchingWi
 
 #### 3. Enable Push
 
-Follow [these instructions](./ios_push.md) to enable push for iOS.
+Follow [these instructions](./iOS.md) to enable push for iOS.
 
 ## URL Handling
 
@@ -182,7 +182,7 @@ The SDK doesn’t automatically present URLs from these sources.
 - OpenDirect URLs from push notifications.
 - Action URLs from in-app messages.
 
-To handle URLs from push notifications, please follow [iOS step by step guide](./ios_push.md) and [Android step by step guide](./Android.md).
+To handle URLs from push notifications, please follow [iOS step by step guide](./iOS.md) and [Android step by step guide](./Android.md).
 
 Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html) and [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
 
