@@ -5,8 +5,8 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   String recentCalledMethod = '';
-  final Map<Object?, Object?> mockAttributes = {};
-  final List<Object?> mockTags = [];
+  final Map<String, String> mockAttributes = {};
+  final List<String> mockTags = [];
   String? mockContactKey;
   Map<String, dynamic>? lastTrackedEvent;
   bool mockAnalyticsEnabled = false;
@@ -60,7 +60,7 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  Future<Map<Object?, Object?>?> getAttributes() {
+  Future<Map<String, String>> getAttributes() {
     _logCall('getAttributes');
     return Future.value(mockAttributes);
   }
@@ -74,7 +74,7 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   @override
   Future<void> clearAttribute(String key) async {
     _logCall('clearAttribute');
-    mockAttributes[key] = null;
+    mockAttributes[key] = "";
   }
 
   @override
@@ -90,7 +90,7 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  Future<List<Object?>?> getTags() {
+  Future<List<String>> getTags() {
     _logCall('getTags');
     return Future.value(mockTags);
   }
@@ -209,7 +209,7 @@ void main() {
   test('clearAttribute', () async {
     mockPlatform.mockAttributes[testKey] = testValue;
     await SFMCSdk.clearAttribute(testKey);
-    expect(mockPlatform.mockAttributes[testKey], isNull);
+    expect(mockPlatform.mockAttributes[testKey], "");
     expect(mockPlatform.recentCalledMethod, 'clearAttribute');
   });
 

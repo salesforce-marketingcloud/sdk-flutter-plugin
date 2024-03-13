@@ -58,6 +58,13 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "sfmc")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
+        //Add default tag
+        handlePushAction(new MCPushAction() {
+            @Override
+            void execute(PushModuleInterface sdk) {
+                sdk.getRegistrationManager().edit().addTag("Flutter").commit();
+            }
+        });        
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {

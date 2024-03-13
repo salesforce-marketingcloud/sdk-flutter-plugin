@@ -75,8 +75,10 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<Map<Object?, Object?>?> getAttributes() async {
-    return methodChannel.invokeMethod<Map<Object?, Object?>>('getAttributes');
+  Future<Map<String, String>> getAttributes() async {
+    final Map<dynamic, dynamic> result =
+        await methodChannel.invokeMethod('getAttributes');
+    return result.cast<String, String>();
   }
 
   @override
@@ -101,8 +103,9 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<List<Object?>?> getTags() {
-    return methodChannel.invokeMethod<List<Object?>>('getTags');
+  Future<List<String>> getTags() async {
+    final List<dynamic> result = await methodChannel.invokeMethod('getTags');
+    return result.cast<String>();
   }
 
   @override

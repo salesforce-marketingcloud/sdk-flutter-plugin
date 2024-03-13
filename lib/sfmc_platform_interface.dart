@@ -76,7 +76,7 @@ abstract class SfmcPlatform extends PlatformInterface {
     throw UnimplementedError('getDeviceId() has not been implemented.');
   }
 
-  Future<Map<Object?, Object?>?> getAttributes() {
+  Future<Map<String, String>> getAttributes() {
     throw UnimplementedError('getAttributes() has not been implemented.');
   }
 
@@ -96,7 +96,7 @@ abstract class SfmcPlatform extends PlatformInterface {
     throw UnimplementedError('removeTag() has not been implemented.');
   }
 
-  Future<List<Object?>?> getTags() {
+  Future<List<String>> getTags() {
     throw UnimplementedError('getTags() has not been implemented.');
   }
 
