@@ -328,3 +328,18 @@ A service extension can timeout when it is unable to download. In this code samp
 
 @end
 ```
+
+> If you get any errors after this step please check Troubleshooting section below.
+
+### Troubleshooting
+
+#### Resolving Cycle Error in Flutter Xcode Project
+
+If you encounter a cycle error in your Flutter Xcode project after adding a Notification Service Extension, follow these steps to fix it:
+
+1. Navigate to YOUR_APP_TARGET in Xcode.
+2. With your app target selected, go to the "Build Phases" tab.
+3. Find the `Embed Foundation Extension`.
+4. Drag it to position it above both `Thin Binary` and `Embed Pods Frameworks`.
+
+This reordering should resolve the cycle error.
