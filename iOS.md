@@ -340,6 +340,6 @@ If you encounter a cycle error in your Flutter Xcode project after adding a Noti
 1. Navigate to YOUR_APP_TARGET in Xcode.
 2. With your app target selected, go to the "Build Phases" tab.
 3. Find the `Embed Foundation Extension`.
-4. Drag it to position it above both `Thin Binary` and `Embed Pods Frameworks`.
+4. Drag and position it above both `Thin Binary` and `Embed Pods Frameworks`.
 
 This reordering should resolve the cycle error.
