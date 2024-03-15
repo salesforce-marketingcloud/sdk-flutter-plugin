@@ -201,11 +201,7 @@ const int LOG_LENGTH = 800;
 
 - (void)getTagsWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSSet* rawTags = [mp tags];
-        // Filter out non-string tags. Allow only string tags.
-        NSArray<NSString*>* tags = [[rawTags allObjects] filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
-            return [evaluatedObject isKindOfClass:[NSString class]];
-        }]];
+        NSArray* tags = [[mp tags] allObjects];
         result((tags != nil) ? tags : @[]);
     }];
 }
@@ -226,14 +222,7 @@ const int LOG_LENGTH = 800;
 
 - (void)getAttributesWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSDictionary* rawAttributes = [mp attributes];
-        NSMutableDictionary<NSString *, NSString *> *attributes = [NSMutableDictionary dictionary];
-        // Allow only string keys and values
-        [rawAttributes enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-            if ([key isKindOfClass:[NSString class]] && [obj isKindOfClass:[NSString class]]) {
-                [attributes setObject:obj forKey:key];
-            }
-        }];
+        NSDictionary* attributes = [mp attributes];
         result((attributes != nil) ? attributes : @{});
     }];
 }
