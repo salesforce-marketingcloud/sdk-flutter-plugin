@@ -214,7 +214,7 @@ Please find the [API Refrences](#refrence) below.
   - [.clearAttribute(key)](#SFMCSdk.clearAttribute) ⇒ <code>Future&lt;void&gt;</code>
   - [.addTag(tag)](#SFMCSdk.addTag) ⇒ <code>Future&lt;void&gt;</code>
   - [.removeTag(tag)](#SFMCSdk.removeTag) ⇒ <code>Future&lt;void&gt;</code>
-  - [.getTags()](#SFMCSdk.getTags) ⇒ <code>Future&lt;List<Object?>?&gt;</code>
+  - [.getTags()](#SFMCSdk.getTags) ⇒ <code>Future&lt;List<String&gt;&gt;</code>
   - [.setContactKey(contactKey)](#SFMCSdk.setContactKey) ⇒ <code>Future&lt;void&gt;</code>
   - [.getContactKey()](#SFMCSdk.getContactKey) ⇒ <code>Future&lt;String?&gt;</code>
   - [.enableLogging()](#SFMCSdk.enableLogging) ⇒ <code>Future&lt;void&gt;</code>
@@ -282,12 +282,12 @@ the device.
 
 <a name="SFMCSdk.getAttributes"></a>
 
-### SFMCSdk.getAttributes() ⇒ <code>Future&lt;Map&lt;Object?, Object?&gt;?&gt;</code>
+### SFMCSdk.getAttributes() ⇒ <code>Future&lt;Map&lt;String, String&gt;&gt;</code>
 
 Returns the maps of attributes set in the registration.
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;Map&lt;Object?, Object?&gt;?&gt;</code> - A future to the nullable key/value map of attributes set
+**Returns**: <code>Future&lt;Map&lt;String, String&gt;&gt;</code> - A future to the string key/value map of attributes set
 in the registration.  
 **See**
 
@@ -361,12 +361,12 @@ Removes a tag from the list of tags in the registration.
 
 <a name="SFMCSdk.getTags"></a>
 
-### SFMCSdk.getTags() ⇒ <code>Future&lt;Set&lt;String&gt;?&gt;</code>
+### SFMCSdk.getTags() ⇒ <code>Future&lt;List&lt;String&gt;&gt;</code>
 
-Returns the set of tags currently set in the registration.
+Returns the list of tags currently set in the registration.
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;Set&lt;String&gt;?&gt;</code> - A future to the nullable set of strings representing the tags
+**Returns**: <code>Future&lt;List&lt;String&gt;&gt;</code> - A future to the list of strings representing the tags
 currently set in the registration.  
 **See**
 

@@ -40,6 +40,11 @@ const int LOG_LENGTH = 800;
     SfmcPlugin* instance = [[SfmcPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
+    
+    //Add default tag.
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
+        (void)[mp addTag:@"Flutter"];
+    }];
 }
 
 - (void)log:(NSString *)msg {
@@ -197,7 +202,7 @@ const int LOG_LENGTH = 800;
 - (void)getTagsWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSArray* tags = [[mp tags] allObjects];
-        result(tags);
+        result((tags != nil) ? tags : @[]);
     }];
 }
 

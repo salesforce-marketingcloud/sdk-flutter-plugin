@@ -91,16 +91,14 @@ class _MyAppState extends State<MyApp> {
     String attributes = "Not available";
     try {
       var response = await SFMCSdk.getAttributes();
-      if (response != null) {
-        attributes = jsonEncode(response);
-      }
+      attributes = jsonEncode(response);
     } on PlatformException {
       attributes = "Error getting attributes.";
     }
 
     List<String> tags;
     try {
-      tags = (await SFMCSdk.getTags())?.cast<String>() ?? [];
+      tags = await SFMCSdk.getTags();
     } on PlatformException {
       tags = [];
     }
@@ -222,7 +220,8 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         ),
         body: Container(
-          color:const Color.fromARGB(255, 210, 229, 248), // Set background color for ListView
+          color: const Color.fromARGB(
+              255, 210, 229, 248), // Set background color for ListView
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             children: <Widget>[

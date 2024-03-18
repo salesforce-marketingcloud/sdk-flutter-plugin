@@ -118,7 +118,7 @@ class SFMCSdk {
   /// See:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-attributes.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)attributes)
-  static Future<Map<Object?, Object?>?> getAttributes() {
+  static Future<Map<String, String>> getAttributes() {
     return SfmcPlatform.instance.getAttributes();
   }
 
@@ -174,7 +174,7 @@ class SFMCSdk {
   /// See:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-tags.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)tags)
-  static Future<List<Object?>?> getTags() {
+  static Future<List<String>> getTags() {
     return SfmcPlatform.instance.getTags();
   }
 
