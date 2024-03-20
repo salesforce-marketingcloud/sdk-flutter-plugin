@@ -22,157 +22,11 @@ An example implementation is provided within the plugin. For setup details, see 
 
 ### Android Setup
 
-> **Please follow detailed [step by step guide](./Android.md) to setup Android Platform. For basic Android setup, please follow the steps below:**
-
-#### 1. Add the Marketing Cloud SDK Repository
-
-In `android/build.gradle`:
-
-```groovy
-allprojects {
-    repositories {
-        maven { url "https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/repository" }
-        //... Other repositories
-    }
-}
-```
-
-#### 2. Adding the MarketingCloud SDK dependency
-
-Navigate to `android/app/build.gradle` and update the `dependencies` section to include `marketingcloudsdk` dependency.
-
-```groovy
-dependencies {
-    implementation "com.salesforce.marketingcloud:marketingcloudsdk:8.1.+"
-
-    //rest of dependencies
-}
-```
-
-#### 3. FCM credentials
-
-1. To enable push support for the Android platform, you will need to include the google-services.json file. Download the file from your Firebase console and place it in the `android/app` directory.
-
-2. Include the Google Services plugin in your build `YOUR_APP/android/settings.gradle`
-
-> In case you don't have `pluginManagement` in your `settings.gradle`, add this dependency in `android/build.gradle` under `buildscript` section. if `buildscript` section not there, create it.
-
-```groovy
-pluginManagement {
-    buildscript {
-        repositories {
-            mavenCentral()
-        }
-        dependencies {
-            classpath 'com.google.gms:google-services:4.3.2'
-        }
-    }
-
-    //REST of settings.gradle.....
-}
-```
-
-3. Apply the plugin
-   `android/app/build.gradle`
-
-```groovy
-// Add the google services plugin to your build.gradle file
-apply plugin: 'com.google.gms.google-services'
-```
-
-#### 4. Configure the SDK in your `MainApplication.kt` class
-
-> Note: If MainApplication.kt is not there in app. Please create the `MainApplication.kt` in your app. For more detailed setup please check [step-by-step guide](./Android.md).
-
-```kotlin
-override fun onCreate() {
-    super.onCreate()
-    SFMCSdk.configure(
-        applicationContext,
-        SFMCSdkModuleConfig.build {
-            pushModuleConfig =
-                MarketingCloudConfig.builder()
-                    .apply {
-                        //Update these details based on your MC config
-                        setApplicationId("{MC_APP_ID}")
-                        setAccessToken("{MC_ACCESS_TOKEN}")
-                        setMarketingCloudServerUrl("{MC_APP_SERVER_URL}")
-                        setSenderId("{FCM_SENDER_ID_FOR_MC_APP}")
-                        setNotificationCustomizationOptions(
-                            NotificationCustomizationOptions.create(
-                                R.mipmap.ic_launcher
-                            )
-                        )
-                    }
-                    .build(applicationContext)
-        }
-    ) { initStatus ->
-        when (initStatus.status) {
-            InitializationStatus.SUCCESS -> Log.d("SFMC", "SFMC SDK Initialization Successful")
-            InitializationStatus.FAILURE -> Log.d("SFMC", "SFMC SDK Initialization Failed")
-            else -> Log.d("SFMC", "SFMC SDK Initialization Status: Unknown")
-        }
-    }
-    // ... The rest of the onCreate method
-}
-```
+Please follow detailed [step by step guide](./Android.md) to setup Android Platform.
 
 ### iOS Setup
 
-> **Please follow detailed [step by step guide](./iOS.md) to setup iOS Platform. For basic iOS setup please follow below steps:**
-
-#### 1. Naviagte to the `YOUR_APP/ios` directory and open `Runner.xcworkspace`.
-
-#### 2. Configure the SDK in your `AppDelegate` class
-
-Navigate to the `AppDelegate.h` and update the file.
-
-```objc
-//AppDelegate.h
-
-#import <Flutter/Flutter.h>
-#import <UIKit/UIKit.h>
-#import <UserNotifications/UserNotifications.h>
-//Other imports...
-
-@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate>
-
-@end
-```
-
-Navigate to the `AppDelegate.m` and update the `application:didFinishLaunchingWithOptions` method.
-
-```objc
-//AppDelegate.m
-#import <MarketingCloudSDK/MarketingCloudSDK.h>
-//Other imports...
-
-
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Configure the SFMC sdk
-    PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"{MC_APP_ID}"];
-    [pushConfigBuilder setAccessToken:@"{MC_ACCESS_TOKEN}"];
-    [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"{MC_APP_SERVER_URL}"]];
-    [pushConfigBuilder setMid:@"MC_MID"];
-    [pushConfigBuilder setAnalyticsEnabled:YES];
-
-    [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(SFMCSdkOperationResult result) {
-        if (result == SFMCSdkOperationResultSuccess) {
-        //Enable Push
-        } else {
-          NSLog(@"SFMC sdk configuration failed.");
-        }
-    }] build]];
-
-    // ... The rest of the didFinishLaunchingWithOptions method
-}
-```
-
-#### 3. Enable Push
-
-Follow [these instructions](./iOS.md) to enable push for iOS.
+Please follow detailed step by step guide for [Swift](./iOS_swift.md) or [Objective-C](./iOS_objc.md) to setup iOS Platform.
 
 ## URL Handling
 
@@ -182,7 +36,7 @@ The SDK doesn’t automatically present URLs from these sources.
 - OpenDirect URLs from push notifications.
 - Action URLs from in-app messages.
 
-To handle URLs from push notifications, please follow [iOS step by step guide](./iOS.md) and [Android step by step guide](./Android.md).
+To handle URLs from push notifications, please follow iOS step by step guide for [Swift](./iOS_swift.md) or [Objective-C](./iOS_objc.md) and [Android step by step guide](./Android.md).
 
 Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html) and [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
 
@@ -220,7 +74,7 @@ Please find the [API Refrences](#refrence) below.
   - [.enableLogging()](#SFMCSdk.enableLogging) ⇒ <code>Future&lt;void&gt;</code>
   - [.disableLogging()](#SFMCSdk.disableLogging) ⇒ <code>Future&lt;void&gt;</code>
   - [.logSdkState()](#SFMCSdk.logSdkState) ⇒ <code>Future&lt;void&gt;</code>
-  - [.trackEvent(event)](#SFMCSdk.trackEvent) ⇒ <code>Future&lt;void&gt;</code>
+  - [.trackEvent(event)](#SFMCSdk.track) ⇒ <code>Future&lt;void&gt;</code>
   - [.getDeviceId()](#SFMCSdk.getDeviceId) ⇒ <code>Future&lt;String?&gt;</code>
   - [.setAnalyticsEnabled(analyticsEnabled)](#SFMCSdk.setAnalyticsEnabled) ⇒ <code>Future&lt;void&gt;</code>
   - [.isAnalyticsEnabled()](#SFMCSdk.isAnalyticsEnabled) ⇒ <code>Future&lt;bool&gt;</code>
@@ -453,9 +307,9 @@ This method helps to track events, which could result in actions such as an InAp
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/event-tracking/event-tracking-event-tracking.html)
 - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/event-tracking/event-tracking-event-tracking.html)
 
-| Param | Type                                                                                                                                                                                                                             | Description              |
-| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| event | [<code>CustomEvent</code>](#CustomEvent) \| [<code>EngagementEvent</code>](#EngagementEvent) \| [<code>SystemEvent</code>](#SystemEvent) \| <code>CartEvent</code> \| <code>OrderEvent</code> \| <code>CatalogObjectEvent</code> | The event to be tracked. |
+| Param | Type                                                                                                                                                                         | Description              |
+| ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| event | <code>CustomEvent</code> \| <code>EngagementEvent</code> \| <code>SystemEvent</code> \| <code>CartEvent</code> \| <code>OrderEvent</code> \| <code>CatalogObjectEvent</code> | The event to be tracked. |
 
 <a name="SFMCSdk.getDeviceId"></a>
 

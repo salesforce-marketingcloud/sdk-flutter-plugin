@@ -1,4 +1,4 @@
-# Android Step by Step Flutter Setup
+# Android step by step Guide
 
 > **Depending on your app and Flutter version below steps may vary.**
 
@@ -101,22 +101,13 @@ Update the `MainApplication.kt` in your app.
 //YOUR_package
 
 //rest of imports...
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.util.Log
 import com.salesforce.marketingcloud.MarketingCloudConfig
 import com.salesforce.marketingcloud.notifications.NotificationCustomizationOptions
-import com.salesforce.marketingcloud.notifications.NotificationManager
-import com.salesforce.marketingcloud.notifications.NotificationMessage
 import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
 import io.flutter.app.FlutterApplication
-
-import java.util.Random
 
 class MainApplication : FlutterApplication() {
 
@@ -124,35 +115,26 @@ class MainApplication : FlutterApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        SFMCSdk.configure(applicationContext, SFMCSdkModuleConfig.build {
-            pushModuleConfig = MarketingCloudConfig.builder().apply {
-                //Update these details based on your MC config
-                setApplicationId("{MC_APP_ID}")
-                setAccessToken("{MC_ACCESS_TOKEN}")
-                setMarketingCloudServerUrl("{MC_APP_SERVER_URL}")
-                setSenderId("{FCM_SENDER_ID_FOR_MC_APP}")
-                setAnalyticsEnabled(true)
-                setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
-                    NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
-                        NotificationManager.getDefaultNotificationBuilder(
-                            context,
-                            notificationMessage,
-                            channelId,
-                            R.mipmap.ic_launcher
-                        ).apply {
-                            setContentIntent(
-                                NotificationManager.redirectIntentForAnalytics(
-                                    context,
-                                    getPendingIntent(context, notificationMessage),
-                                    notificationMessage,
-                                    true
+        SFMCSdk.configure(
+            applicationContext,
+            SFMCSdkModuleConfig.build {
+                pushModuleConfig =
+                    MarketingCloudConfig.builder()
+                        .apply {
+                            //Update these details based on your MC config
+                            setApplicationId("{MC_APP_ID}")
+                            setAccessToken("{MC_ACCESS_TOKEN}")
+                            setMarketingCloudServerUrl("{MC_APP_SERVER_URL}")
+                            setSenderId("{FCM_SENDER_ID_FOR_MC_APP}")
+                            setNotificationCustomizationOptions(
+                                NotificationCustomizationOptions.create(
+                                    R.mipmap.ic_launcher
                                 )
                             )
                         }
-                    }
-                })
-            }.build(applicationContext)
-        }) { initStatus ->
+                        .build(applicationContext)
+            }
+        ) { initStatus ->
             when (initStatus.status) {
                 InitializationStatus.SUCCESS -> Log.d("SFMC", "SFMC SDK Initialization Successful")
                 InitializationStatus.FAILURE -> Log.d("SFMC", "SFMC SDK Initialization Failed")
@@ -161,26 +143,6 @@ class MainApplication : FlutterApplication() {
         }
 
         //rest of onCreate...
-    }
-
-    private fun provideIntentFlags(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        } else {
-            PendingIntent.FLAG_UPDATE_CURRENT
-        }
-    }
-
-    private fun getPendingIntent(
-        context: Context,
-        notificationMessage: NotificationMessage
-    ): PendingIntent {
-        val intent = if (notificationMessage.url.isNullOrEmpty()) {
-            context.packageManager.getLaunchIntentForPackage(context.packageName)
-        } else {
-            Intent(Intent.ACTION_VIEW, Uri.parse(notificationMessage.url))
-        }
-        return PendingIntent.getActivity(context, Random().nextInt(), intent, provideIntentFlags())
     }
 
     //rest of MainApplication...
@@ -201,6 +163,90 @@ Update the `AndroidManifest.xml` to declare the notification permission.
     </application>
 </manifest>
 ```
+
+## 9. URL Handling
+
+The SDK doesn’t automatically present URLs from these sources.
+
+- CloudPage URLs from push notifications.
+- OpenDirect URLs from push notifications.
+- Action URLs from in-app messages.
+
+To handle URLs from push notifications, please follow below steps:
+
+### Update `setNotificationCustomizationOptions`
+
+Navigate to `MainApplication.kt` and update the `setNotificationCustomizationOptions` options to handle the url's
+
+#### 1. Add `imports`
+
+```kotlin
+//MainApplication.kt
+
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import com.salesforce.marketingcloud.notifications.NotificationManager
+import com.salesforce.marketingcloud.notifications.NotificationMessage
+
+import java.util.Random
+```
+
+#### 2. Update the `setNotificationCustomizationOptions` of `SFMCSdk.configure`
+
+```kotlin
+//MainApplication.kt
+
+setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
+    NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
+        NotificationManager.getDefaultNotificationBuilder(
+            context,
+            notificationMessage,
+            channelId,
+            R.mipmap.ic_launcher
+        ).apply {
+            setContentIntent(
+                NotificationManager.redirectIntentForAnalytics(
+                    context,
+                    getPendingIntent(context, notificationMessage),
+                    notificationMessage,
+                    true
+                )
+            )
+        }
+    }
+})
+```
+
+#### 3. Implement the following methods in `MainApplication.kt`
+
+```kotlin
+//MainApplication.kt
+
+private fun provideIntentFlags(): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    } else {
+        PendingIntent.FLAG_UPDATE_CURRENT
+    }
+}
+
+private fun getPendingIntent(
+    context: Context,
+    notificationMessage: NotificationMessage
+): PendingIntent {
+    val intent = if (notificationMessage.url.isNullOrEmpty()) {
+        context.packageManager.getLaunchIntentForPackage(context.packageName)
+    } else {
+        Intent(Intent.ACTION_VIEW, Uri.parse(notificationMessage.url))
+    }
+    return PendingIntent.getActivity(context, Random().nextInt(), intent, provideIntentFlags())
+}
+```
+
+Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html).
 
 # Troubleshooting
 
