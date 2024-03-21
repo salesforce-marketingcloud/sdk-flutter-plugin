@@ -37,28 +37,26 @@ dependencies {
 }
 ```
 
-## 4. Update `compileSdk/compileSdkVersion` and `minSdkVersion`
+## 4. Update `compileSdk or compileSdkVersion` and `minSdkVersion`
 
-Ensure in your `android/app/build.gradle` that `compileSdk/compileSdkVersion` is `34` and `minSdkVersion` is `21`.
+Ensure in your `android/app/build.gradle` that `compileSdk or compileSdkVersion` is `34` and `minSdkVersion` is `21`.
 
-If not, update the `compileSdk/compileSdkVersion` and `minSdkVersion` in `android/app/build.gradle` to `34` and `21` respectively.
+If not, update the `compileSdk or compileSdkVersion` and `minSdkVersion` in `android/app/build.gradle` to `34` and `21` respectively.
 
 ## 5. Update `kotlin version`
 
 The location for specifying the `kotlin version` might differ depending on your app.
 
-Ensure the `kotlin version` specified is equal to or above `1.9.10`.
-
 > The Kotlin version could be specified either in `android/build.gradle` or `android/settings.gradle` depending on your Flutter app.
+
+Ensure the `org.jetbrains.kotlin.android` or `org.jetbrains.kotlin:kotlin-gradle-plugin` specified is equal to or above `1.9.10`
 
 ## 6. Provide FCM credentials
 
 1. To enable push support for the Android platform you will need to include the `google-services.json` file. Download the file from your Firebase console and place it into the `android/app` directory
 
 2. Include the Google Services plugin in your build
-   `YOUR_APP/android/settings.gradle`
-
-> In case you don't have `pluginManagement` in your `settings.gradle`, add this dependency in `android/build.gradle` under `buildscript` section. if `buildscript` section not there, create it.
+   `android/settings.gradle`
 
 ```groovy
 pluginManagement {
@@ -75,8 +73,23 @@ pluginManagement {
 }
 ```
 
-3. Apply the plugin
+> If `pluginManagement` is not present in your `settings.gradle`, add this dependency in `android/build.gradle` under the `buildscript` section. If there is no `buildscript` section, you will need to create it.
+
+3. Apply the plugin in
    `android/app/build.gradle`
+
+> The following step may vary depending on your app.
+
+Update the `plugins` section in `android/app/build.gradle`
+
+```groovy
+plugins {
+    id "com.google.gms.google-services"
+    // rest of the plugins...
+}
+```
+
+If the `plugins` section does not exist in your `android/app/build.gradle`, then add the following code at the end of `android/app/build.gradle`:
 
 ```groovy
 // Add the google services plugin to your build.gradle file
@@ -172,11 +185,11 @@ The SDK doesn’t automatically present URLs from these sources.
 - OpenDirect URLs from push notifications.
 - Action URLs from in-app messages.
 
+### 1. Handling URLs from push notifications
+
 To handle URLs from push notifications, please follow below steps:
 
-### Update `setNotificationCustomizationOptions`
-
-Navigate to `MainApplication.kt` and update the `setNotificationCustomizationOptions` options to handle the url's
+Navigate to `MainApplication.kt` and update the `setNotificationCustomizationOptions` options to handle the URLs
 
 #### 1. Add `imports`
 
@@ -194,7 +207,7 @@ import com.salesforce.marketingcloud.notifications.NotificationMessage
 import java.util.Random
 ```
 
-#### 2. Update the `setNotificationCustomizationOptions` of `SFMCSdk.configure`
+#### 2. Update the `setNotificationCustomizationOptions` in `MarketingCloudConfig`
 
 ```kotlin
 //MainApplication.kt
@@ -246,7 +259,29 @@ private fun getPendingIntent(
 }
 ```
 
-Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html).
+### 2. Handling URLs from In-App messages
+
+To handle the URLs from In-App messages set the `setUrlHandler` in `MarketingCloudConfig`
+
+```kotlin
+//MainApplication.kt
+
+// Add import statement for UrlHandler
+import com.salesforce.marketingcloud.UrlHandler
+
+// Tell the SDK how to handle button clicks in an IAM
+setUrlHandler(UrlHandler { context, url, _ ->
+    PendingIntent.getActivity(
+    context,
+    Random().nextInt(),
+    Intent(Intent.ACTION_VIEW, Uri.parse(url)),
+    PendingIntent.FLAG_UPDATE_CURRENT
+    )
+})
+
+```
+
+Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html)
 
 # Troubleshooting
 

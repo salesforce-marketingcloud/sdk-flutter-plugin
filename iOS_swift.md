@@ -222,7 +222,7 @@ extension AppDelegate: URLHandlingDelegate {
 
 Please also see additional documentation on URL Handling for [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
 
-## 5. Enable Rich Notifications (Optional):
+## 5. Enable Rich Notifications (Optional)
 
 **Enable Rich Notifications:** Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
 
