@@ -30,12 +30,6 @@ Please follow detailed step by step guide for [Swift](./iOS_swift.md) or [Object
 
 ## URL Handling
 
-The SDK doesn’t automatically present URLs from these sources.
-
-- CloudPage URLs from push notifications.
-- OpenDirect URLs from push notifications.
-- Action URLs from in-app messages.
-
 To handle URLs from push notifications, please follow iOS step by step guide for [Swift](./iOS_swift.md) or [Objective-C](./iOS_objc.md) and [Android step by step guide](./Android.md).
 
 Please also see additional documentation on URL Handling for [Android](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/url-handling.html) and [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
@@ -74,7 +68,7 @@ Please find the [API Refrences](#refrence) below.
   - [.enableLogging()](#SFMCSdk.enableLogging) ⇒ <code>Future&lt;void&gt;</code>
   - [.disableLogging()](#SFMCSdk.disableLogging) ⇒ <code>Future&lt;void&gt;</code>
   - [.logSdkState()](#SFMCSdk.logSdkState) ⇒ <code>Future&lt;void&gt;</code>
-  - [.trackEvent(event)](#SFMCSdk.track) ⇒ <code>Future&lt;void&gt;</code>
+  - [.trackEvent(event)](#SFMCSdk.trackEvent) ⇒ <code>Future&lt;void&gt;</code>
   - [.getDeviceId()](#SFMCSdk.getDeviceId) ⇒ <code>Future&lt;String?&gt;</code>
   - [.setAnalyticsEnabled(analyticsEnabled)](#SFMCSdk.setAnalyticsEnabled) ⇒ <code>Future&lt;void&gt;</code>
   - [.isAnalyticsEnabled()](#SFMCSdk.isAnalyticsEnabled) ⇒ <code>Future&lt;bool&gt;</code>
@@ -295,9 +289,9 @@ the SDK and will be requested by the Marketing Cloud support team.
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/com.salesforce.marketingcloud.sfmcsdk/-s-f-m-c-sdk/get-sdk-state.html)
 - [iOS Docs](<https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/SFMCSdk.html#/c:@M@SFMCSDK@objc(cs)SFMCSdk(cm)state>)
 
-<a name="SFMCSdk.track"></a>
+<a name="SFMCSdk.trackEvent"></a>
 
-### SFMCSdk.track(event) ⇒ <code>Future&lt;void&gt;</code>
+### SFMCSdk.trackEvent(event) ⇒ <code>Future&lt;void&gt;</code>
 
 This method helps to track events, which could result in actions such as an InApp Message being displayed.
 
