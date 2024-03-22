@@ -1,4 +1,4 @@
-# iOS step by step guide
+# iOS `Objective-C` step by step guide
 
 ## 1. Installation
 
@@ -33,7 +33,7 @@ Navigate to the `AppDelegate.h` and update the file.
 #import <SFMCSDK/SFMCSDK.h>
 //Other imports...
 
-@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate, SFMCSdkURLHandlingDelegate>
+@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate>
 
 @end
 
@@ -58,16 +58,23 @@ Navigate to the `AppDelegate.m` and update the file.
     [GeneratedPluginRegistrant registerWithRegistry:self];
     // Override point for customization after application launch.
 
-    // Configure the SFMC sdk ...
+    // Use the Push Config Builder to configure the Mobile Push Module. This gives you the maximum flexibility in SDK configuration.
+    // The builder lets you configure the module parameters at runtime.
+    PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"{MC_APP_ID}"];
+    [pushConfigBuilder setAccessToken:@"{MC_ACCESS_TOKEN}"];
+    [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"{MC_APP_SERVER_URL}"]];
+    [pushConfigBuilder setMid:@"MC_MID"];
+    [pushConfigBuilder setAnalyticsEnabled:YES];
     PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"{MC_APP_ID}"];
     [pushConfigBuilder setAccessToken:@"{MC_ACCESS_TOKEN}"];
     [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"{MC_APP_SERVER_URL}"]];
     [pushConfigBuilder setMid:@"MC_MID"];
     [pushConfigBuilder setAnalyticsEnabled:YES];
 
+    // Once you've created the mobile push configuration, intialize the SDK.
     [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(SFMCSdkOperationResult result) {
         if (result == SFMCSdkOperationResultSuccess) {
-            //Enable Push
+            // module is fully configured and ready for use
             [self pushSetup];
         } else {
             NSLog(@"SFMC sdk configuration failed.");
@@ -79,30 +86,33 @@ Navigate to the `AppDelegate.m` and update the file.
 }
 
 - (void)pushSetup {
-    // AppDelegate adheres to the SFMCSdkURLHandlingDelegate protocol
-    // and handles URLs passed back from the SDK in `sfmc_handleURL`.
-    // For more information, see https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html
-    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
-        [mp setURLHandlingDelegate:self];
-    }];
-
+    // Make sure to dispatch this to the main thread, as UNUserNotificationCenter will present UI.
     dispatch_async(dispatch_get_main_queue(), ^{
-        // set the UNUserNotificationCenter delegate - the delegate must be set here in
-        // didFinishLaunchingWithOptions
+        // Set the UNUserNotificationCenterDelegate to a class adhering to thie protocol.
+        // In this exmple, the AppDelegate class adheres to the protocol (see below)
+        // and handles Notification Center delegate methods from iOS.
         [UNUserNotificationCenter currentNotificationCenter].delegate = self;
-        [[SFMCSdk mp] setURLHandlingDelegate:self];
+
+        // In any case, your application should register for remote notifications *each time* your application
+        // launches to ensure that the push token used by MobilePush (for silent push) is updated if necessary.
+
+        // Registering in this manner does *not* mean that a user will see a notification - it only means
+        // that the application will receive a unique push token from iOS.
         [[UIApplication sharedApplication] registerForRemoteNotifications];
 
+        // Request authorization from the user for push notification alerts.
         [[UNUserNotificationCenter currentNotificationCenter]
-        requestAuthorizationWithOptions:UNAuthorizationOptionAlert |
-        UNAuthorizationOptionSound |
-        UNAuthorizationOptionBadge
-        completionHandler:^(BOOL granted, NSError *_Nullable error) {
-        if (error == nil) {
-            if (granted == YES) {
-                NSLog(@"User granted permission");
+         requestAuthorizationWithOptions:UNAuthorizationOptionAlert |
+         UNAuthorizationOptionSound |
+         UNAuthorizationOptionBadge
+         completionHandler:^(BOOL granted, NSError *_Nullable error) {
+            if (error == nil) {
+                if (granted == YES) {
+                    // Your application may want to do something specific if the user has granted authorization
+                    // for the notification types specified; it would be done here.
+                    NSLog(@"User granted permission");
+                }
             }
-        }
         }];
     });
 }
@@ -130,10 +140,13 @@ Navigate to the `AppDelegate.m` and update the file.
     }
 }
 
+// The method will be called on the delegate only if the application is in the foreground. If the method is not implemented or the handler is not called in a timely manner then the notification will not be presented. The application can choose to have the notification presented as a sound, badge, alert and/or in the notification list. This decision should be based on whether the information in the notification is otherwise visible to the user.
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
     completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
 }
 
+/** This delegate method offers an opportunity for applications with the "remote-notification" background mode to fetch appropriate new data in response to an incoming remote notification. You should call the fetchCompletionHandler as soon as you're finished performing that operation, so the system can accurately estimate its power and data cost.
+ This method will be invoked even if the application was launched or resumed because of the remote notification. The respective delegate methods will be invoked first. Note that this behavior is in contrast to application:didReceiveRemoteNotification:, which is not called in those cases, and which will not be invoked if this method is implemented. **/
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         [mp setNotificationUserInfo:userInfo];
@@ -141,9 +154,80 @@ Navigate to the `AppDelegate.m` and update the file.
     completionHandler(UIBackgroundFetchResultNewData);
 }
 
-// Implement the required delegate method to handle URLs
+@end
+```
+
+## 4. URL Handling
+
+The SDK doesn’t automatically present URLs from these sources.
+
+- CloudPage URLs from push notifications.
+- OpenDirect URLs from push notifications.
+- Action URLs from in-app messages.
+
+To handle URLs from push notifications, please follow below steps:
+
+### 1. Implement the `SFMCSdkURLHandlingDelegate`
+
+Update the `AppDelegate.h` to implement `SFMCSdkURLHandlingDelegate`
+
+```objc
+// AppDelegate.h
+
+#import <Flutter/Flutter.h>
+#import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
+#import <SFMCSDK/SFMCSDK.h>
+
+//...
+
+// Implement the SFMCSdkURLHandlingDelegate delegate
+@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate, SFMCSdkURLHandlingDelegate>
+
+@end
+
+```
+
+### 2. Set the `setURLHandlingDelegate`
+
+Update the `pushSetup` method in `AppDelegate.m` to set the `URLHandlingDelegate`.
+
+```objc
+// AppDelegate.m
+
+- (void)pushSetup {
+    // AppDelegate adheres to the SFMCSdkURLHandlingDelegate protocol
+    // and handles URLs passed back from the SDK in `sfmc_handleURL`.
+    // For more information, see https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
+        [mp setURLHandlingDelegate:self];
+    }];
+
+    //rest of pushSetup...
+}
+```
+
+### 3. Implement the `URLHandlingDelegate`
+
+Implement the `URLHandlingDelegate` in the `AppDelegate.m`
+
+```swift
+// AppDelegate.m
+
+//rest of AppDelegate.m...
+
+/**
+ This method, if implemented, can be called when a Alert+CloudPage, Alert+OpenDirect, Alert+Inbox or Inbox message is processed by the SDK.
+ Implementing this method allows the application to handle the URL from Marketing Cloud data.
+
+ Prior to the MobilePush SDK version 6.0.0, the SDK would automatically handle these URLs and present them using a SFSafariViewController.
+
+ Given security risks inherent in URLs and web pages (Open Redirect vulnerabilities, especially), the responsibility of processing the URL shall be held by the application implementing the MobilePush SDK. This reduces risk to the application by affording full control over processing, presentation and security to the application code itself.
+
+ @param url value NSURL sent with the Location, CloudPage, OpenDirect or Inbox message
+ @param type value NSInteger enumeration of the MobilePush source type of this URL
+ */
 - (void)sfmc_handleURL:(NSURL * _Nonnull)url type:(NSString * _Nonnull)type {
-    // Handle the urls for CloudPages, OpenDirect, and In-App Messages here
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
         [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             if (success) {
@@ -155,10 +239,12 @@ Navigate to the `AppDelegate.m` and update the file.
     }
 }
 
-@end
+//rest of AppDelegate.m...
 ```
 
-## 4. Enable Rich Notifications (Optional):
+Please also see additional documentation on URL Handling for [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
+
+## 5. Enable Rich Notifications (Optional)
 
 **Enable Rich Notifications:** Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
 
