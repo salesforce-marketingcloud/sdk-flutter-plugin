@@ -301,7 +301,7 @@ pluginManagement {
         }
         dependencies {
             //Add the r8 dependency
-            classpath("com.android.tools:r8:8.2.42")
+            classpath 'com.android.tools:r8:8.2.42'
 
             //other dependencies
         }
