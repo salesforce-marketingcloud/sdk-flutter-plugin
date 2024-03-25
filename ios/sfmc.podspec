@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
   Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/salesforce-marketingcloud/sdk-flutter-plugin'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Salesforce Marketing Cloud' => 'mobilepushsdk@salesforce.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
