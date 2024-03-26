@@ -6,9 +6,22 @@ This module enables the integration of the Marketing Cloud Push SDK into your Fl
 
 For release notes, please refer to [CHANGELOG.md](./CHANGELOG.md).
 
-## Installation
+## Requirements
 
-> This plugin is compatible with Flutter version 3.3.0 and above.
+### Flutter
+
+- Flutter version `3.3.0+`
+
+### iOS
+
+- minimum deployment target `iOS 12+`
+
+### Android
+
+- minSdkVersion `21+`
+- compileSdkVersion `34+`
+
+## Installation
 
 To add the plugin to your application via [pub](https://pub.dev/packages/sfmc), run the following command:
 
