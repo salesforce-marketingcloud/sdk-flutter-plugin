@@ -57,28 +57,40 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+
+    //enable logging
+    if (kDebugMode) {
+      SFMCSdk.enableLogging();
+    }
   }
 
-  Future<void> initPlatformState() async {
-    if (kDebugMode) {
-      await SFMCSdk.enableLogging();
-    }
-
+  Future<void> _fetchSystemToken() async {
     String systemToken;
     try {
       systemToken = await SFMCSdk.getSystemToken() ?? 'Not Available';
     } on PlatformException {
       systemToken = 'Failed to get system token.';
     }
+    setState(() {
+      _systemToken = systemToken;
+    });
+    _showToast("System Token Fetched");
+  }
 
+  Future<void> _fetchDeviceId() async {
     String deviceId;
     try {
       deviceId = await SFMCSdk.getDeviceId() ?? 'Not Available';
     } on PlatformException {
       deviceId = 'Failed to get device ID.';
     }
+    setState(() {
+      _deviceId = deviceId;
+    });
+    _showToast("Device ID Fetched");
+  }
 
+  Future<void> _updatePushStatus() async {
     String pushStatus;
     try {
       pushStatus = await SFMCSdk.isPushEnabled() == true
@@ -87,55 +99,56 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException {
       pushStatus = 'Failed to get Push Status.';
     }
+    setState(() {
+      _pushStatus = pushStatus;
+    });
+    _showToast("Push Status Updated");
+  }
 
-    String attributes = "Not available";
+  Future<void> _fetchAttributes() async {
+    String attributes;
     try {
       var response = await SFMCSdk.getAttributes();
       attributes = jsonEncode(response);
     } on PlatformException {
       attributes = "Error getting attributes.";
     }
+    setState(() {
+      _attributes = attributes;
+    });
+    _showToast("Attributes Fetched");
+  }
 
+  Future<void> _fetchTags() async {
     List<String> tags;
     try {
       tags = await SFMCSdk.getTags();
     } on PlatformException {
       tags = [];
     }
+    setState(() {
+      _tags = tags;
+    });
+    _showToast("Tags Fetched");
+  }
 
+  Future<void> _fetchContactKey() async {
     String contactKey;
     try {
       contactKey = await SFMCSdk.getContactKey() ?? 'Not Available';
     } on PlatformException {
       contactKey = 'Failed to get contact key.';
     }
-
-    try {
-      _analyticsEnabled = await SFMCSdk.isAnalyticsEnabled();
-      _piAnalyticsEnabled = await SFMCSdk.isPiAnalyticsEnabled();
-    } on PlatformException {
-      // Handle exceptions or set default values
-      _analyticsEnabled = false;
-      _piAnalyticsEnabled = false;
-    }
-
-    if (!mounted) return;
-
     setState(() {
-      _systemToken = systemToken;
-      _deviceId = deviceId;
-      _pushStatus = pushStatus;
-      _attributes = attributes;
-      _tags = tags;
       _contactKey = contactKey;
     });
+    _showToast("Contact Key Fetched");
   }
 
   void _onSetAttributesClicked(String key, String value) {
     try {
       SFMCSdk.setAttribute(key, value);
       _showToast('Attribute set successfully!');
-      initPlatformState();
     } catch (e) {
       _showToast('Error setting attribute.');
     }
@@ -145,7 +158,6 @@ class _MyAppState extends State<MyApp> {
     try {
       SFMCSdk.clearAttribute(key);
       _showToast('Attribute cleared successfully!');
-      initPlatformState();
     } catch (e) {
       _showToast('Error removing attribute.');
     }
@@ -155,7 +167,6 @@ class _MyAppState extends State<MyApp> {
     try {
       SFMCSdk.addTag(tag);
       _showToast('Tags set successfully!');
-      initPlatformState();
     } catch (e) {
       Fluttertoast.showToast(msg: 'Error setting tags.');
     }
@@ -165,7 +176,6 @@ class _MyAppState extends State<MyApp> {
     try {
       SFMCSdk.removeTag(tag);
       _showToast('Tag removed successfully!');
-      initPlatformState();
     } catch (e) {
       _showToast('Error setting tags.');
     }
@@ -175,7 +185,6 @@ class _MyAppState extends State<MyApp> {
     try {
       SFMCSdk.setContactKey(value);
       _showToast('Contact key is set.');
-      initPlatformState();
     } catch (e) {
       _showToast('Error setting contact key.');
     }
@@ -228,30 +237,21 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "System Token",
                 "Get the system token from the SFMC SDK using SFMCSdk.getSystemToken().",
-                () async {
-                  await initPlatformState();
-                  _showToast("System Token Fetched");
-                },
+                _fetchSystemToken,
                 'GET SYSTEM TOKEN',
                 content: _systemToken,
               ),
               buildCard(
                 "Device ID",
                 "Get the device ID from the SFMC SDK using SFMCSdk.getDeviceId().",
-                () async {
-                  await initPlatformState();
-                  _showToast("Device ID Fetched");
-                },
+                _fetchDeviceId,
                 'GET DEVICE ID',
                 content: _deviceId,
               ),
               buildCard(
                 "Check Push Status",
                 "Check if push notifications are enabled or disabled using SFMCSdk.isPushEnabled().",
-                () async {
-                  await initPlatformState();
-                  _showToast("Push Status Fetched");
-                },
+                _updatePushStatus,
                 'UPDATE PUSH STATUS',
                 content: _pushStatus,
               ),
@@ -276,10 +276,7 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Contact Key",
                 "Get the contact key from the SFMC SDK using SFMCSdk.getContactKey().",
-                () async {
-                  await initPlatformState();
-                  _showToast("Contact Key Fetched");
-                },
+                _fetchContactKey,
                 'GET CONTACT KEY',
                 content: _contactKey,
               ),
@@ -292,10 +289,7 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Tags",
                 "Get tags from the SFMC SDK using SFMCSdk.getTags().",
-                () async {
-                  await initPlatformState();
-                  _showToast("Tags Fetched");
-                },
+                _fetchTags,
                 'GET TAGS',
                 content: _tags.isNotEmpty ? _tags.join(', ') : 'No tags found.',
               ),
@@ -314,10 +308,7 @@ class _MyAppState extends State<MyApp> {
               buildCard(
                 "Get Attributes",
                 "Get attributes from the SFMC SDK using SFMCSdk.getAttributes().",
-                () async {
-                  await initPlatformState();
-                  _showToast("Attributes Fetched");
-                },
+                _fetchAttributes,
                 'GET ATTRIBUTES',
                 content: _attributes.isNotEmpty
                     ? _attributes
