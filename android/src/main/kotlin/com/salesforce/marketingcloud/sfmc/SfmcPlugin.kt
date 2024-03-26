@@ -164,11 +164,12 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun setContactKey(call: MethodCall, result: Result) {
-        val contactKey: String? = call.argument("contactKey")
-        handleIdentityAction {
-            it.setProfileId(contactKey ?: "")
-            result.success(null)
-        }
+        call.argument<String?>("contactKey")?.let { contactKey ->
+            handleIdentityAction {
+                it.setProfileId(contactKey)
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "contactKey is null", null)
     }
 
     private fun getAttributes(result: Result) {
@@ -181,18 +182,21 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun setAttribute(call: MethodCall, result: Result) {
         val key: String? = call.argument("key")
         val value: String? = call.argument("value")
-        handleIdentityAction {
-            it.setProfileAttribute(key ?: "", value ?: "")
-            result.success(null)
-        }
+        key?.let { key ->
+            handleIdentityAction {
+                it.setProfileAttribute(key, value)
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "attribute key is null", null)
     }
 
     private fun clearAttribute(call: MethodCall, result: Result) {
-        val key: String? = call.argument("key")
-        handleIdentityAction {
-            it.clearProfileAttribute(key ?: "")
-            result.success(null)
-        }
+        call.argument<String?>("key")?.let { key ->
+            handleIdentityAction {
+                it.clearProfileAttribute(key)
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "clearAttribute key is null", null)
     }
 
     private fun getTags(result: Result) {
@@ -203,19 +207,21 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun addTag(call: MethodCall, result: Result) {
-        val tag: String? = call.argument("tag")
-        handlePushAction {
-            it.registrationManager.edit().addTag(tag ?: "").commit()
-            result.success(null)
-        }
+        call.argument<String?>("tag")?.let { tag ->
+            handlePushAction {
+                it.registrationManager.edit().addTag(tag).commit()
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "tag is null", null)
     }
 
     private fun removeTag(call: MethodCall, result: Result) {
-        val tag: String? = call.argument("tag")
-        handlePushAction {
-            it.registrationManager.edit().removeTag(tag ?: "").commit()
-            result.success(null)
-        }
+        call.argument<String?>("tag")?.let { tag ->
+            handlePushAction {
+                it.registrationManager.edit().removeTag(tag).commit()
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "tag is null", null)
     }
 
     private fun trackEvent(call: MethodCall, result: Result) {

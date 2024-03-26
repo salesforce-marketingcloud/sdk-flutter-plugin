@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _onClarAttributesClicked(String key) {
+  void _onClearAttributesClicked(String key) {
     try {
       SFMCSdk.clearAttribute(key);
       _showToast('Attribute cleared successfully!');
@@ -230,7 +230,7 @@ class _MyAppState extends State<MyApp> {
                 "Get the system token from the SFMC SDK using SFMCSdk.getSystemToken().",
                 () async {
                   await initPlatformState();
-                  _showToast("System Token Updated");
+                  _showToast("System Token Fetched");
                 },
                 'GET SYSTEM TOKEN',
                 content: _systemToken,
@@ -240,7 +240,7 @@ class _MyAppState extends State<MyApp> {
                 "Get the device ID from the SFMC SDK using SFMCSdk.getDeviceId().",
                 () async {
                   await initPlatformState();
-                  _showToast("Device ID Updated");
+                  _showToast("Device ID Fetched");
                 },
                 'GET DEVICE ID',
                 content: _deviceId,
@@ -250,7 +250,7 @@ class _MyAppState extends State<MyApp> {
                 "Check if push notifications are enabled or disabled using SFMCSdk.isPushEnabled().",
                 () async {
                   await initPlatformState();
-                  _showToast("Push Status Updated");
+                  _showToast("Push Status Fetched");
                 },
                 'UPDATE PUSH STATUS',
                 content: _pushStatus,
@@ -278,7 +278,7 @@ class _MyAppState extends State<MyApp> {
                 "Get the contact key from the SFMC SDK using SFMCSdk.getContactKey().",
                 () async {
                   await initPlatformState();
-                  _showToast("Contact Key Updated");
+                  _showToast("Contact Key Fetched");
                 },
                 'GET CONTACT KEY',
                 content: _contactKey,
@@ -294,7 +294,7 @@ class _MyAppState extends State<MyApp> {
                 "Get tags from the SFMC SDK using SFMCSdk.getTags().",
                 () async {
                   await initPlatformState();
-                  _showToast("Tags Updated");
+                  _showToast("Tags Fetched");
                 },
                 'GET TAGS',
                 content: _tags.isNotEmpty ? _tags.join(', ') : 'No tags found.',
@@ -316,7 +316,7 @@ class _MyAppState extends State<MyApp> {
                 "Get attributes from the SFMC SDK using SFMCSdk.getAttributes().",
                 () async {
                   await initPlatformState();
-                  _showToast("Attributes Updated");
+                  _showToast("Attributes Fetched");
                 },
                 'GET ATTRIBUTES',
                 content: _attributes.isNotEmpty
@@ -333,7 +333,7 @@ class _MyAppState extends State<MyApp> {
               buildCardWithInput(
                 "Clear Attribute",
                 "Clear an attribute from the SFMC SDK using SFMCSdk.clearAttribute(key).",
-                _onClarAttributesClicked,
+                _onClearAttributesClicked,
                 'CLEAR ATTRIBUTE',
               ),
               buildCard(
@@ -359,7 +359,7 @@ class _MyAppState extends State<MyApp> {
                 "Log the state of the SFMC SDK using SFMCSdk.logSdkState().",
                 () {
                   SFMCSdk.logSdkState();
-                  _showToast("SDK state logged.");
+                  _showToast("Check platform logs for SDK state.");
                 },
                 'LOG SDK STATE',
               ),
