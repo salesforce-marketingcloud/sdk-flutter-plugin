@@ -87,6 +87,7 @@ class _MyAppState extends State<MyApp> {
       _showToast("Device ID Fetched");
     } catch (e) {
       _logException(e);
+      _showToast('Failed to get Device Id.');
     }
   }
 
@@ -199,7 +200,7 @@ class _MyAppState extends State<MyApp> {
   void _trackCustomEvent() {
     try {
       var customEvent = CustomEvent('CustomEventName',
-          attributes: {'key1': 't rackCustomEvent'});
+          attributes: {'key1': 'trackCustomEvent'});
       SFMCSdk.trackEvent(customEvent);
       _showToast("Event tracked successfully");
     } catch (e) {
