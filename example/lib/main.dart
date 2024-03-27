@@ -27,7 +27,6 @@
 
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:sfmc/sfmc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/foundation.dart';
@@ -58,6 +57,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    _updateAnalyticsToggle();
     //enable logging
     if (kDebugMode) {
       SFMCSdk.enableLogging();
@@ -65,84 +65,85 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _fetchSystemToken() async {
-    String systemToken;
     try {
-      systemToken = await SFMCSdk.getSystemToken() ?? 'Not Available';
-    } on PlatformException {
-      systemToken = 'Failed to get system token.';
+      final String systemToken =
+          await SFMCSdk.getSystemToken() ?? 'Not Available';
+      setState(() {
+        _systemToken = systemToken;
+      });
+      _showToast("System Token Fetched");
+    } catch (e) {
+      _logException(e);
+      _showToast('Failed to get system token.');
     }
-    setState(() {
-      _systemToken = systemToken;
-    });
-    _showToast("System Token Fetched");
   }
 
   Future<void> _fetchDeviceId() async {
-    String deviceId;
     try {
-      deviceId = await SFMCSdk.getDeviceId() ?? 'Not Available';
-    } on PlatformException {
-      deviceId = 'Failed to get device ID.';
+      final String deviceId = await SFMCSdk.getDeviceId() ?? 'Not Available';
+      setState(() {
+        _deviceId = deviceId;
+      });
+      _showToast("Device ID Fetched");
+    } catch (e) {
+      _logException(e);
     }
-    setState(() {
-      _deviceId = deviceId;
-    });
-    _showToast("Device ID Fetched");
   }
 
   Future<void> _updatePushStatus() async {
-    String pushStatus;
     try {
-      pushStatus = await SFMCSdk.isPushEnabled() == true
+      final String pushStatus = await SFMCSdk.isPushEnabled() == true
           ? "Push is Enabled"
           : "Push is Disabled";
-    } on PlatformException {
-      pushStatus = 'Failed to get Push Status.';
+      setState(() {
+        _pushStatus = pushStatus;
+      });
+      _showToast("Push Status Updated");
+    } catch (e) {
+      _logException(e);
+      _showToast('Failed to get Push Status.');
     }
-    setState(() {
-      _pushStatus = pushStatus;
-    });
-    _showToast("Push Status Updated");
   }
 
   Future<void> _fetchAttributes() async {
-    String attributes;
     try {
       var response = await SFMCSdk.getAttributes();
-      attributes = jsonEncode(response);
-    } on PlatformException {
-      attributes = "Error getting attributes.";
+      final String attributes = jsonEncode(response);
+      setState(() {
+        _attributes = attributes;
+      });
+      _showToast("Attributes Fetched");
+    } catch (e) {
+      _logException(e);
+      _showToast("Error getting attributes.");
     }
-    setState(() {
-      _attributes = attributes;
-    });
-    _showToast("Attributes Fetched");
   }
 
   Future<void> _fetchTags() async {
-    List<String> tags;
     try {
-      tags = await SFMCSdk.getTags();
-    } on PlatformException {
-      tags = [];
+      final List<String> tags = await SFMCSdk.getTags();
+      setState(() {
+        _tags = tags;
+      });
+      _showToast("Tags Fetched");
+    } catch (e) {
+      _logException(e);
+      _showToast("Error fetching tags.");
     }
-    setState(() {
-      _tags = tags;
-    });
-    _showToast("Tags Fetched");
   }
 
   Future<void> _fetchContactKey() async {
-    String contactKey;
     try {
-      contactKey = await SFMCSdk.getContactKey() ?? 'Not Available';
-    } on PlatformException {
-      contactKey = 'Failed to get contact key.';
+      final String contactKey =
+          await SFMCSdk.getContactKey() ?? 'Not Available';
+      setState(() {
+        _contactKey = contactKey;
+      });
+      _showToast("Contact Key Fetched");
+    } catch (e) {
+      _logException(e);
+      _showToast('Failed to get contact key.');
     }
-    setState(() {
-      _contactKey = contactKey;
-    });
-    _showToast("Contact Key Fetched");
   }
 
   void _onSetAttributesClicked(String key, String value) {
@@ -150,6 +151,7 @@ class _MyAppState extends State<MyApp> {
       SFMCSdk.setAttribute(key, value);
       _showToast('Attribute set successfully!');
     } catch (e) {
+      _logException(e);
       _showToast('Error setting attribute.');
     }
   }
@@ -159,6 +161,7 @@ class _MyAppState extends State<MyApp> {
       SFMCSdk.clearAttribute(key);
       _showToast('Attribute cleared successfully!');
     } catch (e) {
+      _logException(e);
       _showToast('Error removing attribute.');
     }
   }
@@ -168,7 +171,8 @@ class _MyAppState extends State<MyApp> {
       SFMCSdk.addTag(tag);
       _showToast('Tags set successfully!');
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error setting tags.');
+      _logException(e);
+      _showToast('Error setting tags.');
     }
   }
 
@@ -177,6 +181,7 @@ class _MyAppState extends State<MyApp> {
       SFMCSdk.removeTag(tag);
       _showToast('Tag removed successfully!');
     } catch (e) {
+      _logException(e);
       _showToast('Error setting tags.');
     }
   }
@@ -186,6 +191,7 @@ class _MyAppState extends State<MyApp> {
       SFMCSdk.setContactKey(value);
       _showToast('Contact key is set.');
     } catch (e) {
+      _logException(e);
       _showToast('Error setting contact key.');
     }
   }
@@ -193,11 +199,25 @@ class _MyAppState extends State<MyApp> {
   void _trackCustomEvent() {
     try {
       var customEvent = CustomEvent('CustomEventName',
-          attributes: {'key1': 'trackCustomEvent'});
+          attributes: {'key1': 't rackCustomEvent'});
       SFMCSdk.trackEvent(customEvent);
       _showToast("Event tracked successfully");
     } catch (e) {
+      _logException(e);
       _showToast('Error tracking event.');
+    }
+  }
+
+  void _updateAnalyticsToggle() async {
+    try {
+      bool analyticsEnabled = await SFMCSdk.isAnalyticsEnabled();
+      bool piAnalyticsEnabled = await SFMCSdk.isPiAnalyticsEnabled();
+      setState(() {
+        _analyticsEnabled = analyticsEnabled;
+        _piAnalyticsEnabled = piAnalyticsEnabled;
+      });
+    } catch (e) {
+      _logException(e);
     }
   }
 
@@ -210,6 +230,12 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: const Color.fromARGB(249, 0, 0, 0),
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  void _logException(dynamic exception) {
+    if (kDebugMode) {
+      debugPrint(exception.toString());
+    }
   }
 
   @override
