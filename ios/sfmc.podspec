@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'sfmc'
-  s.version          = '8.1.0'
+  s.version          = '8.1.1'
   s.summary          = 'Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.'
   s.description      = <<-DESC
   Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.
