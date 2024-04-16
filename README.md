@@ -1,4 +1,4 @@
-# Salesforce Marketing Cloud Plugin for Flutter
+# Salesforce Marketing Cloud Flutter Plugin
 
 This module enables the integration of the Marketing Cloud Engagement MobilePush SDK into your Flutter applications.
 
