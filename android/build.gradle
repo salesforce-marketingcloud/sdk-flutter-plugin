@@ -31,6 +31,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    if (project.android.hasProperty("namespace")) {
+        namespace("com.salesforce.marketingcloud.sfmc")
+    }
     compileSdkVersion compile_sdk_version
 
     compileOptions {
