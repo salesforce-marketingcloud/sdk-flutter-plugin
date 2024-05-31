@@ -18,7 +18,7 @@ class InboxMessage {
 
   InboxMessage({
     required this.id,
-    required this.title,
+    this.title,
     this.alert,
     this.custom,
     this.customKeys,
@@ -90,4 +90,4 @@ class InboxMessage {
   }
 }
 
- List<InboxMessage> inboxMessages = [];
+List<InboxMessage> inboxMessages = [];
