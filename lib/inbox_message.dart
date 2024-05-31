@@ -2,7 +2,7 @@ import 'media.dart';
 
 class InboxMessage {
   final String id;
-  final String title;
+  final String? title;
   final String? alert;
   final String? custom;
   final Map<String, String>? customKeys;
@@ -81,7 +81,7 @@ class InboxMessage {
     return subject;
   }
 
-  String title() {
+  String? title() {
     return title;
   }
 
@@ -89,3 +89,5 @@ class InboxMessage {
     return url;
   }
 }
+
+ List<InboxMessage> inboxMessages = [];
