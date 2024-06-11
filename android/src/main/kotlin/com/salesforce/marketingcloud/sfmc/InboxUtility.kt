@@ -14,7 +14,6 @@ class InboxUtils {
 
             }
         }
-
         fun Map<String, String>?.asKeyValueJsonArray(): JSONArray? {
             val jsonArray = JSONArray()
             this?.forEach { (key, value) ->

@@ -134,8 +134,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                             Text('Message marked as read')),
                                   );
                                   setState(() {
-                                    message.read =
-                                        true; // Update the message's read status
+                                    message.read = true;
                                   });
                                 }
                               }),
@@ -149,6 +148,9 @@ class _MessagesPageState extends State<MessagesPage> {
                                 const SnackBar(
                                     content: Text('Message deleted')),
                               );
+                              setState(() {
+                                message.deleted = true;
+                              });
                             },
                           ),
                         ],
