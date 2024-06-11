@@ -27,6 +27,7 @@
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'inbox_message.dart';
 import 'sfmc_method_channel.dart';
 
 abstract class SfmcPlatform extends PlatformInterface {
@@ -128,5 +129,17 @@ abstract class SfmcPlatform extends PlatformInterface {
   Future<bool> isPiAnalyticsEnabled() {
     throw UnimplementedError(
         'isPiAnalyticsEnabled() has not been implemented.');
+  }
+
+  Future<String> getMessages() async {
+    throw UnimplementedError('getMessages() has not been implemented.');
+  }
+
+  Future<void> setMessageRead(String id) {
+    throw UnimplementedError('setMessageRead() has not been implemented.');
+  }
+
+  Future<void> deleteMessage(String id) {
+    throw UnimplementedError('deleteMessage() has not been implemented.');
   }
 }

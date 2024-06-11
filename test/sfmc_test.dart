@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
 import 'package:sfmc/sfmc_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -7,6 +8,7 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   String recentCalledMethod = '';
   final Map<String, String> mockAttributes = {};
   final List<String> mockTags = [];
+  final String mockInboxMsgs="";
   String? mockContactKey;
   Map<String, dynamic>? lastTrackedEvent;
   bool mockAnalyticsEnabled = false;
@@ -135,7 +137,17 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
     _logCall('isPiAnalyticsEnabled');
     return Future.value(mockPiAnalyticsEnabled);
   }
-}
+
+  @override
+  Future<String> getMessages() {
+    _logCall('getMessages');
+    return Future.value(mockInboxMsgs);
+  }
+// Future<List<String>> getMessages()
+//   {
+//     return Future.value([]);
+//   }
+// }
 
 void main() {
   final SfmcPlatform initialPlatform = SfmcPlatform.instance;
@@ -533,4 +545,15 @@ void main() {
       expect(mockPlatform.recentCalledMethod, 'isPiAnalyticsEnabled');
     });
   });
+}
+
+  @override
+  Future<void> setMessageRead(String id) async {
+    _logCall('setPiAnalyticsEnabled');
+
+  }
+  Future<void> deleteMessage(String id) async {
+    _logCall('setPiAnalyticsEnabled');
+
+  }
 }

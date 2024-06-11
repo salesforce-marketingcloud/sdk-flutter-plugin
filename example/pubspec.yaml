@@ -31,6 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   fluttertoast: ^8.2.4
 
+  url_launcher: any
 dev_dependencies:
   integration_test:
     sdk: flutter

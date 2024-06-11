@@ -256,4 +256,16 @@ class SFMCSdk {
   static Future<bool> isPiAnalyticsEnabled() {
     return SfmcPlatform.instance.isPiAnalyticsEnabled();
   }
+
+  static Future<String> getMessages() {
+    return SfmcPlatform.instance.getMessages();
+  }
+
+  static Future<void> setMessageRead(String id) {
+    return SfmcPlatform.instance.setMessageRead(id);
+  }
+
+  static Future<void> deleteMessage(String id) {
+    return SfmcPlatform.instance.deleteMessage(id);
+  }
 }

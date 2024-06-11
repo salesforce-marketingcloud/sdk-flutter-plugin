@@ -1,5 +1,3 @@
-import 'media.dart';
-
 class InboxMessage {
   final String id;
   final String? title;
@@ -33,61 +31,70 @@ class InboxMessage {
     this.media,
   });
 
-  String? alert() {
-    return alert;
+  factory InboxMessage.fromJson(Map<String, dynamic> json) {
+    return InboxMessage(
+      id: json['id'],
+      subject: json['subject'],
+      title: json['title'],
+      alert: json['alert'],
+      sound: json['sound'],
+      media: json['media'] != null ? Media.fromJson(json['media']) : null,
+      startDateUtc: json['startDateUtc'] != null
+          ? DateTime.parse(json['startDateUtc'])
+          : null,
+      endDateUtc: json['endDateUtc'] != null
+          ? DateTime.parse(json['endDateUtc'])
+          : null,
+      sendDateUtc: json['sendDateUtc'] != null
+          ? DateTime.parse(json['sendDateUtc'])
+          : null,
+      url: json['url'],
+      custom: json['custom'],
+      customKeys: json['customKeys'] != null
+          ? Map<String, String>.from(json['customKeys'])
+          : null,
+      deleted: json['deleted'] ?? false,
+      read: json['read'] ?? false,
+    );
   }
 
-  String? custom() {
-    return custom;
-  }
-
-  Map<String, String>? customKeys() {
-    return customKeys;
-  }
-
-  bool deleted() {
-    return deleted;
-  }
-
-  DateTime? endDateUtc() {
-    return endDateUtc;
-  }
-
-  String id() {
-    return id;
-  }
-
-  Media? media() {
-    return media;
-  }
-
-  bool read() {
-    return read;
-  }
-
-  DateTime? sendDateUtc() {
-    return sendDateUtc;
-  }
-
-  String? sound() {
-    return sound;
-  }
-
-  DateTime? startDateUtc() {
-    return startDateUtc;
-  }
-
-  String? subject() {
-    return subject;
-  }
-
-  String? title() {
-    return title;
-  }
-
-  String url() {
-    return url;
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'alert': alert,
+      'custom': custom,
+      'customKeys': customKeys,
+      'deleted': deleted,
+      'endDateUtc': endDateUtc?.toIso8601String(),
+      'read': read,
+      'sendDateUtc': sendDateUtc?.toIso8601String(),
+      'sound': sound,
+      'startDateUtc': startDateUtc?.toIso8601String(),
+      'subject': subject,
+      'url': url,
+      'media': media?.toJson(),
+    };
   }
 }
 
-List<InboxMessage> inboxMessages = [];
+class Media {
+  final String? altText;
+  final String? url;
+
+  Media({this.altText, this.url});
+
+  factory Media.fromJson(Map<String, dynamic> json) {
+    return Media(
+      altText: json['altText'],
+      url: json['url'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'altText': altText,
+      'url': url,
+    };
+  }
+}

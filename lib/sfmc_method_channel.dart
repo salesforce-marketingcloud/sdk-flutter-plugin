@@ -27,6 +27,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:sfmc/inbox_message.dart';
 
 import 'sfmc_platform_interface.dart';
 
@@ -146,5 +147,22 @@ class MethodChannelSfmc extends SfmcPlatform {
   Future<bool> isPiAnalyticsEnabled() async {
     return await methodChannel.invokeMethod<bool>('isPiAnalyticsEnabled') ??
         false;
+  }
+
+  @override
+  Future<String> getMessages() async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>('getMessages');
+    return result;
+  }
+
+  @override
+  Future<void> setMessageRead(String id) {
+    return methodChannel.invokeMethod('setMessageRead', {'messageId': id});
+  }
+
+  @override
+  Future<void> deleteMessage(String id) {
+    return methodChannel.invokeMethod('deleteMessage', {'messageId': id});
   }
 }

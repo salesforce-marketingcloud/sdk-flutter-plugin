@@ -57,6 +57,7 @@ class MainApplication : FlutterApplication() {
                 setMarketingCloudServerUrl(BuildConfig.PUSH_TSE)
                 setSenderId(BuildConfig.PUSH_SENDER_ID)
                 setAnalyticsEnabled(true)
+               setInboxEnabled(true)
                 setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
                     NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
                         NotificationManager.getDefaultNotificationBuilder(

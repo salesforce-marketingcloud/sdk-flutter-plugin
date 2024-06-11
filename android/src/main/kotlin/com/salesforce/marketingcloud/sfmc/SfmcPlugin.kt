@@ -27,6 +27,8 @@
 
 package com.salesforce.marketingcloud.sfmc
 
+import com.salesforce.marketingcloud.messages.inbox.*
+
 import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
@@ -38,6 +40,7 @@ import com.salesforce.marketingcloud.sfmcsdk.components.identity.Identity
 import com.salesforce.marketingcloud.sfmcsdk.components.logging.LogLevel
 import com.salesforce.marketingcloud.sfmcsdk.components.logging.LogListener
 import com.salesforce.marketingcloud.sfmcsdk.modules.push.PushModuleInterface
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -76,6 +79,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "disablePush" -> disablePush(result)
             "getDeviceId" -> getDeviceId(result)
             "getTags" -> getTags(result)
+            "getMessages" -> getMessages(result)
             "addTag" -> addTag(call, result)
             "removeTag" -> removeTag(call, result)
             "getContactKey" -> getContactKey(result)
@@ -88,6 +92,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "setAnalyticsEnabled" -> setAnalyticsEnabled(call, result)
             "isPiAnalyticsEnabled" -> isPiAnalyticsEnabled(result)
             "setPiAnalyticsEnabled" -> setPiAnalyticsEnabled(call, result)
+            "setMessageRead" -> setMessageRead(call, result)
+            "deleteMessage" -> deleteMessage(call, result)
             else -> result.notImplemented()
         }
     }
@@ -244,6 +250,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+
     private fun isAnalyticsEnabled(result: Result) {
         handlePushAction {
             val isEnabled = it.analyticsManager.areAnalyticsEnabled()
@@ -270,6 +277,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+
     private fun setPiAnalyticsEnabled(call: MethodCall, result: Result) {
         val enable: Boolean = call.argument("analyticsEnabled") ?: false
         handlePushAction {
@@ -280,6 +288,37 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             }
             result.success(null)
         }
+    }
+
+
+    private fun getMessages(result: Result) {
+        handlePushAction {
+            val inboxMessages: MutableList<InboxMessage> = it.inboxMessageManager.getMessages()
+            android.util.Log.d("Pragati", "getMessages: $inboxMessages")
+            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            println("Formatted Inbox Messages: $str")
+            result.success(str)
+        }
+    }
+
+    private fun setMessageRead(call: MethodCall, result: Result) {
+        call.argument<String?>("messageId")?.let { messageId ->
+            handlePushAction {
+                it.inboxMessageManager.setMessageRead(messageId)
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "messageId is null", null)
+
+    }
+
+    private fun deleteMessage(call: MethodCall, result: Result) {
+        call.argument<String?>("messageId")?.let { messageId ->
+            handlePushAction {
+                it.inboxMessageManager.deleteMessage(messageId)
+                result.success(null)
+            }
+        } ?: result.error("INVALID_ARGUMENTS", "messageId is null", null)
+
     }
 
     private fun handleSFMCAction(action: (SFMCSdk) -> Unit) {
@@ -305,4 +344,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
+
+
 }

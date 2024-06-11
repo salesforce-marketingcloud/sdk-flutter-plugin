@@ -28,12 +28,16 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:sfmc/sfmc.dart';
+import 'package:sfmc/inbox_message.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
+import 'messages_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -52,6 +56,8 @@ class _MyAppState extends State<MyApp> {
   String _contactKey = 'Not available';
   bool _analyticsEnabled = false;
   bool _piAnalyticsEnabled = false;
+  List<InboxMessage> messagesList = [];
+  List<InboxMessage> _messages = [];
 
   @override
   void initState() {
@@ -117,6 +123,25 @@ class _MyAppState extends State<MyApp> {
     } catch (e) {
       _logException(e);
       _showToast("Error getting attributes.");
+    }
+  }
+
+  List<InboxMessage> parseMessages(String jsonString) {
+    final List<dynamic> jsonArray = jsonDecode(jsonString);
+    return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
+  }
+
+  Future<void> _fetchMessages() async {
+    try {
+      final String messages = await SFMCSdk.getMessages();
+      final List<InboxMessage> messagesList = parseMessages(messages);
+      setState(() {
+        _messages = messagesList;
+      });
+      _showToast("Messages Fetched");
+    } catch (e) {
+      _logException(e);
+      _showToast("Error fetching messages.");
     }
   }
 
@@ -261,6 +286,13 @@ class _MyAppState extends State<MyApp> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             children: <Widget>[
+              buildCard(
+                "Get Messages",
+                "Get Messages from the SFMC SDK using SFMCSdk.getMessages().",
+                _fetchMessages,
+                'GET MESSAGES',
+                content: _messages.isNotEmpty ? _messages[0].id : 'No Mesages',
+              ),
               buildCard(
                 "System Token",
                 "Get the system token from the SFMC SDK using SFMCSdk.getSystemToken().",
@@ -514,7 +546,7 @@ class _MyAppState extends State<MyApp> {
                             color: Color.fromARGB(255, 120, 119, 119),
                             fontWeight: FontWeight.bold,
                             fontSize: 12))),
-                if (content.isNotEmpty)
+                if (buttonText != 'GET MESSAGES' && content.isNotEmpty)
                   SelectableText(
                     content,
                     style: const TextStyle(
@@ -525,7 +557,20 @@ class _MyAppState extends State<MyApp> {
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton(
-                    onPressed: buttonAction,
+                    onPressed: () {
+                      if (buttonText == 'GET MESSAGES') {
+                        buttonAction();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MessagesPage(messages: _messages),
+                          ),
+                        );
+                      } else {
+                        buttonAction();
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 11, 95, 200),
                     ),
