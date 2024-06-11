@@ -51,7 +51,6 @@ class InboxUtils {
             }
         }
 
-        // Function to convert a list of InboxMessage to JSON String
         fun inboxMessagesToString(messages: List<InboxMessage>): String {
             return JSONArray(messages.mapNotNull { it.toJson() }).toString()
         }

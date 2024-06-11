@@ -26,8 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
-import 'inbox_message.dart';
 import 'sfmc_method_channel.dart';
 
 abstract class SfmcPlatform extends PlatformInterface {

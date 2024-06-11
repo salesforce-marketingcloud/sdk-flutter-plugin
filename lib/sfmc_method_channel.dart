@@ -27,8 +27,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:sfmc/inbox_message.dart';
-
 import 'sfmc_platform_interface.dart';
 
 class MethodChannelSfmc extends SfmcPlatform {

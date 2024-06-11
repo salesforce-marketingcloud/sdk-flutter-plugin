@@ -294,9 +294,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun getMessages(result: Result) {
         handlePushAction {
             val inboxMessages: MutableList<InboxMessage> = it.inboxMessageManager.getMessages()
-            android.util.Log.d("Pragati", "getMessages: $inboxMessages")
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
-            println("Formatted Inbox Messages: $str")
             result.success(str)
         }
     }
