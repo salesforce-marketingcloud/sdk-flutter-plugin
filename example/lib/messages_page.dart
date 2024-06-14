@@ -101,7 +101,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                     : 'Not available',
                                 style: TextStyle(
                                   color: Colors.grey[700],
-                                  fontSize: 14,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -157,6 +157,10 @@ class _MessagesPageState extends State<MessagesPage> {
                       ),
                       onTap: () async {
                         // Handle tapping on the message tile
+                        _onSetMessagesRead(message.id);
+                        setState(() {
+                          message.read = true;
+                        });
                         if (!await launchUrl(url)) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Could not launch $url')),
