@@ -35,22 +35,20 @@
     [GeneratedPluginRegistrant registerWithRegistry:self];
     // Override point for customization after application launch.
     // Configure the SFMC sdk ...
-    PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"16586d33-807c-4e1a-9a73-feb54a5c4ad1"];
-    [pushConfigBuilder setAccessToken:@"v9q3gd5ysstjrwv2vqcst296"];
-    [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"https://mcgrjfgk81ckrt0h4rwlnbhmbvf4.device.marketingcloudapis.com/"]];
-    [pushConfigBuilder setMid:@"348137931902"];
+    PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"{MC_APP_ID}"];
+    [pushConfigBuilder setAccessToken:@"{MC_ACCESS_TOKEN}"];
+    [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"{MC_APP_SERVER_URL}"]];
+    [pushConfigBuilder setMid:@"MC_MID"];
     [pushConfigBuilder setAnalyticsEnabled:YES];
-    [pushConfigBuilder setInboxEnabled:YES];
-
-    [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(
-            SFMCSdkOperationResult result) {
+    
+    [SFMCSdk initializeSdk:[[[SFMCSdkConfigBuilder new] setPushWithConfig:[pushConfigBuilder build] onCompletion:^(SFMCSdkOperationResult result) {
         if (result == SFMCSdkOperationResultSuccess) {
             [self pushSetup];
         } else {
             NSLog(@"SFMC sdk configuration failed.");
         }
     }] build]];
-
+    
     return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -58,32 +56,32 @@
     // AppDelegate adheres to the SFMCSdkURLHandlingDelegate protocol
     // and handles URLs passed back from the SDK in `sfmc_handleURL`.
     // For more information, see https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html
-    [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         [mp setURLHandlingDelegate:self];
     }];
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         // set the UNUserNotificationCenter delegate - the delegate must be set here in
         // didFinishLaunchingWithOptions
         [UNUserNotificationCenter currentNotificationCenter].delegate = self;
         [[UIApplication sharedApplication] registerForRemoteNotifications];
-
+        
         [[UNUserNotificationCenter currentNotificationCenter]
-                requestAuthorizationWithOptions:UNAuthorizationOptionAlert |
-                                                UNAuthorizationOptionSound |
-                                                UNAuthorizationOptionBadge
-                              completionHandler:^(BOOL granted, NSError *_Nullable error) {
-                                  if (error == nil) {
-                                      if (granted == YES) {
-                                          NSLog(@"User granted permission");
-                                      }
-                                  }
-                              }];
+         requestAuthorizationWithOptions:UNAuthorizationOptionAlert |
+         UNAuthorizationOptionSound |
+         UNAuthorizationOptionBadge
+         completionHandler:^(BOOL granted, NSError *_Nullable error) {
+            if (error == nil) {
+                if (granted == YES) {
+                    NSLog(@"User granted permission");
+                }
+            }
+        }];
     });
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         [mp setDeviceToken:deviceToken];
     }];
 }
@@ -95,10 +93,9 @@
 // The method will be called on the delegate when the user responded to the notification by opening
 // the application, dismissing the notification or choosing a UNNotificationAction. The delegate
 // must be set before the application returns from applicationDidFinishLaunching:.
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(
-        void))completionHandler {
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
     // tell the MarketingCloudSDK about the notification
-    [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         [mp setNotificationRequest:response.notification.request];
     }];
     if (completionHandler != nil) {
@@ -106,15 +103,12 @@
     }
 }
 
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(
-        UNNotificationPresentationOptions options))completionHandler {
-    completionHandler(
-            UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+    completionHandler(UNAuthorizationOptionSound | UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(
-        UIBackgroundFetchResult))completionHandler {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         [mp setNotificationUserInfo:userInfo];
     }];
     completionHandler(UIBackgroundFetchResultNewData);
@@ -122,8 +116,7 @@
 
 - (void)sfmc_handleURL:(NSURL * _Nonnull)url type:(NSString * _Nonnull)type {
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
-        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(
-                BOOL success) {
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
             if (success) {
                 NSLog(@"url %@ opened successfully", url);
             } else {
