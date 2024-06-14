@@ -29,21 +29,22 @@
 #import <SFMCSDK/SFMCSDK.h>
 #import <MarketingCloudSDK/MarketingCloudSDK.h>
 #import "NSDictionary+SFMCEvent.h"
+#import "InboxUtility.h"
 
 @implementation SfmcPlugin
 const int LOG_LENGTH = 800;
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-                                     methodChannelWithName:@"sfmc"
-                                     binaryMessenger:[registrar messenger]];
-    SfmcPlugin* instance = [[SfmcPlugin alloc] init];
++ (void)registerWithRegistrar:(NSObject <FlutterPluginRegistrar> *)registrar {
+    FlutterMethodChannel *channel = [FlutterMethodChannel
+            methodChannelWithName:@"sfmc"
+                  binaryMessenger:[registrar messenger]];
+    SfmcPlugin *instance = [[SfmcPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
-    
+
     //Add default tag.
-    [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
-        (void)[mp addTag:@"Flutter"];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
+        (void) [mp addTag:@"Flutter"];
     }];
 }
 
@@ -58,11 +59,11 @@ const int LOG_LENGTH = 800;
     NSInteger length = msg.length;
     for (int i = 0; i < length; i += LOG_LENGTH) {
         NSInteger rangeLength = MIN(length - i, LOG_LENGTH);
-        [self log:[msg substringWithRange:NSMakeRange((NSUInteger)i, (NSUInteger)rangeLength)]];
+        [self log:[msg substringWithRange:NSMakeRange((NSUInteger) i, (NSUInteger) rangeLength)]];
     }
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([@"logSdkState" isEqualToString:call.method]) {
         [self logSdkStateWithResult:result];
     } else if ([@"getSystemToken" isEqualToString:call.method]) {
@@ -80,42 +81,50 @@ const int LOG_LENGTH = 800;
     } else if ([@"getDeviceId" isEqualToString:call.method]) {
         [self getDeviceIdWithResult:result];
     } else if ([@"setContactKey" isEqualToString:call.method]) {
-        NSString* contactKey = call.arguments[@"contactKey"];
+        NSString *contactKey = call.arguments[@"contactKey"];
         [self setContactKey:contactKey result:result];
     } else if ([@"getContactKey" isEqualToString:call.method]) {
         [self getContactKeyWithResult:result];
     } else if ([@"addTag" isEqualToString:call.method]) {
-        NSString* tag = call.arguments[@"tag"];
+        NSString *tag = call.arguments[@"tag"];
         [self addTag:tag result:result];
     } else if ([@"removeTag" isEqualToString:call.method]) {
-        NSString* tag = call.arguments[@"tag"];
+        NSString *tag = call.arguments[@"tag"];
         [self removeTag:tag result:result];
     } else if ([@"getTags" isEqualToString:call.method]) {
         [self getTagsWithResult:result];
     } else if ([@"setAttribute" isEqualToString:call.method]) {
-        NSDictionary* args = call.arguments;
-        NSString* key = args[@"key"];
-        NSString* value = args[@"value"];
+        NSDictionary *args = call.arguments;
+        NSString *key = args[@"key"];
+        NSString *value = args[@"value"];
         [self setAttributeWithKey:key value:value result:result];
         result(nil);
     } else if ([@"clearAttribute" isEqualToString:call.method]) {
-        NSString* key = call.arguments[@"key"];
+        NSString *key = call.arguments[@"key"];
         [self clearAttributeWithKey:key result:result];
     } else if ([@"getAttributes" isEqualToString:call.method]) {
         [self getAttributesWithResult:result];
     } else if ([@"trackEvent" isEqualToString:call.method]) {
-        NSDictionary* eventJson = call.arguments;
+        NSDictionary *eventJson = call.arguments;
         [self trackEventWithJson:eventJson result:result];
     } else if ([@"setAnalyticsEnabled" isEqualToString:call.method]) {
-        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        NSNumber *analyticsEnabled = call.arguments[@"analyticsEnabled"];
         [self setAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
     } else if ([@"isAnalyticsEnabled" isEqualToString:call.method]) {
         [self isAnalyticsEnabledWithResult:result];
     } else if ([@"setPiAnalyticsEnabled" isEqualToString:call.method]) {
-        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        NSNumber *analyticsEnabled = call.arguments[@"analyticsEnabled"];
         [self setPiAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
     } else if ([@"isPiAnalyticsEnabled" isEqualToString:call.method]) {
         [self isPiAnalyticsEnabledWithResult:result];
+    } else if ([@"getMessages" isEqualToString:call.method]) {
+        [self getMessagesWithResult:result];
+    } else if ([@"setMessageRead" isEqualToString:call.method]) {
+        NSString *messageId = call.arguments[@"messageId"];
+        [self setMessageRead:messageId result:result];
+    } else if ([@"deleteMessage" isEqualToString:call.method]) {
+        NSString *messageId = call.arguments[@"messageId"];
+        [self deleteMessage:messageId result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -127,8 +136,8 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)getSystemTokenWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSString* deviceToken = [mp deviceToken];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSString *deviceToken = [mp deviceToken];
         result(deviceToken);
     }];
 }
@@ -144,85 +153,85 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)enablePushWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [mp setPushEnabled:YES];
         result(nil);
     }];
 }
 
 - (void)disablePushWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [mp setPushEnabled:NO];
         result(nil);
     }];
 }
 
 - (void)isPushEnabledWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL status = [mp pushEnabled];
         result(@(status));
     }];
 }
 
 - (void)getDeviceIdWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSString* deviceId =  [mp deviceIdentifier];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSString *deviceId = [mp deviceIdentifier];
         result(deviceId);
     }];
 }
 
-- (void)setContactKey:(NSString* _Nonnull)contactKey result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+- (void)setContactKey:(NSString * _Nonnull)contactKey result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [[SFMCSdk identity] setProfileId:contactKey];
         result(nil);
     }];
 }
 
 - (void)getContactKeyWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSString* contactKey = [mp contactKey];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSString *contactKey = [mp contactKey];
         result(contactKey);
     }];
 }
 
-- (void)addTag:(NSString* _Nonnull)tag result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+- (void)addTag:(NSString * _Nonnull)tag result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL ignore = [mp addTag:tag];
         result(nil);
     }];
 }
 
-- (void)removeTag:(NSString* _Nonnull)tag result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+- (void)removeTag:(NSString * _Nonnull)tag result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL ignore = [mp removeTag:tag];
         result(nil);
     }];
 }
 
 - (void)getTagsWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSArray* tags = [[mp tags] allObjects];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSArray *tags = [[mp tags] allObjects];
         result((tags != nil) ? tags : @[]);
     }];
 }
 
-- (void)setAttributeWithKey:(NSString* _Nonnull)key value:(NSString* _Nonnull)value result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+- (void)setAttributeWithKey:(NSString * _Nonnull)key value:(NSString * _Nonnull)value result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [[SFMCSdk identity] setProfileAttributes:@{key: value}];
         result(nil);
     }];
 }
 
-- (void)clearAttributeWithKey:(NSString* _Nonnull)key result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+- (void)clearAttributeWithKey:(NSString * _Nonnull)key result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [[SFMCSdk identity] clearProfileAttributeWithKey:key];
         result(nil);
     }];
 }
 
 - (void)getAttributesWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
-        NSDictionary* attributes = [mp attributes];
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSDictionary *attributes = [mp attributes];
         result((attributes != nil) ? attributes : @{});
     }];
 }
@@ -233,37 +242,72 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)setAnalyticsEnabled:(BOOL)enabled result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [mp setAnalyticsEnabled:enabled];
         result(nil);
     }];
 }
 
 - (void)isAnalyticsEnabledWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL isEnabled = [mp isAnalyticsEnabled];
         result(@(isEnabled));
     }];
 }
 
 - (void)setPiAnalyticsEnabled:(BOOL)enabled result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         [mp setPiAnalyticsEnabled:enabled];
         result(nil);
     }];
 }
 
 - (void)isPiAnalyticsEnabledWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL isEnabled = [mp isPiAnalyticsEnabled];
         result(@(isEnabled));
+    }];
+}
+
+- (void)getMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSArray < NSDictionary * > *inboxMessages = [mp getAllMessages];
+
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray < NSDictionary * >
+        *updatedMessages = [utility processInboxMessages:inboxMessages];
+
+        NSError *error;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+        if (data) {
+            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            result(jsonString);
+        } else {
+            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+            result(@"[]"); // Return an empty array as a fallback
+        }
+    }];
+}
+
+- (void)setMessageRead:(NSString * _Nonnull)messageId result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        BOOL success = [mp markMessageWithIdReadWithMessageId:messageId];
+        result(@(success));
+    }];
+}
+
+- (void)deleteMessage:(NSString * _Nonnull)messageId result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        BOOL success = [mp markMessageWithIdDeletedWithMessageId:messageId];
+        result(@(success));
     }];
 }
 
 // https://github.com/flutter/flutter/issues/52895
 // Flutter overrides `respondToSelector` and does shady things. There is issue in flutter where `didReceiveRemoteNotification`
 // not getting called on AppDelegate. This is workaround to make sure AppDeleage `didReceiveRemoteNotification` gets called.
-- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(
+        UIBackgroundFetchResult result))completionHandler {
     completionHandler(UIBackgroundFetchResultNoData);
     return YES;
 }
