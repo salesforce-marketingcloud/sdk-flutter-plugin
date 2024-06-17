@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:sfmc/inbox_message.dart';
-import 'package:sfmc/sfmc.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:sfmc/inbox_message.dart'; // Assuming you have this class defined
+import 'package:url_launcher/url_launcher.dart';
+import 'message_utils.dart'; // Import the utility functions
 
 class MessagesPage extends StatefulWidget {
   final List<InboxMessage> messages;
@@ -15,6 +16,42 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   String _selectedMessageType = 'all';
+  List<InboxMessage> _readMessages = [];
+  List<InboxMessage> _unreadMessages = [];
+  List<InboxMessage> _deletedMessages = [];
+  int _totalMessageCount = 0;
+  int _readMessageCount = 0;
+  int _unreadMessageCount = 0;
+  int _deletedMessageCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeMessages();
+  }
+
+  Future<void> _initializeMessages() async {
+    setState(() {
+      _totalMessageCount = 0;
+      _readMessageCount = 0;
+      _unreadMessageCount = 0;
+      _deletedMessageCount = 0;
+      _readMessages = [];
+      _unreadMessages = [];
+      _deletedMessages = [];
+    });
+
+    _totalMessageCount = await fetchMessageCount();
+    _readMessageCount = await fetchReadMessageCount();
+    _unreadMessageCount = await fetchUnreadMessageCount();
+    _deletedMessageCount = await fetchDeletedMessageCount();
+
+    _readMessages = await fetchReadMessages();
+    _unreadMessages = await fetchUnreadMessages();
+    _deletedMessages = await fetchDeletedMessages();
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +60,11 @@ class _MessagesPageState extends State<MessagesPage> {
     if (_selectedMessageType == 'all') {
       filteredMessages = widget.messages;
     } else if (_selectedMessageType == 'read') {
-      filteredMessages =
-          widget.messages.where((message) => message.read).toList();
+      filteredMessages = _readMessages;
     } else if (_selectedMessageType == 'unread') {
-      filteredMessages =
-          widget.messages.where((message) => !message.read).toList();
+      filteredMessages = _unreadMessages;
+    } else if (_selectedMessageType == 'deleted') {
+      filteredMessages = _deletedMessages;
     }
 
     return Scaffold(
@@ -42,6 +79,37 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 11, 95, 200),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.white),
+            onPressed: () async {
+              setState(() {
+                widget.messages.clear();
+              });
+              await deleteAllMessages();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('All messages deleted')),
+              );
+              await _initializeMessages();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.mark_email_read, color: Colors.white),
+            onPressed: () async {
+              setState(() {
+                for (var message in widget.messages) {
+                  message.read = true;
+                }
+              });
+              await markAllMessagesAsRead();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('All messages marked as read')),
+              );
+
+              await _initializeMessages();
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -56,7 +124,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   child: Card(
                     elevation: 3,
                     child: ListTile(
@@ -96,8 +164,8 @@ class _MessagesPageState extends State<MessagesPage> {
                               const SizedBox(width: 4),
                               Text(
                                 message.sendDateUtc != null
-                                    ? _formatDateTime(message
-                                        .sendDateUtc!) // Show formatted date and time
+                                    ? formatDateTime(message
+                                    .sendDateUtc!) // Show formatted date and time
                                     : 'Not available',
                                 style: TextStyle(
                                   color: Colors.grey[700],
@@ -108,7 +176,8 @@ class _MessagesPageState extends State<MessagesPage> {
                           ),
                         ],
                       ),
-                      trailing: Row(
+                      trailing: _selectedMessageType != 'deleted'
+                          ? Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
@@ -116,22 +185,27 @@ class _MessagesPageState extends State<MessagesPage> {
                                 message.read
                                     ? Icons.mark_email_read
                                     : Icons.mark_email_unread,
-                                color: message.read ? Colors.blue : Colors.grey,
+                                color: message.read
+                                    ? Colors.blue
+                                    : Colors.grey,
                                 size: 24,
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 // Call function to mark message as read
                                 if (message.read) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     const SnackBar(
                                         content: Text('Already read')),
                                   );
                                 } else {
-                                  _onSetMessagesRead(message.id);
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  await setMessagesRead(message.id);
+                                  await _initializeMessages();
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     const SnackBar(
-                                        content:
-                                            Text('Message marked as read')),
+                                        content: Text(
+                                            'Message marked as read')),
                                   );
                                   setState(() {
                                     message.read = true;
@@ -141,31 +215,30 @@ class _MessagesPageState extends State<MessagesPage> {
                           IconButton(
                             icon: const Icon(Icons.delete,
                                 color: Colors.grey, size: 24),
-                            onPressed: () {
-                              // Handle deleting the message
-                              _onDeleteMessage(message.id);
+                            onPressed: () async {
+                              await deleteMessage(message.id);
+                              widget.messages.removeWhere(
+                                      (msg) => msg.id == message.id);
+                              await _initializeMessages();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Message deleted')),
                               );
-                              setState(() {
-                                message.deleted = true;
-                              });
                             },
                           ),
                         ],
-                      ),
+                      )
+                          : null,
                       onTap: () async {
-                        // Handle tapping on the message tile
-                        _onSetMessagesRead(message.id);
-                        setState(() {
-                          message.read = true;
-                        });
                         if (!await launchUrl(url)) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Could not launch $url')),
                           );
                         }
+                        setState(() {
+                          message.read = true;
+                        });
+                        await _initializeMessages();
                       },
                       onLongPress: () {
                         showDialog(
@@ -209,9 +282,11 @@ class _MessagesPageState extends State<MessagesPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildFilterTab('All (${widget.messages.length})', 'all'),
-          _buildFilterTab('Read (${_getReadMessagesCount()})', 'read'),
-          _buildFilterTab('Unread (${_getUnreadMessagesCount()})', 'unread'),
+          _buildFilterTab('All ($_totalMessageCount)', 'all'),
+          // Display the total count
+          _buildFilterTab('Read ($_readMessageCount)', 'read'),
+          _buildFilterTab('Unread ($_unreadMessageCount)', 'unread'),
+          _buildFilterTab('Deleted ($_deletedMessageCount)', 'deleted'),
         ],
       ),
     );
@@ -241,40 +316,5 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _onSetMessagesRead(String id) async {
-    SFMCSdk.setMessageRead(id);
-  }
-
-  Future<void> _onDeleteMessage(String id) async {
-    SFMCSdk.deleteMessage(id);
-    setState(() {
-      widget.messages.removeWhere((message) => message.id == id);
-    });
-  }
-
-  int _getReadMessagesCount() {
-    return widget.messages.where((message) => message.read).length;
-  }
-
-  int _getUnreadMessagesCount() {
-    return widget.messages.where((message) => !message.read).length;
-  }
-
-  // Define a function to format date and time
-  String _formatDateTime(DateTime sendDateUtc) {
-    String date = sendDateUtc.toString().substring(0, 10); // Extract date
-    String time = _formatTime(sendDateUtc); // Format time
-    return '$date $time';
-  }
-
-// Define a function to format time
-  String _formatTime(DateTime sendDateUtc) {
-    String period = sendDateUtc.hour >= 12 ? 'PM' : 'AM';
-    int hour = sendDateUtc.hour > 12 ? sendDateUtc.hour - 12 : sendDateUtc.hour;
-    String hourStr = hour.toString().padLeft(2, '0');
-    String minuteStr = sendDateUtc.minute.toString().padLeft(2, '0');
-    return '$hourStr:$minuteStr $period';
   }
 }

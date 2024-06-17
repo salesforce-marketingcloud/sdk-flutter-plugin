@@ -155,6 +155,27 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
+  Future<String> getReadMessages() async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>('getReadMessages');
+    return result;
+  }
+
+  @override
+  Future<String> getUnreadMessages() async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
+    return result;
+  }
+
+  @override
+  Future<String> getDeletedMessages() async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
+    return result;
+  }
+
+  @override
   Future<void> setMessageRead(String id) {
     return methodChannel.invokeMethod('setMessageRead', {'messageId': id});
   }
@@ -162,5 +183,35 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<void> deleteMessage(String id) {
     return methodChannel.invokeMethod('deleteMessage', {'messageId': id});
+  }
+
+  @override
+  Future<int?> getMessageCount() {
+    return methodChannel.invokeMethod<int?>('getMessageCount');
+  }
+
+  @override
+  Future<int?> getReadMessageCount() {
+    return methodChannel.invokeMethod<int?>('getReadMessageCount');
+  }
+
+  @override
+  Future<int?> getUnreadMessageCount() {
+    return methodChannel.invokeMethod<int?>('getUnreadMessageCount');
+  }
+
+  @override
+  Future<int?> getDeletedMessageCount() {
+    return methodChannel.invokeMethod<int?>('getDeletedMessageCount');
+  }
+
+  @override
+  Future<void> markAllMessagesRead() {
+    return methodChannel.invokeMethod('markAllMessagesRead');
+  }
+
+  @override
+  Future<void> markAllMessagesDeleted() {
+    return methodChannel.invokeMethod('markAllMessagesDeleted');
   }
 }

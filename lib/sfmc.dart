@@ -261,11 +261,47 @@ class SFMCSdk {
     return SfmcPlatform.instance.getMessages();
   }
 
+  static Future<String> getReadMessages() {
+    return SfmcPlatform.instance.getReadMessages();
+  }
+
+  static Future<String> getUnreadMessages() {
+    return SfmcPlatform.instance.getUnreadMessages();
+  }
+
+  static Future<String> getDeletedMessages() {
+    return SfmcPlatform.instance.getDeletedMessages();
+  }
+
   static Future<void> setMessageRead(String id) {
     return SfmcPlatform.instance.setMessageRead(id);
   }
 
   static Future<void> deleteMessage(String id) {
     return SfmcPlatform.instance.deleteMessage(id);
+  }
+
+  static Future<int?> getMessageCount() {
+    return SfmcPlatform.instance.getMessageCount();
+  }
+
+  static Future<int?> getReadMessageCount() {
+    return SfmcPlatform.instance.getReadMessageCount();
+  }
+
+  static Future<int?> getUnreadMessageCount() {
+    return SfmcPlatform.instance.getUnreadMessageCount();
+  }
+
+  static Future<int?> getDeletedMessageCount() {
+    return SfmcPlatform.instance.getDeletedMessageCount();
+  }
+
+  static Future<void> markAllMessagesRead() {
+    return SfmcPlatform.instance.markAllMessagesRead();
+  }
+
+  static Future<void> markAllMessagesDeleted() {
+    return SfmcPlatform.instance.markAllMessagesDeleted();
   }
 }
