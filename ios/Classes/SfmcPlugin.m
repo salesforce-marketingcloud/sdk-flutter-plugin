@@ -119,12 +119,31 @@ const int LOG_LENGTH = 800;
         [self isPiAnalyticsEnabledWithResult:result];
     } else if ([@"getMessages" isEqualToString:call.method]) {
         [self getMessagesWithResult:result];
+    } else if ([@"getReadMessages" isEqualToString:call.method]) {
+        [self getReadMessagesWithResult:result];
+    } else if ([@"getUnreadMessages" isEqualToString:call.method]) {
+        [self getUnreadMessagesWithResult:result];
+    } else if ([@"getDeletedMessages" isEqualToString:call.method]) {
+        [self getDeletedMessagesWithResult:result];
+    } else if ([@"getMessageCount" isEqualToString:call.method]) {
+        [self getMessagesCountWithResult:result];
+    } else if ([@"getReadMessageCount" isEqualToString:call.method]) {
+        [self getReadMessagesCountWithResult:result];
+    } else if ([@"getUnreadMessageCount" isEqualToString:call.method]) {
+        [self getUnreadMessagesCountWithResult:result];
+    } else if ([@"getDeletedMessageCount" isEqualToString:call.method]) {
+        [self getDeletedMessagesCountWithResult:result];
     } else if ([@"setMessageRead" isEqualToString:call.method]) {
         NSString *messageId = call.arguments[@"messageId"];
         [self setMessageRead:messageId result:result];
     } else if ([@"deleteMessage" isEqualToString:call.method]) {
         NSString *messageId = call.arguments[@"messageId"];
         [self deleteMessage:messageId result:result];
+    } else if ([@"markAllMessagesRead" isEqualToString:call.method]) {
+        [self setAllMessageRead:result];
+    } else if ([@"markAllMessagesDeleted" isEqualToString:call.method]) {
+        [self deleteAllMessages
+        :result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -289,6 +308,67 @@ const int LOG_LENGTH = 800;
     }];
 }
 
+- (void)getReadMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSArray < NSDictionary * > *inboxMessages = [mp getReadMessages];
+
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray < NSDictionary * >
+        *updatedMessages = [utility processInboxMessages:inboxMessages];
+
+        NSError *error;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+        if (data) {
+            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            result(jsonString);
+        } else {
+            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+            result(@"[]"); // Return an empty array as a fallback
+        }
+    }];
+}
+
+- (void)getUnreadMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSArray < NSDictionary * > *inboxMessages = [mp getUnreadMessages];
+
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray < NSDictionary * >
+        *updatedMessages = [utility processInboxMessages:inboxMessages];
+
+        NSError *error;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+        if (data) {
+            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            result(jsonString);
+        } else {
+            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+            result(@"[]"); // Return an empty array as a fallback
+        }
+    }];
+}
+
+- (void)getDeletedMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSArray < NSDictionary * > *inboxMessages = [mp getDeletedMessages];
+
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray < NSDictionary * >
+        *updatedMessages = [utility processInboxMessages:inboxMessages];
+
+        NSError *error;
+        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+        if (data) {
+            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            result(jsonString);
+        } else {
+            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+            result(@"[]"); // Return an empty array as a fallback
+        }
+    }];
+}
+
+
 - (void)setMessageRead:(NSString * _Nonnull)messageId result:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL success = [mp markMessageWithIdReadWithMessageId:messageId];
@@ -299,6 +379,49 @@ const int LOG_LENGTH = 800;
 - (void)deleteMessage:(NSString * _Nonnull)messageId result:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL success = [mp markMessageWithIdDeletedWithMessageId:messageId];
+        result(@(success));
+    }];
+}
+
+- (void)getMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSUInteger count = [mp getAllMessagesCount];
+        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+    }];
+}
+
+- (void)getReadMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSUInteger count = [mp getReadMessagesCount];
+        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+    }];
+}
+
+- (void)getUnreadMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSUInteger count = [mp getUnreadMessagesCount];
+        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+    }];
+}
+
+- (void)getDeletedMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        NSUInteger count = [mp getDeletedMessagesCount];
+        NSLog(@"Messages count: %lu", (unsigned long) count); // Log the count for debugging
+        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+    }];
+}
+
+- (void)setAllMessageRead:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        BOOL success = [mp markAllMessagesRead];
+        result(@(success));
+    }];
+}
+
+- (void)deleteAllMessages:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        BOOL success = [mp markAllMessagesDeleted];
         result(@(success));
     }];
 }

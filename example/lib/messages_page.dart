@@ -294,6 +294,9 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Widget _buildFilterTab(String text, String type) {
     final bool selected = type == _selectedMessageType;
+    double paddingVertical = 11.0; // Default vertical padding
+    double paddingHorizontal = 11.0; // Default horizontal padding
+    double fontSize = 13.0; // Default font size
 
     return GestureDetector(
       onTap: () {
@@ -302,7 +305,8 @@ class _MessagesPageState extends State<MessagesPage> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: EdgeInsets.symmetric(
+            horizontal: paddingHorizontal, vertical: paddingVertical),
         decoration: BoxDecoration(
           color: selected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
@@ -312,6 +316,7 @@ class _MessagesPageState extends State<MessagesPage> {
           style: TextStyle(
             color: selected ? Colors.blue : Colors.white,
             fontWeight: FontWeight.bold,
+            fontSize: fontSize,
           ),
         ),
       ),
