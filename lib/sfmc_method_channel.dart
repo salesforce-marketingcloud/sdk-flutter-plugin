@@ -25,14 +25,26 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'inbox_message.dart';
 import 'sfmc_platform_interface.dart';
 
+typedef InboxResponseListener = void Function(List<InboxMessage> messages);
+typedef InboxRefreshListener = void Function(bool successful);
 class MethodChannelSfmc extends SfmcPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('sfmc');
+  static InboxResponseListener ?_inboxListener;
+  static InboxRefreshListener? _refreshCompleteListener;
 
+  MethodChannelSfmc() {
+    methodChannel.setMethodCallHandler(_handleNativeCall);
+  }
+  //final responseHandler;
   @override
   Future<String?> getSystemToken() {
     return methodChannel.invokeMethod<String>('getSystemToken');
@@ -213,5 +225,57 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<void> markAllMessagesDeleted() {
     return methodChannel.invokeMethod('markAllMessagesDeleted');
+  }
+
+  @override
+  Future<bool> refreshInbox(InboxRefreshListener callback) async{
+    print("Pragati3");
+    return await methodChannel.invokeMethod('refreshInbox');
+  }
+
+  //(InboxResponseListener listener)
+  @override
+  void registerInboxResponseListener(InboxResponseListener callback) {
+    _inboxListener = callback;
+  }
+
+  Future<void> unregisterInboxResponseListener() {
+    print("5678");
+    return methodChannel.invokeMethod('unregisterInboxResponseListener');
+    _inboxListener=null;
+  }
+
+  Future<void> _handleNativeCall(MethodCall call) async {
+   // print("!!pg1");
+    if (call.method == 'onInboxMessagesChanged') {
+     // print("!!pg2");
+      print("!pg3$_inboxListener");
+      if (_inboxListener != null) {
+        //print("pg3");
+        try {
+          final List<dynamic> jsonArray = jsonDecode(call.arguments);
+          print("!!pg4${call.arguments}");
+          final List<InboxMessage> inboxMessages = jsonArray
+        .where((json) => json != null) // Filter out null objects
+        .map((json) => InboxMessage.fromJson(json))
+        .toList();
+          print("!!!$inboxMessages");
+          _inboxListener!(inboxMessages);
+        } catch (e) {
+          // Handle JSON decoding or other errors here
+          print('Error handling native call: $e');
+        }
+      }
+    } else if (call.method == 'onRefreshComplete') {
+      if (_refreshCompleteListener != null) {
+        try {
+          final bool successful = call.arguments as bool;
+          _refreshCompleteListener!(successful);
+        } catch (e) {
+          // Handle errors here
+          print('Error handling refresh complete call: $e');
+        }
+      }
+    }
   }
 }

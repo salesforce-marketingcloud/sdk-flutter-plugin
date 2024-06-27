@@ -25,13 +25,16 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+import 'inbox_message.dart';
 import 'sfmc_platform_interface.dart';
 import 'events.dart';
 
 export 'events.dart';
-
+typedef InboxResponseListener = void Function(List<InboxMessage> messages);
+typedef InboxRefreshListener = void Function(bool successful);
 /// Salesforce Marketing Cloud SDK for Flutter.
 class SFMCSdk {
+
   /// Returns the system token used by the Marketing Cloud to send push messages to the device.
   ///
   /// Returns a Future that resolves to the system token string.
@@ -303,5 +306,18 @@ class SFMCSdk {
 
   static Future<void> markAllMessagesDeleted() {
     return SfmcPlatform.instance.markAllMessagesDeleted();
+  }
+
+  static Future<bool> refreshInbox(InboxRefreshListener callback) {
+    return SfmcPlatform.instance.refreshInbox(callback);
+  }
+
+  static void registerInboxResponseListener(InboxResponseListener callback) {
+    return SfmcPlatform.instance.registerInboxResponseListener(callback);
+  }
+
+
+  static Future<void> unregisterInboxResponseListener() {
+    return SfmcPlatform.instance.unregisterInboxResponseListener();
   }
 }

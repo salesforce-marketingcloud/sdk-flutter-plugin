@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class InboxMessage {
   final String id;
   final String? title;
@@ -33,11 +35,11 @@ class InboxMessage {
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
     return InboxMessage(
-      id: json['id'],
-      subject: json['subject'],
-      title: json['title'],
-      alert: json['alert'],
-      sound: json['sound'],
+      id: json['id']??'',
+      subject: json['subject']??'',
+      title: json['title']??'',
+      alert: json['alert']??'',
+      sound: json['sound']??'',
       media: json['media'] != null ? Media.fromJson(json['media']) : null,
       startDateUtc: json['startDateUtc'] != null
           ? DateTime.parse(json['startDateUtc'])
@@ -48,8 +50,8 @@ class InboxMessage {
       sendDateUtc: json['sendDateUtc'] != null
           ? DateTime.parse(json['sendDateUtc'])
           : null,
-      url: json['url'],
-      custom: json['custom'],
+      url: json['url']??'',
+      custom:  json['custom']??'' ,
       customKeys: json['customKeys'] != null
           ? Map<String, String>.from(json['customKeys'])
           : null,
