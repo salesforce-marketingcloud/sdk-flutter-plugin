@@ -31,6 +31,12 @@
 #import "NSDictionary+SFMCEvent.h"
 #import "InboxUtility.h"
 
+@interface SfmcPlugin ()
+@property(strong, nonatomic) FlutterMethodChannel *channel;
+@property(copy, nonatomic) FlutterResult refreshResult;
+@property bool value;
+@end
+
 @implementation SfmcPlugin
 const int LOG_LENGTH = 800;
 
@@ -41,11 +47,75 @@ const int LOG_LENGTH = 800;
     SfmcPlugin *instance = [[SfmcPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
-
+    instance.channel = channel;
+    [instance registerListeners];
     //Add default tag.
     [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
         (void) [mp addTag:@"Flutter"];
     }];
+
+}
+
+- (void)registerListeners {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(
+                                                     onInboxResponse:)
+                                                 name:@"SFMCInboxMessagesMessageResponseSucceededNotification"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(
+                                                     onInboxRefresh:)
+                                                 name:@"SFMCInboxMessagesRefreshCompleteNotification"
+                                               object:nil];
+}
+
+
+- (void)onInboxResponse:(NSNotification *)notification {
+//    NSDictionary *dict = [notification userInfo];
+//    NSLog(@"Inbox response %@", dict);
+    NSDictionary *userInfo = [notification userInfo];
+    NSDictionary *responsePayload = userInfo[@"responsePayload"];
+
+    NSLog(@"Response Payload: %@", responsePayload);
+
+    // Create an array to hold dictionaries
+    NSArray < NSDictionary * > *arrayOfDictionaries = @[responsePayload];
+
+    InboxUtility *utility = [[InboxUtility alloc] init];
+    NSMutableArray < NSDictionary * >
+    *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
+
+    NSError *error;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+    if (data) {
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"JSON String: %@", jsonString);
+            [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonString];
+        });
+        printf("111");
+
+    } else {
+        NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+        // result(@"[]"); // Return an empty array as a fallback
+    }
+
+}
+
+
+- (void)onInboxRefresh:(NSNotification *)notification {
+    if(self.refreshResult!=nil)
+    {
+        self.refreshResult(@(YES));
+        self.refreshResult=nil;
+    }
+}
+
+- (void)unregisterListeners {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SFMCInboxMessagesMessageResponseSucceededNotification" object:nil];
+    // Remove any other observers you might have added
+    NSLog(@"Unregistered Succesfully");
 }
 
 - (void)log:(NSString *)msg {
@@ -144,6 +214,10 @@ const int LOG_LENGTH = 800;
     } else if ([@"markAllMessagesDeleted" isEqualToString:call.method]) {
         [self deleteAllMessages
         :result];
+    } else if ([@"refreshInbox" isEqualToString:call.method]) {
+        [self refreshInbox:result];
+    } else if ([@"unregisterInboxResponseListener" isEqualToString:call.method]) {
+        [self unregisterListeners];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -425,6 +499,25 @@ const int LOG_LENGTH = 800;
         result(@(success));
     }];
 }
+
+- (void)refreshInbox:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+        BOOL success = [mp refreshMessages];
+
+           if (success) {
+        // Success case
+               printf("&&&&");
+        NSLog(@"Inbox refresh completed successfully.");
+               self.refreshResult=result;
+
+            } else {
+                printf("%%%%%");
+                result(@(NO)); // Or handle error appropriately
+            }
+//        
+    }];
+}
+
 
 // https://github.com/flutter/flutter/issues/52895
 // Flutter overrides `respondToSelector` and does shady things. There is issue in flutter where `didReceiveRemoteNotification`

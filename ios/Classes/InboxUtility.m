@@ -40,6 +40,10 @@
 
 - (void)convertCustomDataInMessage:(NSMutableDictionary *)message {
     id customData = message[@"custom"];
+    if (!customData || customData == [NSNull null]) {
+        customData = @{}; // Set default empty dictionary if custom is null
+    }
+
     if ([customData isKindOfClass:[NSDictionary class]]) {
         NSError *jsonError;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:customData options:NSJSONWritingPrettyPrinted error:&jsonError];
