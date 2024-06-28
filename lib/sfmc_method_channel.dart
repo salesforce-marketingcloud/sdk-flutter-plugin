@@ -235,16 +235,18 @@ class MethodChannelSfmc extends SfmcPlatform {
 
   //(InboxResponseListener listener)
   @override
-  void registerInboxResponseListener(InboxResponseListener callback) {
+  void registerInboxResponseListener(InboxResponseListener callback) async{
     _inboxListener = callback;
+    print("12234567");
+    await methodChannel.invokeMethod('registerInboxResponseListener');
+
   }
 
-  Future<void> unregisterInboxResponseListener() {
+  Future<void> unregisterInboxResponseListener()async {
     print("5678");
-    return methodChannel.invokeMethod('unregisterInboxResponseListener');
+    return await methodChannel.invokeMethod('unregisterInboxResponseListener');
     _inboxListener=null;
   }
-
   Future<void> _handleNativeCall(MethodCall call) async {
    // print("!!pg1");
     if (call.method == 'onInboxMessagesChanged') {
