@@ -715,7 +715,7 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   void dispose() {
     if (responseListener != null) {
-      SFMCSdk.unregisterInboxResponseListener();
+      SFMCSdk.unregisterInboxResponseListener(responseListener);
        responseListener = null;
     }
     super.dispose();
@@ -751,16 +751,18 @@ class _MessagesPageState extends State<MessagesPage> {
       print("1111SUCCESS");
       print(succ);
       if (succ) {
-        if (responseListener == null) {
+       if (responseListener == null) {
+print("%%%");
           responseListener = (List<InboxMessage> list) {
             setState(() async {
               print("pg1");
               await _fetchMessages();
             });
           };
+          print("later");
           SFMCSdk.registerInboxResponseListener(responseListener);
 
-        }
+      }
 
 
         print("1111");

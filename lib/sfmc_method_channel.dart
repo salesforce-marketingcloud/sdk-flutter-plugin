@@ -35,6 +35,9 @@ import 'sfmc_platform_interface.dart';
 
 typedef InboxResponseListener = void Function(List<InboxMessage> messages);
 typedef InboxRefreshListener = void Function(bool successful);
+int _nextCallbackId = 0;
+Map<int, InboxResponseListener> _callbacksById = {};
+
 class MethodChannelSfmc extends SfmcPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('sfmc');
@@ -236,38 +239,74 @@ class MethodChannelSfmc extends SfmcPlatform {
   //(InboxResponseListener listener)
   @override
   void registerInboxResponseListener(InboxResponseListener callback) async{
-    _inboxListener = callback;
-    print("12234567");
-    await methodChannel.invokeMethod('registerInboxResponseListener');
-
+    // _inboxListener = callback;
+     print("12234567");
+    // await methodChannel.invokeMethod('registerInboxResponseListener');
+    _nextCallbackId++;
+    int currentListenerId = _nextCallbackId;
+    _callbacksById[currentListenerId] = callback;
+    await methodChannel.invokeMethod('registerInboxResponseListener', currentListenerId);
   }
 
-  Future<void> unregisterInboxResponseListener()async {
-    print("5678");
-    return await methodChannel.invokeMethod('unregisterInboxResponseListener');
-    _inboxListener=null;
+
+
+
+
+  void unregisterInboxResponseListener(InboxResponseListener callback) async {
+    int? listenerId = _callbacksById.entries.firstWhere(
+          (entry) => entry.value == callback,
+      orElse: () => MapEntry(-1, (List<InboxMessage> messages) {}),
+    )?.key;
+    print("{{{object}}}");
+print(listenerId);
+    if (listenerId != null) {
+      try {
+        print("yay");
+        _callbacksById.remove(listenerId);
+        await methodChannel.invokeMethod('unregisterInboxResponseListener', listenerId);
+        print('Listener $listenerId unregistered successfully');
+      } catch (e) {
+        print('Failed to unregister listener $listenerId: $e');
+      }
+    } else {
+      print('Listener not found in the map');
+    }
   }
+
   Future<void> _handleNativeCall(MethodCall call) async {
-   // print("!!pg1");
+    print("!!pg1");
     if (call.method == 'onInboxMessagesChanged') {
-     // print("!!pg2");
+      print("!!pg2");
       print("!pg3$_inboxListener");
-      if (_inboxListener != null) {
-        //print("pg3");
+        print("pg3");
         try {
-          final List<dynamic> jsonArray = jsonDecode(call.arguments);
+          final int id = call.arguments['id'];
+          final String jsonString = call.arguments['args'] as String;
+          final List<dynamic> jsonArray = jsonDecode(jsonString);
           print("!!pg4${call.arguments}");
           final List<InboxMessage> inboxMessages = jsonArray
         .where((json) => json != null) // Filter out null objects
         .map((json) => InboxMessage.fromJson(json))
         .toList();
-          print("!!!$inboxMessages");
-          _inboxListener!(inboxMessages);
+
+print("!!");
+print(jsonArray);
+          print("!!!");
+          print(inboxMessages);
+          InboxResponseListener? listener = _callbacksById[id];
+          if (listener != null) {
+            print('Done good');
+            listener(inboxMessages);
+          } else {
+            print('Listener not found for ID: $id');
+          }
+          //
+          // print("!!!$inboxMessages");
+          // _inboxListener!(inboxMessages);
         } catch (e) {
           // Handle JSON decoding or other errors here
           print('Error handling native call: $e');
         }
-      }
     } else if (call.method == 'onRefreshComplete') {
       if (_refreshCompleteListener != null) {
         try {

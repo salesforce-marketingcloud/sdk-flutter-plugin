@@ -188,8 +188,7 @@ abstract class SfmcPlatform extends PlatformInterface {
     throw UnimplementedError('registerInboxResponseListener()has not been implemented.');
     }
 
-  Future<void>  unregisterInboxResponseListener() {
-    print("1234");
+  void unregisterInboxResponseListener(InboxResponseListener callback) {
     throw UnimplementedError('unregisterInboxResponseListener()has not been implemented.');
   }
 }
