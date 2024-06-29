@@ -709,6 +709,17 @@ class _MessagesPageState extends State<MessagesPage> {
   @override
   void initState() {
     super.initState();
+    if (responseListener == null) {
+      print("%%%");
+      responseListener = (List<InboxMessage> list) {
+        setState(() async {
+          print("pg1");
+          await _fetchMessages();
+        });
+      };
+      print("later");
+      SFMCSdk.registerInboxResponseListener(responseListener);
+    }
     _initializeMessages();
   }
 
@@ -716,7 +727,7 @@ class _MessagesPageState extends State<MessagesPage> {
   void dispose() {
     if (responseListener != null) {
       SFMCSdk.unregisterInboxResponseListener(responseListener);
-       responseListener = null;
+      responseListener = null;
     }
     super.dispose();
   }
@@ -751,19 +762,6 @@ class _MessagesPageState extends State<MessagesPage> {
       print("1111SUCCESS");
       print(succ);
       if (succ) {
-       if (responseListener == null) {
-print("%%%");
-          responseListener = (List<InboxMessage> list) {
-            setState(() async {
-              print("pg1");
-              await _fetchMessages();
-            });
-          };
-          print("later");
-          SFMCSdk.registerInboxResponseListener(responseListener);
-
-      }
-
 
         print("1111");
 
