@@ -317,7 +317,8 @@ class SFMCSdk {
   }
 
 
-  static Future<void> unregisterInboxResponseListener() {
-    return SfmcPlatform.instance.unregisterInboxResponseListener();
+  static void unregisterInboxResponseListener(InboxResponseListener callback) {
+    return SfmcPlatform.instance.unregisterInboxResponseListener(callback);
   }
+
 }

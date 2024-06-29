@@ -46,6 +46,9 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.util.HashMap
+
+
 
 //import javax.xml.transform.Result
 
@@ -63,44 +66,12 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "sfmc")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-
-        registerListeners()
-        //Add default tag
         handlePushAction {
 
             it.registrationManager.edit().addTag("Flutter").commit()
         }
     }
-   // private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
-    private fun registerListeners() {
-        registerInboxResponseListener()
-    }
 
-
-    private val inboxResponseListener: InboxMessageManager.InboxResponseListener? = object : InboxMessageManager.InboxResponseListener {
-        override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
-            val str: String = InboxUtils.inboxMessagesToString(messages)
-            channel.invokeMethod("onInboxMessagesChanged", str)
-        }
-    }
-
-    private fun registerInboxResponseListener() {
-        handlePushAction { pushModule ->
-            pushModule.inboxMessageManager.registerInboxResponseListener(inboxResponseListener!!)
-            Log.d(TAG, "Inbox response listener registered.")
-        }
-    }
-
-    private fun unregisterInboxResponseListener(result: Result) {
-        inboxResponseListener?.let { listener ->
-            handlePushAction {
-                it.inboxMessageManager.unregisterInboxResponseListener(listener)
-                Log.d(TAG, "Inbox response listener unregistered!!.")
-                result.success(null)
-               // inboxResponseListener = null
-            }
-        } ?: result.success(null) // If no listener is registered, return success
-    }
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "getPlatformVersion" -> getPlatformVersion(result)
@@ -138,6 +109,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "markAllMessagesRead" -> markAllMessagesRead(result)
             "markAllMessagesDeleted" -> markAllMessagesDeleted(result)
             "refreshInbox" -> refreshInbox(result)
+            "registerInboxResponseListener"->registerInboxResponseListener(result)
             "unregisterInboxResponseListener"->unregisterInboxResponseListener(result)
             else -> result.notImplemented()
         }
@@ -322,7 +294,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun setPiAnalyticsEnabled(call: MethodCall, result: Result) {
         val enable: Boolean = call.argument("analyticsEnabled") ?: false
         handlePushAction {
@@ -448,30 +419,46 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             })
         }
     }
+    private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
 
-//    private fun unregisterInboxResponseListener(call: MethodCall, result: Result) {
-//        call.argument<InboxMessageManager.InboxResponseListener>("listener")?.let { listener ->
-//            handlePushAction {
-//                it.inboxMessageManager.unregisterInboxResponseListener(listener);
-//                println("====");
-//                println("done");
-//                result.success(null)
-//            }
-//        } ?: result.error("INVALID_ARGUMENTS", "messageId is null", null)
-//
-//    }
+    private fun createInboxResponseListener(): InboxMessageManager.InboxResponseListener {
+        return object : InboxMessageManager.InboxResponseListener {
+            override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
+                try {
+                    val str: String = InboxUtils.inboxMessagesToString(messages)
+                    println("&&&&&")
+                    println(str)
+                    channel.invokeMethod("onInboxMessagesChanged", str)
+                } catch (e: Exception) {
+                    println("Error handling inbox messages change: $e")
+                }
+            }
+        }.also { inboxResponseListener = it }
+    }
 
-//        private fun registerInboxResponseListener(call: MethodCall, result: Result) {
-//        call.argument<InboxMessageManager.InboxResponseListener>("listener")?.let { listener ->
-//            handlePushAction {
-//                it.inboxMessageManager.registerInboxResponseListener(listener);
-//                println("====");
-//                println("done");
-//                result.success(null)
-//            }
-//        } ?: result.error("INVALID_ARGUMENTS", "messageId is null", null)
-//
-//    }
+    private fun registerInboxResponseListener(result: Result) {
+        val listener = createInboxResponseListener()
+        handlePushAction { pushModule ->
+            pushModule.inboxMessageManager.registerInboxResponseListener(listener)
+            result.success(null)
+        }
+    }
+
+    private fun unregisterInboxResponseListener(result: MethodChannel.Result) {
+        val listener = inboxResponseListener
+        if (listener != null) {
+            handlePushAction { pushModule ->
+                println("Unregistering inbox response listener.")
+                pushModule.inboxMessageManager.unregisterInboxResponseListener(listener)
+                inboxResponseListener = null
+                result.success(null)
+            }
+        } else {
+            result.error("Error", "Listener not found", null)
+        }
+    }
+
+
     private fun handleSFMCAction(action: (SFMCSdk) -> Unit) {
         SFMCSdk.requestSdk { sdk ->
             action(sdk)
@@ -495,19 +482,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
-        unregisterInboxResponseListener(object : Result {
-            override fun success(result: Any?) {
-                Log.d(TAG, "Inbox response listener unregistered successfully.")
-            }
-
-            override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-                Log.e(TAG, "Error while unregistering inbox response listener: $errorMessage")
-            }
-
-            override fun notImplemented() {
-                Log.e(TAG, "Unregister inbox response listener not implemented.")
-            }
-        })
     }
 
 
