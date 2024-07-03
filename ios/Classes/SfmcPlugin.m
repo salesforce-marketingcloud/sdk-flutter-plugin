@@ -48,7 +48,6 @@ const int LOG_LENGTH = 800;
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
     instance.channel = channel;
-    [instance registerListeners];
     //Add default tag.
     [SFMCSdk requestPushSdk:^(id <PushInterface> _Nonnull mp) {
         (void) [mp addTag:@"Flutter"];
@@ -56,67 +55,6 @@ const int LOG_LENGTH = 800;
 
 }
 
-- (void)registerListeners {
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(
-                                                     onInboxResponse:)
-                                                 name:@"SFMCInboxMessagesMessageResponseSucceededNotification"
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(
-                                                     onInboxRefresh:)
-                                                 name:@"SFMCInboxMessagesRefreshCompleteNotification"
-                                               object:nil];
-}
-
-
-- (void)onInboxResponse:(NSNotification *)notification {
-//    NSDictionary *dict = [notification userInfo];
-//    NSLog(@"Inbox response %@", dict);
-    NSDictionary *userInfo = [notification userInfo];
-    NSDictionary *responsePayload = userInfo[@"responsePayload"];
-
-    NSLog(@"Response Payload: %@", responsePayload);
-
-    // Create an array to hold dictionaries
-    NSArray < NSDictionary * > *arrayOfDictionaries = @[responsePayload];
-
-    InboxUtility *utility = [[InboxUtility alloc] init];
-    NSMutableArray < NSDictionary * >
-    *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
-
-    NSError *error;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-    if (data) {
-        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"JSON String: %@", jsonString);
-            [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonString];
-        });
-        printf("111");
-
-    } else {
-        NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-        // result(@"[]"); // Return an empty array as a fallback
-    }
-
-}
-
-
-- (void)onInboxRefresh:(NSNotification *)notification {
-    if(self.refreshResult!=nil)
-    {
-        self.refreshResult(@(YES));
-        self.refreshResult=nil;
-    }
-}
-
-- (void)unregisterListeners {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SFMCInboxMessagesMessageResponseSucceededNotification" object:nil];
-    // Remove any other observers you might have added
-    NSLog(@"Unregistered Succesfully");
-}
 
 - (void)log:(NSString *)msg {
     if (self.logger == nil) {
@@ -216,6 +154,8 @@ const int LOG_LENGTH = 800;
         :result];
     } else if ([@"refreshInbox" isEqualToString:call.method]) {
         [self refreshInbox:result];
+    } else if ([@"registerInboxResponseListener" isEqualToString:call.method]) {
+        [self registerListeners];
     } else if ([@"unregisterInboxResponseListener" isEqualToString:call.method]) {
         [self unregisterListeners];
     } else {
@@ -377,7 +317,7 @@ const int LOG_LENGTH = 800;
             result(jsonString);
         } else {
             NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]"); // Return an empty array as a fallback
+            result(@"[]");
         }
     }];
 }
@@ -397,7 +337,7 @@ const int LOG_LENGTH = 800;
             result(jsonString);
         } else {
             NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]"); // Return an empty array as a fallback
+            result(@"[]");
         }
     }];
 }
@@ -417,7 +357,7 @@ const int LOG_LENGTH = 800;
             result(jsonString);
         } else {
             NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]"); // Return an empty array as a fallback
+            result(@"[]");
         }
     }];
 }
@@ -437,7 +377,7 @@ const int LOG_LENGTH = 800;
             result(jsonString);
         } else {
             NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]"); // Return an empty array as a fallback
+            result(@"[]");
         }
     }];
 }
@@ -460,29 +400,28 @@ const int LOG_LENGTH = 800;
 - (void)getMessagesCountWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         NSUInteger count = [mp getAllMessagesCount];
-        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+        result(@(count));
     }];
 }
 
 - (void)getReadMessagesCountWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         NSUInteger count = [mp getReadMessagesCount];
-        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+        result(@(count));
     }];
 }
 
 - (void)getUnreadMessagesCountWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         NSUInteger count = [mp getUnreadMessagesCount];
-        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+        result(@(count));
     }];
 }
 
 - (void)getDeletedMessagesCountWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         NSUInteger count = [mp getDeletedMessagesCount];
-        NSLog(@"Messages count: %lu", (unsigned long) count); // Log the count for debugging
-        result(@(count)); // Convert NSUInteger to NSNumber and pass to Flutter result block
+        result(@(count));
     }];
 }
 
@@ -500,30 +439,73 @@ const int LOG_LENGTH = 800;
     }];
 }
 
+- (void)onInboxResponse:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    NSDictionary *responsePayload = userInfo[@"responsePayload"];
+    NSArray < NSDictionary * > *arrayOfDictionaries = @[responsePayload];
+    InboxUtility *utility = [[InboxUtility alloc] init];
+    NSMutableArray < NSDictionary * >
+    *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
+    NSError *error;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
+    if (data) {
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonString];
+        });
+    } else {
+        NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+    }
+
+}
+
+
+- (void)onInboxRefresh:(NSNotification *)notification {
+    if (self.refreshResult != nil) {
+        self.refreshResult(@(YES));
+        self.refreshResult = nil;
+    }
+}
+
 - (void)refreshInbox:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
         BOOL success = [mp refreshMessages];
-
-           if (success) {
-        // Success case
-               printf("&&&&");
-        NSLog(@"Inbox refresh completed successfully.");
-               self.refreshResult=result;
-
-            } else {
-                printf("%%%%%");
-                result(@(NO)); // Or handle error appropriately
-            }
-//        
-    }];
+        if (success) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(
+                                                                        onInboxRefresh:)
+                                                         name:@"SFMCInboxMessagesRefreshCompleteNotification"
+                                                       object:nil];
+            NSLog(@"Inbox refresh completed successfully.");
+            self.refreshResult = result;
+        } else {
+            result(@(NO));
+        }}];
 }
 
+- (void)registerListeners {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(
+                                                     onInboxResponse:)
+                                                 name:@"SFMCInboxMessagesMessageResponseSucceededNotification"
+                                               object:nil];
+    NSLog(@"Registered Successfully");
+}
+
+- (void)unregisterListeners {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SFMCInboxMessagesMessageResponseSucceededNotification" object:nil];
+    NSLog(@"Unregistered Successfully");
+}
 
 // https://github.com/flutter/flutter/issues/52895
 // Flutter overrides `respondToSelector` and does shady things. There is issue in flutter where `didReceiveRemoteNotification`
 // not getting called on AppDelegate. This is workaround to make sure AppDeleage `didReceiveRemoteNotification` gets called.
-- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(
-        UIBackgroundFetchResult result))completionHandler {
+- (BOOL)         application:(UIApplication *)application
+didReceiveRemoteNotification:
+        (NSDictionary *)userInfo
+      fetchCompletionHandler:
+              (void (^)(
+              UIBackgroundFetchResult result))completionHandler {
     completionHandler(UIBackgroundFetchResultNoData);
     return YES;
 }

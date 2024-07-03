@@ -8,10 +8,18 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   final Map<String, String> mockAttributes = {};
   final List<String> mockTags = [];
   final String mockInboxMsgs = "";
+  final String mockInboxReadMsgs = "";
+  final String mockInboxUnreadMsgs = "";
+  final String mockInboxDeletedMsgs = "";
+  final int mockInboxCount = 0;
+  final int mockInboxReadCount = 0;
+  final int mockInboxUnreadCount = 0;
+  final int mockInboxDeletedCount = 0;
   String? mockContactKey;
   Map<String, dynamic>? lastTrackedEvent;
   bool mockAnalyticsEnabled = false;
   bool mockPiAnalyticsEnabled = false;
+  bool mockIsRefresh = false;
 
   void _logCall(String methodName) {
     recentCalledMethod = methodName;
@@ -144,6 +152,24 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
+  Future<String> getReadMessages() {
+    _logCall('getReadMessages');
+    return Future.value(mockInboxReadMsgs);
+  }
+
+  @override
+  Future<String> getUnreadMessages() {
+    _logCall('getUnreadMessages');
+    return Future.value(mockInboxUnreadMsgs);
+  }
+
+  @override
+  Future<String> getDeletedMessages() {
+    _logCall('getDeletedMessages');
+    return Future.value(mockInboxDeletedMsgs);
+  }
+
+  @override
   Future<void> setMessageRead(String id) async {
     _logCall('setMessageRead');
   }
@@ -151,6 +177,56 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   @override
   Future<void> deleteMessage(String id) async {
     _logCall('deleteMessage');
+  }
+
+  @override
+  Future<int?> getMessageCount() {
+    _logCall('getMessageCount');
+    return Future.value(mockInboxCount);
+  }
+
+  @override
+  Future<int?> getReadMessageCount() {
+    _logCall('getReadMessageCount');
+    return Future.value(mockInboxReadCount);
+  }
+
+  @override
+  Future<int?> getUnreadMessageCount() {
+    _logCall('getUnreadMessageCount');
+    return Future.value(mockInboxUnreadCount);
+  }
+
+  @override
+  Future<int?> getDeletedMessageCount() {
+    _logCall('getDeleteMessageCount');
+    return Future.value(mockInboxCount);
+  }
+
+  @override
+  Future<void> markAllMessagesRead() async {
+    _logCall('markAllMessagesRead');
+  }
+
+  @override
+  Future<void> markAllMessagesDeleted() async {
+    _logCall('markAllMessagesRead');
+  }
+
+  @override
+  Future<bool> refreshInbox(InboxRefreshListener listener) {
+    _logCall('refreshInbox');
+    return Future.value(mockIsRefresh);
+  }
+
+  @override
+  void registerInboxResponseListener(InboxResponseListener callback) {
+    _logCall('registerInboxResponseListener');
+  }
+
+  @override
+  void unregisterInboxResponseListener(InboxResponseListener callback) {
+    _logCall('unregisterInboxResponseListener');
   }
 
   void main() {
