@@ -261,62 +261,167 @@ class SFMCSdk {
     return SfmcPlatform.instance.isPiAnalyticsEnabled();
   }
 
+  /// Returns the string of Active, Read & Unread, not Deleted Inbox Messages.
+  ///
+  /// Returns a Future to the string representing Active, Read & Unread, not Deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getAllMessages)
   static Future<String> getMessages() {
     return SfmcPlatform.instance.getMessages();
   }
 
+  /// Returns the string of Active, Read, not Deleted Inbox Messages
+  ///
+  /// Returns a Future to the string representing Active, Read, not Deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getReadMessages)
   static Future<String> getReadMessages() {
     return SfmcPlatform.instance.getReadMessages();
   }
 
+  /// Returns the string of Active, Unread, not Deleted Inbox Messages
+  ///
+  /// Returns a Future to the string representing Active, Unread, not Deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getUnreadMessages)
   static Future<String> getUnreadMessages() {
     return SfmcPlatform.instance.getUnreadMessages();
   }
 
+  /// Returns the string of Active, Deleted Inbox Messages
+  ///
+  /// Returns a Future to the string representing Active, Deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getDeletedMessages)
   static Future<String> getDeletedMessages() {
     return SfmcPlatform.instance.getDeletedMessages();
   }
 
+  /// Marks a InboxMessage as read in local storage.
+  ///
+  /// @param id The InboxMessage#id() of the InboxMessage to mark as read.
+  ///
+  /// See:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/set-message-read.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markMessageWithIdReadWithMessageId:)
   static Future<void> setMessageRead(String id) {
     return SfmcPlatform.instance.setMessageRead(id);
   }
 
+  /// Marks a InboxMessage as deleted in local storage.
+  ///
+  /// @param id The InboxMessage#id() of the InboxMessage to mark as deleted.
+  ///
+  /// See:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/delete-message.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markMessageWithIdDeletedWithMessageId:)
   static Future<void> deleteMessage(String id) {
     return SfmcPlatform.instance.deleteMessage(id);
   }
 
+  /// Returns the total number of not deleted Inbox Messages.
+  ///
+  /// Returns a Future to the int representing total number of not deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-message-count.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getAllMessagesCount)
   static Future<int?> getMessageCount() {
     return SfmcPlatform.instance.getMessageCount();
   }
 
+  /// Returns the total number of read, not deleted Inbox Messages.
+  ///
+  /// Returns a Future to the int representing total number of read, not deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-message-count.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getReadMessagesCount)
   static Future<int?> getReadMessageCount() {
     return SfmcPlatform.instance.getReadMessageCount();
   }
 
+  /// Returns the total number of unread, not deleted Inbox Messages
+  ///
+  /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-message-count.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getUnreadMessagesCount)
   static Future<int?> getUnreadMessageCount() {
     return SfmcPlatform.instance.getUnreadMessageCount();
   }
 
+  /// Returns the total number of deleted Inbox Messages regardless of their read status.
+  ///
+  /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-message-count.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getDeletedMessagesCount)
   static Future<int?> getDeletedMessageCount() {
     return SfmcPlatform.instance.getDeletedMessageCount();
   }
 
+  /// Marks all active, unread InboxMessages as read.
+  ///
+  /// Returns a Future to the void that marks all active, unread InboxMessages as read.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-read.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markAllMessagesRead)
   static Future<void> markAllMessagesRead() {
     return SfmcPlatform.instance.markAllMessagesRead();
   }
 
+  /// Marks all active InboxMessages as deleted.
+  ///
+  /// Returns a Future to to the void that Marks all active InboxMessages as deleted.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-deleted.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markAllMessagesDeleted)
   static Future<void> markAllMessagesDeleted() {
     return SfmcPlatform.instance.markAllMessagesDeleted();
   }
 
+  /// Requests an updated list of Inbox Messages from the Marketing Cloud Servers. The Inbox request can be made, at most, once per minute. This throttle also includes the Inbox request that is made by the SDK when your application is brought into the foreground.
+  ///
+  /// Returns a Future to the boolean representation if inbox has been refreshed or not.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/refresh-inbox.html)
+  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)refreshMessages)
   static Future<bool> refreshInbox(InboxRefreshListener callback) {
     return SfmcPlatform.instance.refreshInbox(callback);
   }
 
+  /// Call this method to be notified of Inbox events within the Marketing Cloud SDK.
+  ///
+  /// @param callback The InboxResponseListener that you want to register.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/register-inbox-response-listener.html)
+  /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
   static void registerInboxResponseListener(InboxResponseListener callback) {
     return SfmcPlatform.instance.registerInboxResponseListener(callback);
   }
 
+  /// Unregister your InboxMessageManager.InboxResponseListener listener.
+  ///
+  ///@param callback The InboxResponseListener that you want to unregister.
+  ///
+  /// See also:
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/unregister-inbox-response-listener.html)
+  /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
   static void unregisterInboxResponseListener(InboxResponseListener callback) {
     return SfmcPlatform.instance.unregisterInboxResponseListener(callback);
   }
