@@ -26,8 +26,6 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'inbox_message.dart';
@@ -36,20 +34,16 @@ import 'sfmc_platform_interface.dart';
 typedef InboxResponseListener = void Function(List<InboxMessage> messages);
 typedef InboxRefreshListener = void Function(bool successful);
 
-int _nextCallbackId = 0;
 List<InboxResponseListener> _callbacksById = [];
 
 class MethodChannelSfmc extends SfmcPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('sfmc');
-  static InboxResponseListener? _inboxListener;
-  static InboxRefreshListener? _refreshCompleteListener;
 
   MethodChannelSfmc() {
     methodChannel.setMethodCallHandler(_handleNativeCall);
   }
 
-  //final responseHandler;
   @override
   Future<String?> getSystemToken() {
     return methodChannel.invokeMethod<String>('getSystemToken');
@@ -93,7 +87,7 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<Map<String, String>> getAttributes() async {
     final Map<dynamic, dynamic> result =
-        await methodChannel.invokeMethod('getAttributes');
+    await methodChannel.invokeMethod('getAttributes');
     return result.cast<String, String>();
   }
 
@@ -167,28 +161,28 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<String> getMessages() async {
     final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getMessages');
+    await methodChannel.invokeMethod<dynamic>('getMessages');
     return result;
   }
 
   @override
   Future<String> getReadMessages() async {
     final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getReadMessages');
+    await methodChannel.invokeMethod<dynamic>('getReadMessages');
     return result;
   }
 
   @override
   Future<String> getUnreadMessages() async {
     final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
+    await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
     return result;
   }
 
   @override
   Future<String> getDeletedMessages() async {
     final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
+    await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
     return result;
   }
 
@@ -234,31 +228,26 @@ class MethodChannelSfmc extends SfmcPlatform {
 
   @override
   Future<bool> refreshInbox(InboxRefreshListener callback) async {
-    print("Pragati3");
     return await methodChannel.invokeMethod('refreshInbox');
-
   }
 
-  //(InboxResponseListener listener)
   @override
   void registerInboxResponseListener(InboxResponseListener callback) async {
-    // _inboxListener = callback;
-    print("12234567");
-    // await methodChannel.invokeMethod('registerInboxResponseListener');
-
-    if (_callbacksById.isEmpty) {
+    _callbacksById.add(callback);
+    if (_callbacksById.length == 1) {
       await methodChannel.invokeMethod('registerInboxResponseListener');
     }
-    _callbacksById.add(callback);
   }
 
+  @override
   void unregisterInboxResponseListener(InboxResponseListener callback) async {
     try {
-      print("yay");
       _callbacksById.remove(callback);
-
       if (_callbacksById.isEmpty) {
         await methodChannel.invokeMethod('unregisterInboxResponseListener');
+      } else {
+        print(
+            "Couldn't unregister, still active ${_callbacksById.length} registers left");
       }
     } catch (e) {
       print('Failed to unregister listener : $e');
@@ -266,48 +255,24 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   Future<void> _handleNativeCall(MethodCall call) async {
-    print("!!pg1");
     if (call.method == 'onInboxMessagesChanged') {
-      print("!!pg2");
-      print("pg3");
       try {
         final String jsonString = call.arguments;
         final List<dynamic> jsonArray = jsonDecode(jsonString);
-        print("!!pg4${call.arguments}");
         final List<InboxMessage> inboxMessages = jsonArray
-            .where((json) => json != null) // Filter out null objects
+            .where((json) => json != null)
             .map((json) => InboxMessage.fromJson(json))
             .toList();
-
-        print("!!");
-        print(jsonArray);
-        print("!!!");
-        print(inboxMessages);
         _callbacksById.forEach((listener) {
           if (listener != null) {
-            print('Done good');
             listener(inboxMessages);
           } else {
             print('Listener not found ');
           }
         });
-
-        //
-        // print("!!!$inboxMessages");
-        // _inboxListener!(inboxMessages);
       } catch (e) {
         // Handle JSON decoding or other errors here
         print('Error handling native call: $e');
-      }
-    } else if (call.method == 'onRefreshComplete') {
-      if (_refreshCompleteListener != null) {
-        try {
-          final bool successful = call.arguments as bool;
-          _refreshCompleteListener!(successful);
-        } catch (e) {
-          // Handle errors here
-          print('Error handling refresh complete call: $e');
-        }
       }
     }
   }

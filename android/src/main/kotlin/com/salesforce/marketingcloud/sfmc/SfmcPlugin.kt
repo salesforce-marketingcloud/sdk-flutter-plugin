@@ -49,7 +49,6 @@ import io.flutter.plugin.common.MethodChannel.Result
 import java.util.HashMap
 
 
-
 //import javax.xml.transform.Result
 
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
@@ -67,7 +66,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
         handlePushAction {
-
             it.registrationManager.edit().addTag("Flutter").commit()
         }
     }
@@ -84,14 +82,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "disablePush" -> disablePush(result)
             "getDeviceId" -> getDeviceId(result)
             "getTags" -> getTags(result)
-            "getMessages" -> getMessages(result)
-            "getReadMessages" -> getReadMessages(result)
-            "getUnreadMessages" -> getUnreadMessages(result)
-            "getDeletedMessages" -> getDeletedMessages(result)
-            "getMessageCount" -> getMessageCount(result)
-            "getReadMessageCount" -> getReadMessageCount(result)
-            "getUnreadMessageCount" -> getUnreadMessageCount(result)
-            "getDeletedMessageCount" -> getDeletedMessageCount(result)
             "addTag" -> addTag(call, result)
             "removeTag" -> removeTag(call, result)
             "getContactKey" -> getContactKey(result)
@@ -104,13 +94,20 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "setAnalyticsEnabled" -> setAnalyticsEnabled(call, result)
             "isPiAnalyticsEnabled" -> isPiAnalyticsEnabled(result)
             "setPiAnalyticsEnabled" -> setPiAnalyticsEnabled(call, result)
-            "setMessageRead" -> setMessageRead(call, result)
+            "getMessages" -> getMessages(result)
+            "getReadMessages" -> getReadMessages(result)
+            "getUnreadMessages" -> getUnreadMessages(result)
+            "getDeletedMessages" -> getDeletedMessages(result)
+            "getMessageCount" -> getMessageCount(result)
+            "getReadMessageCount" -> getReadMessageCount(result)
+            "getUnreadMessageCount" -> getUnreadMessageCount(result)
+            "getDeletedMessageCount" -> getDeletedMessageCount(result)
             "deleteMessage" -> deleteMessage(call, result)
             "markAllMessagesRead" -> markAllMessagesRead(result)
             "markAllMessagesDeleted" -> markAllMessagesDeleted(result)
             "refreshInbox" -> refreshInbox(result)
-            "registerInboxResponseListener"->registerInboxResponseListener(result)
-            "unregisterInboxResponseListener"->unregisterInboxResponseListener(result)
+            "registerInboxResponseListener" -> registerInboxResponseListener(result)
+            "unregisterInboxResponseListener" -> unregisterInboxResponseListener(result)
             else -> result.notImplemented()
         }
     }
@@ -175,7 +172,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val deviceId = it.registrationManager.getDeviceId()
             result.success(deviceId)
-
         }
     }
 
@@ -309,7 +305,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> = it.inboxMessageManager.getMessages()
+            val inboxMessages: MutableList<InboxMessage> =
+                it.inboxMessageManager.getMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
@@ -317,7 +314,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getReadMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> = it.inboxMessageManager.getReadMessages()
+            val inboxMessages: MutableList<InboxMessage> =
+                it.inboxMessageManager.getReadMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
@@ -405,20 +403,17 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
 
     private fun refreshInbox(result: Result) {
-
         handlePushAction { pushModule ->
-            println("Pragati4");
             pushModule.inboxMessageManager.refreshInbox(object :
                 InboxMessageManager.InboxRefreshListener {
                 override fun onRefreshComplete(successful: Boolean) {
-                    println("!!!!!!!5");
-                    println(successful);
                     result.success(successful)
                     Log.d(TAG, "Inbox refresh completed successfully: $successful")
                 }
             })
         }
     }
+
     private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
 
     private fun createInboxResponseListener(): InboxMessageManager.InboxResponseListener {
@@ -426,8 +421,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
                 try {
                     val str: String = InboxUtils.inboxMessagesToString(messages)
-                    println("&&&&&")
-                    println(str)
                     channel.invokeMethod("onInboxMessagesChanged", str)
                 } catch (e: Exception) {
                     println("Error handling inbox messages change: $e")
@@ -444,11 +437,10 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun unregisterInboxResponseListener(result: MethodChannel.Result) {
+    private fun unregisterInboxResponseListener(result: Result) {
         val listener = inboxResponseListener
         if (listener != null) {
             handlePushAction { pushModule ->
-                println("Unregistering inbox response listener.")
                 pushModule.inboxMessageManager.unregisterInboxResponseListener(listener)
                 inboxResponseListener = null
                 result.success(null)
