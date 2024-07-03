@@ -1,9 +1,23 @@
-import 'package:flutter/material.dart';
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
 import 'dart:convert';
 
 // Utility functions
+
+Future<List<InboxMessage>> fetchReadMessages() async {
+  final String messages = await SFMCSdk.getReadMessages();
+  return parseMessages(messages);
+}
+
+Future<List<InboxMessage>> fetchUnreadMessages() async {
+  final String messages = await SFMCSdk.getUnreadMessages();
+  return parseMessages(messages);
+}
+
+Future<List<InboxMessage>> fetchDeletedMessages() async {
+  final String messages = await SFMCSdk.getDeletedMessages();
+  return parseMessages(messages);
+}
 
 Future<int> fetchMessageCount() async {
   final int? count = await SFMCSdk.getMessageCount();
@@ -39,21 +53,6 @@ Future<void> markAllMessagesAsRead() async {
 
 Future<void> deleteAllMessages() async {
   await SFMCSdk.markAllMessagesDeleted();
-}
-
-Future<List<InboxMessage>> fetchReadMessages() async {
-  final String messages = await SFMCSdk.getReadMessages();
-  return parseMessages(messages);
-}
-
-Future<List<InboxMessage>> fetchUnreadMessages() async {
-  final String messages = await SFMCSdk.getUnreadMessages();
-  return parseMessages(messages);
-}
-
-Future<List<InboxMessage>> fetchDeletedMessages() async {
-  final String messages = await SFMCSdk.getDeletedMessages();
-  return parseMessages(messages);
 }
 
 List<InboxMessage> parseMessages(String jsonString) {

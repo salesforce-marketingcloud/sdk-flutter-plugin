@@ -87,7 +87,7 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<Map<String, String>> getAttributes() async {
     final Map<dynamic, dynamic> result =
-    await methodChannel.invokeMethod('getAttributes');
+        await methodChannel.invokeMethod('getAttributes');
     return result.cast<String, String>();
   }
 
@@ -161,28 +161,28 @@ class MethodChannelSfmc extends SfmcPlatform {
   @override
   Future<String> getMessages() async {
     final dynamic result =
-    await methodChannel.invokeMethod<dynamic>('getMessages');
+        await methodChannel.invokeMethod<dynamic>('getMessages');
     return result;
   }
 
   @override
   Future<String> getReadMessages() async {
     final dynamic result =
-    await methodChannel.invokeMethod<dynamic>('getReadMessages');
+        await methodChannel.invokeMethod<dynamic>('getReadMessages');
     return result;
   }
 
   @override
   Future<String> getUnreadMessages() async {
     final dynamic result =
-    await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
+        await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
     return result;
   }
 
   @override
   Future<String> getDeletedMessages() async {
     final dynamic result =
-    await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
+        await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
     return result;
   }
 

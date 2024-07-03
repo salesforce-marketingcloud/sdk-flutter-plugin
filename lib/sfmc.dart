@@ -30,11 +30,12 @@ import 'sfmc_platform_interface.dart';
 import 'events.dart';
 
 export 'events.dart';
+
 typedef InboxResponseListener = void Function(List<InboxMessage> messages);
 typedef InboxRefreshListener = void Function(bool successful);
+
 /// Salesforce Marketing Cloud SDK for Flutter.
 class SFMCSdk {
-
   /// Returns the system token used by the Marketing Cloud to send push messages to the device.
   ///
   /// Returns a Future that resolves to the system token string.
@@ -316,9 +317,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.registerInboxResponseListener(callback);
   }
 
-
   static void unregisterInboxResponseListener(InboxResponseListener callback) {
     return SfmcPlatform.instance.unregisterInboxResponseListener(callback);
   }
-
 }

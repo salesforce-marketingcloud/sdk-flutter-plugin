@@ -102,6 +102,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "getReadMessageCount" -> getReadMessageCount(result)
             "getUnreadMessageCount" -> getUnreadMessageCount(result)
             "getDeletedMessageCount" -> getDeletedMessageCount(result)
+            "setMessageRead" -> setMessageRead(call, result)
             "deleteMessage" -> deleteMessage(call, result)
             "markAllMessagesRead" -> markAllMessagesRead(result)
             "markAllMessagesDeleted" -> markAllMessagesDeleted(result)

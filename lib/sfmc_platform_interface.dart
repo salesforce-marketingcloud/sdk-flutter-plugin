@@ -180,15 +180,16 @@ abstract class SfmcPlatform extends PlatformInterface {
   }
 
   Future<bool> refreshInbox(InboxRefreshListener callback) {
-    throw UnimplementedError(
-        'refreshInbox() has not been implemented.');
+    throw UnimplementedError('refreshInbox() has not been implemented.');
   }
 
   void registerInboxResponseListener(InboxResponseListener callback) {
-    throw UnimplementedError('registerInboxResponseListener()has not been implemented.');
-    }
+    throw UnimplementedError(
+        'registerInboxResponseListener()has not been implemented.');
+  }
 
   void unregisterInboxResponseListener(InboxResponseListener callback) {
-    throw UnimplementedError('unregisterInboxResponseListener()has not been implemented.');
+    throw UnimplementedError(
+        'unregisterInboxResponseListener()has not been implemented.');
   }
 }
