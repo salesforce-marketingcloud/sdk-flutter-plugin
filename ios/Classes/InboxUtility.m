@@ -41,7 +41,7 @@
 - (void)convertCustomDataInMessage:(NSMutableDictionary *)message {
     id customData = message[@"custom"];
     if (!customData || customData == [NSNull null]) {
-        customData = @{}; // Set default empty dictionary if custom is null
+        customData = @{};
     }
 
     if ([customData isKindOfClass:[NSDictionary class]]) {
@@ -53,11 +53,11 @@
         } else {
             NSLog(@"Error converting custom dictionary to JSON string: %@",
                   jsonError.localizedDescription);
-            message[@"custom"] = @""; // Set empty string as fallback
+            message[@"custom"] = @"";
         }
     } else {
         NSLog(@"Custom data is not a valid NSDictionary object");
-        message[@"custom"] = @""; // Set empty string as fallback
+        message[@"custom"] = @"";
     }
 }
 

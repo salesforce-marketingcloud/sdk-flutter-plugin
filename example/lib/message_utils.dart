@@ -60,14 +60,12 @@ List<InboxMessage> parseMessages(String jsonString) {
   return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
 }
 
-// Function to format date and time
 String formatDateTime(DateTime sendDateUtc) {
-  String date = sendDateUtc.toString().substring(0, 10); // Extract date
-  String time = formatTime(sendDateUtc); // Format time
+  String date = sendDateUtc.toString().substring(0, 10);
+  String time = formatTime(sendDateUtc);
   return '$date $time';
 }
 
-// Function to format time
 String formatTime(DateTime sendDateUtc) {
   String period = sendDateUtc.hour >= 12 ? 'PM' : 'AM';
   int hour = sendDateUtc.hour > 12 ? sendDateUtc.hour - 12 : sendDateUtc.hour;

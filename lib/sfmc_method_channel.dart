@@ -271,7 +271,6 @@ class MethodChannelSfmc extends SfmcPlatform {
           }
         });
       } catch (e) {
-        // Handle JSON decoding or other errors here
         print('Error handling native call: $e');
       }
     }

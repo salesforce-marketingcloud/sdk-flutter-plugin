@@ -54,7 +54,5 @@ class InboxUtils {
         fun inboxMessagesToString(messages: List<InboxMessage>): String {
             return JSONArray(messages.mapNotNull { it.toJson() }).toString()
         }
-
-
     }
 }
