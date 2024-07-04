@@ -167,7 +167,14 @@ class _MessagesPageState extends State<MessagesPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _handleRefresh,
-              child: ListView.builder(
+              child: filteredMessages.isEmpty
+                  ? const Center(
+                child: Text(
+                  'There are no messages to show',
+                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                ),
+              )
+                  :ListView.builder(
                 itemCount: filteredMessages.length,
                 itemBuilder: (context, index) {
                   final message = filteredMessages[index];
