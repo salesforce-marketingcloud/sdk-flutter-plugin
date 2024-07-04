@@ -128,7 +128,7 @@ class _MessagesPageState extends State<MessagesPage> {
         backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         actions: [
           IconButton(
-            icon: Icon(Icons.mark_email_read, color: Colors.white),
+            icon: const Icon(Icons.mark_email_read, color: Colors.white),
             onPressed: () async {
               setState(() {
                 for (var message in widget.messages) {
@@ -143,7 +143,7 @@ class _MessagesPageState extends State<MessagesPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete, color: Colors.white),
+            icon: const Icon(Icons.delete, color: Colors.white),
             onPressed: () async {
               setState(() {
                 widget.messages.clear();
@@ -347,9 +347,9 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Widget _buildFilterTab(String text, String type) {
     final bool selected = type == _selectedMessageType;
-    double paddingVertical = 11.0; // Default vertical padding
-    double paddingHorizontal = 11.0; // Default horizontal padding
-    double fontSize = 13.0; // Default font size
+    double paddingVertical = 11.0;
+    double paddingHorizontal = 11.0;
+    double fontSize = 13.0;
 
     return GestureDetector(
       onTap: () {

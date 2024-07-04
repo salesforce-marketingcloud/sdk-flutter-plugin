@@ -33,6 +33,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'messages_page.dart';
+import 'message_utils.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -121,11 +122,6 @@ class _MyAppState extends State<MyApp> {
       _logException(e);
       _showToast("Error getting attributes.");
     }
-  }
-
-  List<InboxMessage> parseMessages(String jsonString) {
-    final List<dynamic> jsonArray = jsonDecode(jsonString);
-    return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
   }
 
   Future<void> _fetchMessages() async {

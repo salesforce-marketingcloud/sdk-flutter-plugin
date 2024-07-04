@@ -473,14 +473,15 @@ const int LOG_LENGTH = 800;
         if (success) {
             [[NSNotificationCenter defaultCenter] addObserver:self
                                                      selector:@selector(
-                                                                        onInboxRefresh:)
+                                                             onInboxRefresh:)
                                                          name:@"SFMCInboxMessagesRefreshCompleteNotification"
                                                        object:nil];
             NSLog(@"Inbox refresh completed successfully.");
             self.refreshResult = result;
         } else {
             result(@(NO));
-        }}];
+        }
+    }];
 }
 
 - (void)registerListeners {
