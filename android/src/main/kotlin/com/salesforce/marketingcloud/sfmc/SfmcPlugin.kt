@@ -28,7 +28,6 @@
 package com.salesforce.marketingcloud.sfmc
 
 import com.salesforce.marketingcloud.messages.inbox.*
-
 import android.content.Context
 import android.content.SyncResult
 import android.util.Log
@@ -47,8 +46,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-
-//import javax.xml.transform.Result
 
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
@@ -404,7 +401,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             action(sdk)
         }
     }
-
 
     private fun handlePushAction(action: (PushModuleInterface) -> Unit) {
         handleSFMCAction {
