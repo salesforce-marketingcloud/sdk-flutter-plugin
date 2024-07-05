@@ -49,8 +49,6 @@ import io.flutter.plugin.common.MethodChannel.Result
 import java.util.HashMap
 
 
-//import javax.xml.transform.Result
-
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
@@ -457,7 +455,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             action(sdk)
         }
     }
-
 
     private fun handlePushAction(action: (PushModuleInterface) -> Unit) {
         handleSFMCAction {
