@@ -47,7 +47,11 @@ Future<int> fetchUnreadMessageCount() async {
 
 Future<int> fetchDeletedMessageCount() async {
   final int? count = await SFMCSdk.getDeletedMessageCount();
-  return count!;
+  if (count != null) {
+    return count;
+  } else {
+    return 0;
+  }
 }
 
 Future<void> setMessagesRead(String id) async {
