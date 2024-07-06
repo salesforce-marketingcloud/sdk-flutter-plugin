@@ -125,7 +125,7 @@ class _MessagesPageState extends State<MessagesPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 11, 95, 200),
+        backgroundColor: Colors.blue[800],
         actions: [
           IconButton(
             icon: const Icon(Icons.mark_email_read, color: Colors.white),
@@ -222,7 +222,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                 const SizedBox(width: 4),
                                 Text(
                                   message.sendDateUtc != null
-                                      ? formatDateTime(message.sendDateUtc!)
+                                      ? formatTime(message.sendDateUtc!)
                                       : 'Not available',
                                   style: TextStyle(
                                     color: Colors.grey[700],
