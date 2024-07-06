@@ -222,7 +222,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                 const SizedBox(width: 4),
                                 Text(
                                   message.sendDateUtc != null
-                                      ? formatDateTime(message.sendDateUtc!)
+                                      ? formatTime(message.sendDateUtc!)
                                       : 'Not available',
                                   style: TextStyle(
                                     color: Colors.grey[700],
