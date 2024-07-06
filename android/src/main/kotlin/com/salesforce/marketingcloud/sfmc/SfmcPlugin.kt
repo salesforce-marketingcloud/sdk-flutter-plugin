@@ -304,8 +304,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> =
-                it.inboxMessageManager.getMessages()
+            val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
@@ -313,8 +312,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getReadMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> =
-                it.inboxMessageManager.getReadMessages()
+            val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getReadMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
@@ -322,7 +320,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getUnreadMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> =
+            val inboxMessages: List<InboxMessage> =
                 it.inboxMessageManager.getUnreadMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
@@ -331,7 +329,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun getDeletedMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> =
+            val inboxMessages: List<InboxMessage> =
                 it.inboxMessageManager.getDeletedMessages()
             val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)

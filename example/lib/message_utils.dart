@@ -1,8 +1,7 @@
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
 import 'dart:convert';
-
-// Utility functions
+import 'package:intl/intl.dart';
 
 Future<List<InboxMessage>> fetchReadMessages() async {
   final String messages = await SFMCSdk.getReadMessages();
@@ -21,17 +20,29 @@ Future<List<InboxMessage>> fetchDeletedMessages() async {
 
 Future<int> fetchMessageCount() async {
   final int? count = await SFMCSdk.getMessageCount();
-  return count!;
+  if (count != null) {
+    return count;
+  } else {
+    return 0;
+  }
 }
 
 Future<int> fetchReadMessageCount() async {
   final int? count = await SFMCSdk.getReadMessageCount();
-  return count!;
+  if (count != null) {
+    return count;
+  } else {
+    return 0;
+  }
 }
 
 Future<int> fetchUnreadMessageCount() async {
   final int? count = await SFMCSdk.getUnreadMessageCount();
-  return count!;
+  if (count != null) {
+    return count;
+  } else {
+    return 0;
+  }
 }
 
 Future<int> fetchDeletedMessageCount() async {
@@ -60,18 +71,10 @@ List<InboxMessage> parseMessages(String jsonString) {
   return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
 }
 
-// Function to format date and time
 String formatDateTime(DateTime sendDateUtc) {
-  String date = sendDateUtc.toString().substring(0, 10); // Extract date
-  String time = formatTime(sendDateUtc); // Format time
+  final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
+  String date = dateFormatter.format(sendDateUtc);
+  final DateFormat timeFormatter = DateFormat('hh:mm a');
+  String time = timeFormatter.format(sendDateUtc);
   return '$date $time';
-}
-
-// Function to format time
-String formatTime(DateTime sendDateUtc) {
-  String period = sendDateUtc.hour >= 12 ? 'PM' : 'AM';
-  int hour = sendDateUtc.hour > 12 ? sendDateUtc.hour - 12 : sendDateUtc.hour;
-  String hourStr = hour.toString().padLeft(2, '0');
-  String minuteStr = sendDateUtc.minute.toString().padLeft(2, '0');
-  return '$hourStr:$minuteStr $period';
 }
