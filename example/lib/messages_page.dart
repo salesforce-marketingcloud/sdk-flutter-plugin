@@ -125,7 +125,7 @@ class _MessagesPageState extends State<MessagesPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 11, 95, 200),
+        backgroundColor: Colors.blue[800],
         actions: [
           IconButton(
             icon: Icon(Icons.mark_email_read, color: Colors.white),
