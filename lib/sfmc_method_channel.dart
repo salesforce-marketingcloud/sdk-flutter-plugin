@@ -246,8 +246,7 @@ class MethodChannelSfmc extends SfmcPlatform {
       if (_callbacksById.isEmpty) {
         await methodChannel.invokeMethod('unregisterInboxResponseListener');
       } else {
-        print(
-            "Couldn't unregister, still active ${_callbacksById.length} registers left");
+        print("Active ${_callbacksById.length} registers left");
       }
     } catch (e) {
       print('Failed to unregister listener : $e');
@@ -256,24 +255,19 @@ class MethodChannelSfmc extends SfmcPlatform {
 
   Future<void> _handleNativeCall(MethodCall call) async {
     if (call.method == 'onInboxMessagesChanged') {
-      try {
-        final String jsonString = call.arguments;
-        final List<dynamic> jsonArray = jsonDecode(jsonString);
-        final List<InboxMessage> inboxMessages = jsonArray
-            .where((json) => json != null)
-            .map((json) => InboxMessage.fromJson(json))
-            .toList();
-        _callbacksById.forEach((listener) {
-          if (listener != null) {
-            listener(inboxMessages);
-          } else {
-            print('Listener not found ');
-          }
-        });
-      } catch (e) {
-        // Handle JSON decoding or other errors here
-        print('Error handling native call: $e');
-      }
+      final String jsonString = call.arguments;
+      final List<dynamic> jsonArray = jsonDecode(jsonString);
+      final List<InboxMessage> inboxMessages = jsonArray
+          .where((json) => json != null)
+          .map((json) => InboxMessage.fromJson(json))
+          .toList();
+      _callbacksById.forEach((listener) {
+        if (listener != null) {
+          listener(inboxMessages);
+        } else {
+          print('Listener not found ');
+        }
+      });
     }
   }
 }

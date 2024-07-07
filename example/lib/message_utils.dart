@@ -20,38 +20,22 @@ Future<List<InboxMessage>> fetchDeletedMessages() async {
 
 Future<int> fetchMessageCount() async {
   final int? count = await SFMCSdk.getMessageCount();
-  if (count != null) {
-    return count;
-  } else {
-    return 0;
-  }
+  return count ?? 0;
 }
 
 Future<int> fetchReadMessageCount() async {
   final int? count = await SFMCSdk.getReadMessageCount();
-  if (count != null) {
-    return count;
-  } else {
-    return 0;
-  }
+  return count ?? 0;
 }
 
 Future<int> fetchUnreadMessageCount() async {
   final int? count = await SFMCSdk.getUnreadMessageCount();
-  if (count != null) {
-    return count;
-  } else {
-    return 0;
-  }
+  return count ?? 0;
 }
 
 Future<int> fetchDeletedMessageCount() async {
   final int? count = await SFMCSdk.getDeletedMessageCount();
-  if (count != null) {
-    return count;
-  } else {
-    return 0;
-  }
+  return count ?? 0;
 }
 
 Future<void> setMessagesRead(String id) async {

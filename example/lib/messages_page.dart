@@ -256,7 +256,6 @@ class _MessagesPageState extends State<MessagesPage> {
                                                 content: Text(
                                                     'Message marked as read')),
                                           );
-
                                           setState(() {
                                             message.read = true;
                                           });
@@ -347,9 +346,9 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Widget _buildFilterTab(String text, String type) {
     final bool selected = type == _selectedMessageType;
-    double paddingVertical = 11.0; // Default vertical padding
-    double paddingHorizontal = 11.0; // Default horizontal padding
-    double fontSize = 13.0; // Default font size
+    double paddingVertical = 11.0;
+    double paddingHorizontal = 11.0;
+    double fontSize = 13.0;
 
     return GestureDetector(
       onTap: () {

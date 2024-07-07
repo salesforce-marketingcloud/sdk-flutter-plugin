@@ -413,21 +413,25 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
 
-    private fun createInboxResponseListener(): InboxMessageManager.InboxResponseListener {
+    private fun createInboxResponseListener(result: Result): InboxMessageManager.InboxResponseListener {
         return object : InboxMessageManager.InboxResponseListener {
             override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
                 try {
                     val str: String = InboxUtils.inboxMessagesToString(messages)
                     channel.invokeMethod("onInboxMessagesChanged", str)
                 } catch (e: Exception) {
-                    println("Error handling inbox messages change: $e")
+                    result.error(
+                        "UNREGISTER_ERROR",
+                        "Failed to unregister listener: ${e.message}",
+                        null
+                    )
                 }
             }
         }.also { inboxResponseListener = it }
     }
 
     private fun registerInboxResponseListener(result: Result) {
-        val listener = createInboxResponseListener()
+        val listener = createInboxResponseListener(result)
         handlePushAction { pushModule ->
             pushModule.inboxMessageManager.registerInboxResponseListener(listener)
             result.success(null)
