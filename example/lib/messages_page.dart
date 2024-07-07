@@ -263,7 +263,6 @@ class _MessagesPageState extends State<MessagesPage> {
                                                 content: Text(
                                                     'Message marked as read')),
                                           );
-
                                           setState(() {
                                             message.read = true;
                                           });
