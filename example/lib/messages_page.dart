@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
@@ -49,6 +50,12 @@ class _MessagesPageState extends State<MessagesPage> {
     super.dispose();
   }
 
+  void _logException(dynamic exception) {
+    if (kDebugMode) {
+      debugPrint(exception.toString());
+    }
+  }
+
   Future<void> _initializeMessages() async {
     _totalMessageCount = await fetchMessageCount();
     _readMessageCount = await fetchReadMessageCount();
@@ -76,7 +83,7 @@ class _MessagesPageState extends State<MessagesPage> {
         );
       }
     } catch (e) {
-      print('Error refreshing inbox: $e');
+      _logException(e);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to refresh inbox')),
       );
@@ -93,7 +100,7 @@ class _MessagesPageState extends State<MessagesPage> {
         _initializeMessages();
       });
     } catch (e) {
-      print('Error fetching messages: $e');
+      _logException(e);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to fetch messages')),
       );
