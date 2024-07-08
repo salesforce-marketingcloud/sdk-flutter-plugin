@@ -129,19 +129,19 @@ abstract class SfmcPlatform extends PlatformInterface {
         'isPiAnalyticsEnabled() has not been implemented.');
   }
 
-  Future<String> getMessages() async {
+  Future<List<String>> getMessages() async {
     throw UnimplementedError('getMessages() has not been implemented.');
   }
 
-  Future<String> getReadMessages() async {
+  Future<List<String>> getReadMessages() async {
     throw UnimplementedError('getReadMessages() has not been implemented.');
   }
 
-  Future<String> getUnreadMessages() async {
+  Future<List<String>> getUnreadMessages() async {
     throw UnimplementedError('getUnreadMessages() has not been implemented.');
   }
 
-  Future<String> getDeletedMessages() async {
+  Future<List<String>> getDeletedMessages() async {
     throw UnimplementedError('getDeletedMessages() has not been implemented.');
   }
 

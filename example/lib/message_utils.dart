@@ -4,17 +4,17 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 Future<List<InboxMessage>> fetchReadMessages() async {
-  final String messages = await SFMCSdk.getReadMessages();
-  return parseMessages(messages);
+  final List<String> messages = await SFMCSdk.getReadMessages();
+     return parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchUnreadMessages() async {
-  final String messages = await SFMCSdk.getUnreadMessages();
+  final List<String> messages = await SFMCSdk.getUnreadMessages();
   return parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchDeletedMessages() async {
-  final String messages = await SFMCSdk.getDeletedMessages();
+  final List<String> messages = await SFMCSdk.getDeletedMessages();
   return parseMessages(messages);
 }
 
@@ -54,9 +54,11 @@ Future<void> deleteAllMessages() async {
   await SFMCSdk.markAllMessagesDeleted();
 }
 
-List<InboxMessage> parseMessages(String jsonString) {
-  final List<dynamic> jsonArray = jsonDecode(jsonString);
-  return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
+List<InboxMessage> parseMessages(List<String> messages) {
+  return messages.map((jsonString) {
+    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    return InboxMessage.fromJson(jsonMap);
+  }).toList();
 }
 
 String formatDateTime(DateTime sendDateUtc) {

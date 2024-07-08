@@ -92,7 +92,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Future<void> _fetchMessages() async {
     try {
-      final String messages = await SFMCSdk.getMessages();
+      final List<String> messages = await SFMCSdk.getMessages();
       final List<InboxMessage> messagesList = parseMessages(messages);
       setState(() {
         widget.messages.clear();

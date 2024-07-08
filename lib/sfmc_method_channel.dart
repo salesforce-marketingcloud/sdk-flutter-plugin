@@ -159,31 +159,31 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<String> getMessages() async {
+  Future<List<String>> getMessages() async {
     final dynamic result =
         await methodChannel.invokeMethod<dynamic>('getMessages');
-    return result;
+    return List<String>.from(result);
   }
 
   @override
-  Future<String> getReadMessages() async {
+  Future<List<String>> getReadMessages() async {
     final dynamic result =
         await methodChannel.invokeMethod<dynamic>('getReadMessages');
-    return result;
+    return List<String>.from(result);
   }
 
   @override
-  Future<String> getUnreadMessages() async {
+  Future<List<String>> getUnreadMessages() async {
     final dynamic result =
         await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
-    return result;
+    return List<String>.from(result);
   }
 
   @override
-  Future<String> getDeletedMessages() async {
+  Future<List<String>> getDeletedMessages() async {
     final dynamic result =
         await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
-    return result;
+    return List<String>.from(result);
   }
 
   @override
@@ -255,19 +255,22 @@ class MethodChannelSfmc extends SfmcPlatform {
 
   Future<void> _handleNativeCall(MethodCall call) async {
     if (call.method == 'onInboxMessagesChanged') {
-      final String jsonString = call.arguments;
-      final List<dynamic> jsonArray = jsonDecode(jsonString);
-      final List<InboxMessage> inboxMessages = jsonArray
-          .where((json) => json != null)
-          .map((json) => InboxMessage.fromJson(json))
-          .toList();
-      _callbacksById.forEach((listener) {
-        if (listener != null) {
-          listener(inboxMessages);
-        } else {
-          debugPrint('Listener not found ');
-        }
-      });
+      final List<dynamic> jsonStringList = call.arguments;
+      if (jsonStringList.every((element) => element is String)) {
+        final List<InboxMessage> inboxMessages = jsonStringList
+            .where((jsonString) => jsonString != null)
+            .map((jsonString) {
+          final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+          return InboxMessage.fromJson(jsonMap);
+        }).toList();
+        _callbacksById.forEach((listener) {
+          if (listener != null) {
+            listener(inboxMessages);
+          } else {
+            debugPrint('Listener not found ');
+          }
+        });
+      }
     }
   }
 }

@@ -51,8 +51,8 @@ class InboxUtils {
             }
         }
 
-        fun inboxMessagesToString(messages: List<InboxMessage>): String {
-            return JSONArray(messages.mapNotNull { it.toJson() }).toString()
+        fun inboxMessagesToString(messages: List<InboxMessage>): List<String> {
+            return messages.mapNotNull { it.toJson().toString() }
         }
     }
 }
