@@ -261,7 +261,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.isPiAnalyticsEnabled();
   }
 
-  /// Returns the string of Active, Read & Unread, not Deleted Inbox Messages.
+  /// Retrieves the string of Active, Read & Unread, not Deleted Inbox Messages.
   ///
   /// Returns a Future to the String representing Active, Read & Unread, not Deleted Inbox Messages.
   ///
@@ -272,7 +272,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getMessages();
   }
 
-  /// Returns the string of Active, Read, not Deleted Inbox Messages
+  /// Retrieves the string of Active, Read, not Deleted Inbox Messages
   ///
   /// Returns a Future to the String representing Active, Read, not Deleted Inbox Messages.
   ///
@@ -283,7 +283,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getReadMessages();
   }
 
-  /// Returns the string of Active, Unread, not Deleted Inbox Messages
+  /// Retrieves the string of Active, Unread, not Deleted Inbox Messages
   ///
   /// Returns a Future to the String representing Active, Unread, not Deleted Inbox Messages.
   ///
@@ -294,7 +294,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getUnreadMessages();
   }
 
-  /// Returns the string of Active, Deleted Inbox Messages
+  /// Retrieves the string of Active, Deleted Inbox Messages
   ///
   /// Returns a Future to the String representing Active, Deleted Inbox Messages.
   ///
@@ -327,7 +327,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.deleteMessage(id);
   }
 
-  /// Returns the total number of not deleted Inbox Messages.
+  /// Retrieves the total number of not deleted Inbox Messages.
   ///
   /// Returns a Future to the int representing total number of not deleted Inbox Messages.
   ///
@@ -338,7 +338,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getMessageCount();
   }
 
-  /// Returns the total number of read, not deleted Inbox Messages.
+  /// Retrieves the total number of read, not deleted Inbox Messages.
   ///
   /// Returns a Future to the int representing total number of read, not deleted Inbox Messages.
   ///
@@ -349,7 +349,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getReadMessageCount();
   }
 
-  /// Returns the total number of unread, not deleted Inbox Messages
+  /// Retrieves the total number of unread, not deleted Inbox Messages
   ///
   /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
   ///
@@ -360,7 +360,7 @@ class SFMCSdk {
     return SfmcPlatform.instance.getUnreadMessageCount();
   }
 
-  /// Returns the total number of deleted Inbox Messages regardless of their read status.
+  /// Retrieves the total number of deleted Inbox Messages regardless of their read status.
   ///
   /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
   ///
