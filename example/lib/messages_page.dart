@@ -168,10 +168,16 @@ class _MessagesPageState extends State<MessagesPage> {
             child: RefreshIndicator(
               onRefresh: _handleRefresh,
               child: filteredMessages.isEmpty
-                  ? const Center(
-                child: Text(
-                  'There are no messages to show',
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  ? SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height ,
+                  child: const Center(
+                    child: Text(
+                      'There are no messages to show',
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                    ),
+                  ),
                 ),
               )
                   :ListView.builder(
@@ -179,7 +185,6 @@ class _MessagesPageState extends State<MessagesPage> {
                 itemBuilder: (context, index) {
                   final message = filteredMessages[index];
                   final Uri url = Uri.parse(message.url);
-
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

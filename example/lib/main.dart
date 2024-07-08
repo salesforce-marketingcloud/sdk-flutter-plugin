@@ -435,14 +435,6 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              buildCard(
-                "Get Messages",
-                "Get Messages from the SFMC SDK using SFMCSdk.getMessages().",
-                _fetchMessages,
-                'GET MESSAGES',
-                content:
-                    _messages.isNotEmpty ? _messages.toString() : 'No Messages',
-              ),
             ],
           ),
         ),
