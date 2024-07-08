@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
@@ -49,6 +50,12 @@ class _MessagesPageState extends State<MessagesPage> {
     super.dispose();
   }
 
+  void _logException(dynamic exception) {
+    if (kDebugMode) {
+      debugPrint(exception.toString());
+    }
+  }
+
   Future<void> _initializeMessages() async {
     _totalMessageCount = await fetchMessageCount();
     _readMessageCount = await fetchReadMessageCount();
@@ -76,7 +83,7 @@ class _MessagesPageState extends State<MessagesPage> {
         );
       }
     } catch (e) {
-      print('Error refreshing inbox: $e');
+      _logException(e);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to refresh inbox')),
       );
@@ -93,7 +100,7 @@ class _MessagesPageState extends State<MessagesPage> {
         _initializeMessages();
       });
     } catch (e) {
-      print('Error fetching messages: $e');
+      _logException(e);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to fetch messages')),
       );
@@ -168,10 +175,16 @@ class _MessagesPageState extends State<MessagesPage> {
             child: RefreshIndicator(
               onRefresh: _handleRefresh,
               child: filteredMessages.isEmpty
-                  ? const Center(
-                child: Text(
-                  'There are no messages to show',
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  ? SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height ,
+                  child: const Center(
+                    child: Text(
+                      'There are no messages to show',
+                      style: TextStyle(fontSize: 20, color: Colors.grey),
+                    ),
+                  ),
                 ),
               )
                   :ListView.builder(
@@ -179,7 +192,6 @@ class _MessagesPageState extends State<MessagesPage> {
                 itemBuilder: (context, index) {
                   final message = filteredMessages[index];
                   final Uri url = Uri.parse(message.url);
-
                   return Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

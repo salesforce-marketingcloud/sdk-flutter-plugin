@@ -246,10 +246,10 @@ class MethodChannelSfmc extends SfmcPlatform {
       if (_callbacksById.isEmpty) {
         await methodChannel.invokeMethod('unregisterInboxResponseListener');
       } else {
-        print("Active ${_callbacksById.length} registers left");
+        debugPrint("Active ${_callbacksById.length} registers left");
       }
     } catch (e) {
-      print('Failed to unregister listener : $e');
+      debugPrint('Failed to unregister listener : $e');
     }
   }
 
@@ -265,7 +265,7 @@ class MethodChannelSfmc extends SfmcPlatform {
         if (listener != null) {
           listener(inboxMessages);
         } else {
-          print('Listener not found ');
+          debugPrint('Listener not found ');
         }
       });
     }
