@@ -261,19 +261,19 @@ class SFMCSdk {
     return SfmcPlatform.instance.isPiAnalyticsEnabled();
   }
 
-  static Future<String> getMessages() {
+  static Future<List<String>> getMessages() {
     return SfmcPlatform.instance.getMessages();
   }
 
-  static Future<String> getReadMessages() {
+  static Future<List<String>> getReadMessages() {
     return SfmcPlatform.instance.getReadMessages();
   }
 
-  static Future<String> getUnreadMessages() {
+  static Future<List<String>> getUnreadMessages() {
     return SfmcPlatform.instance.getUnreadMessages();
   }
 
-  static Future<String> getDeletedMessages() {
+  static Future<List<String>> getDeletedMessages() {
     return SfmcPlatform.instance.getDeletedMessages();
   }
 

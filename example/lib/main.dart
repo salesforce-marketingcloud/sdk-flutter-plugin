@@ -124,9 +124,16 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  List<InboxMessage> parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
+  }
+
   Future<void> _fetchMessages() async {
     try {
-      final String messages = await SFMCSdk.getMessages();
+      final List<String> messages = await SFMCSdk.getMessages();
       final List<InboxMessage> messagesList = parseMessages(messages);
       setState(() {
         _messages = messagesList;
