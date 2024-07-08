@@ -262,7 +262,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun isAnalyticsEnabled(result: Result) {
         handlePushAction {
             val isEnabled = it.analyticsManager.areAnalyticsEnabled()
@@ -300,7 +299,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             result.success(null)
         }
     }
-
 
     private fun getMessages(result: Result) {
         handlePushAction {
@@ -399,8 +397,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     private fun refreshInbox(result: Result) {
-        handlePushAction { pushModule ->
-            pushModule.inboxMessageManager.refreshInbox(object :
+        handlePushAction {
+            it.inboxMessageManager.refreshInbox(object :
                 InboxMessageManager.InboxRefreshListener {
                 override fun onRefreshComplete(successful: Boolean) {
                     result.success(successful)
@@ -431,8 +429,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     private fun registerInboxResponseListener(result: Result) {
         val listener = createInboxResponseListener(result)
-        handlePushAction { pushModule ->
-            pushModule.inboxMessageManager.registerInboxResponseListener(listener)
+        handlePushAction {
+            it.inboxMessageManager.registerInboxResponseListener(listener)
             result.success(null)
         }
     }
@@ -440,8 +438,8 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun unregisterInboxResponseListener(result: Result) {
         val listener = inboxResponseListener
         if (listener != null) {
-            handlePushAction { pushModule ->
-                pushModule.inboxMessageManager.unregisterInboxResponseListener(listener)
+            handlePushAction {
+                it.inboxMessageManager.unregisterInboxResponseListener(listener)
                 inboxResponseListener = null
                 result.success(null)
             }
