@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class InboxMessage {
   final String id;
   final String? title;
@@ -75,6 +77,13 @@ class InboxMessage {
       'url': url,
       'media': media?.toJson(),
     };
+  }
+
+  static List<InboxMessage> parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
   }
 }
 

@@ -1,21 +1,20 @@
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
 
 Future<List<InboxMessage>> fetchReadMessages() async {
   final List<String> messages = await SFMCSdk.getReadMessages();
-     return parseMessages(messages);
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchUnreadMessages() async {
   final List<String> messages = await SFMCSdk.getUnreadMessages();
-  return parseMessages(messages);
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchDeletedMessages() async {
   final List<String> messages = await SFMCSdk.getDeletedMessages();
-  return parseMessages(messages);
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<int> fetchMessageCount() async {
@@ -52,13 +51,6 @@ Future<void> markAllMessagesAsRead() async {
 
 Future<void> deleteAllMessages() async {
   await SFMCSdk.markAllMessagesDeleted();
-}
-
-List<InboxMessage> parseMessages(List<String> messages) {
-  return messages.map((jsonString) {
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-    return InboxMessage.fromJson(jsonMap);
-  }).toList();
 }
 
 String formatTime(DateTime sendDateUtc) {
