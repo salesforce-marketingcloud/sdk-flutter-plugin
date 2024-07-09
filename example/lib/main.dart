@@ -33,7 +33,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'messages_page.dart';
-import 'message_utils.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -124,9 +123,16 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  List<InboxMessage> parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
+  }
+
   Future<void> _fetchMessages() async {
     try {
-      final String messages = await SFMCSdk.getMessages();
+      final List<String> messages = await SFMCSdk.getMessages();
       final List<InboxMessage> messagesList = parseMessages(messages);
       setState(() {
         _messages = messagesList;
@@ -274,8 +280,7 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         ),
         body: Container(
-          color: const Color.fromARGB(
-              255, 210, 229, 248), // Set background color for ListView
+          color: const Color.fromARGB(255, 210, 229, 248),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             children: <Widget>[

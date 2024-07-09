@@ -1,21 +1,20 @@
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
 
 Future<List<InboxMessage>> fetchReadMessages() async {
-  final String messages = await SFMCSdk.getReadMessages();
-  return parseMessages(messages);
+  final List<String> messages = await SFMCSdk.getReadMessages();
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchUnreadMessages() async {
-  final String messages = await SFMCSdk.getUnreadMessages();
-  return parseMessages(messages);
+  final List<String> messages = await SFMCSdk.getUnreadMessages();
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<List<InboxMessage>> fetchDeletedMessages() async {
-  final String messages = await SFMCSdk.getDeletedMessages();
-  return parseMessages(messages);
+  final List<String> messages = await SFMCSdk.getDeletedMessages();
+  return InboxMessage.parseMessages(messages);
 }
 
 Future<int> fetchMessageCount() async {
@@ -52,11 +51,6 @@ Future<void> markAllMessagesAsRead() async {
 
 Future<void> deleteAllMessages() async {
   await SFMCSdk.markAllMessagesDeleted();
-}
-
-List<InboxMessage> parseMessages(String jsonString) {
-  final List<dynamic> jsonArray = jsonDecode(jsonString);
-  return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
 }
 
 String formatTime(DateTime sendDateUtc) {

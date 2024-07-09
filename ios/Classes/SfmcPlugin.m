@@ -55,7 +55,6 @@ const int LOG_LENGTH = 800;
 
 }
 
-
 - (void)log:(NSString *)msg {
     if (self.logger == nil) {
         self.logger = os_log_create("com.salesforce.marketingcloud.marketingcloudsdk", "Cordova");
@@ -303,84 +302,83 @@ const int LOG_LENGTH = 800;
 
 - (void)getMessagesWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
-        NSArray < NSDictionary * > *inboxMessages = [mp getAllMessages];
-        
+        NSArray<NSDictionary *> *inboxMessages = [mp getAllMessages];
         InboxUtility *utility = [[InboxUtility alloc] init];
-        NSMutableArray < NSDictionary * >
-        *updatedMessages = [utility processInboxMessages:inboxMessages];
-        
-        NSError *error;
-        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-        if (data) {
-            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            result(jsonString);
-        } else {
-            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]");
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSError *jsonError;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
+            if (jsonData) {
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                [jsonStrings addObject:jsonString];
+            } else {
+                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+            }
         }
+        result(jsonStrings);
     }];
 }
 
 - (void)getReadMessagesWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
-        NSArray < NSDictionary * > *inboxMessages = [mp getReadMessages];
-        
+        NSArray<NSDictionary *> *inboxMessages = [mp getReadMessages];
         InboxUtility *utility = [[InboxUtility alloc] init];
-        NSMutableArray < NSDictionary * >
-        *updatedMessages = [utility processInboxMessages:inboxMessages];
-        
-        NSError *error;
-        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-        if (data) {
-            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            result(jsonString);
-        } else {
-            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]");
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSError *jsonError;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
+            if (jsonData) {
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                [jsonStrings addObject:jsonString];
+            } else {
+                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+            }
         }
+        result(jsonStrings);
     }];
 }
 
 - (void)getUnreadMessagesWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
-        NSArray < NSDictionary * > *inboxMessages = [mp getUnreadMessages];
-        
+        NSArray<NSDictionary *> *inboxMessages = [mp getUnreadMessages];
         InboxUtility *utility = [[InboxUtility alloc] init];
-        NSMutableArray < NSDictionary * >
-        *updatedMessages = [utility processInboxMessages:inboxMessages];
-        
-        NSError *error;
-        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-        if (data) {
-            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            result(jsonString);
-        } else {
-            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]");
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSError *jsonError;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
+            if (jsonData) {
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                [jsonStrings addObject:jsonString];
+            } else {
+                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+            }
         }
+        result(jsonStrings);
     }];
 }
 
 - (void)getDeletedMessagesWithResult:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
-        NSArray < NSDictionary * > *inboxMessages = [mp getDeletedMessages];
-        
+        NSArray<NSDictionary *> *inboxMessages = [mp getDeletedMessages];
         InboxUtility *utility = [[InboxUtility alloc] init];
-        NSMutableArray < NSDictionary * >
-        *updatedMessages = [utility processInboxMessages:inboxMessages];
-        
-        NSError *error;
-        NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-        if (data) {
-            NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            result(jsonString);
-        } else {
-            NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
-            result(@"[]");
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSError *jsonError;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
+            if (jsonData) {
+                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                [jsonStrings addObject:jsonString];
+            } else {
+                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+            }
         }
+        result(jsonStrings);
     }];
 }
-
 
 - (void)setMessageRead:(NSString * _Nonnull)messageId result:(FlutterResult)result {
     [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
@@ -445,19 +443,21 @@ const int LOG_LENGTH = 800;
     InboxUtility *utility = [[InboxUtility alloc] init];
     NSMutableArray < NSDictionary * >
     *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
-    NSError *error;
-    NSData *data = [NSJSONSerialization dataWithJSONObject:updatedMessages options:NSJSONWritingPrettyPrinted error:&error];
-    if (data) {
-        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonString];
-        });
-    } else {
-        NSLog(@"Error converting array to JSON string: %@", error.localizedDescription);
+    NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+    for (NSDictionary *message in updatedMessages) {
+        NSError *jsonError;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
+        if (jsonData) {
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            [jsonStrings addObject:jsonString];
+        } else {
+            NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+        }
     }
-
+    dispatch_async(dispatch_get_main_queue(), ^{
+                [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonStrings];
+    });
 }
-
 
 - (void)onInboxRefresh:(NSNotification *)notification {
     if (self.refreshResult != nil) {

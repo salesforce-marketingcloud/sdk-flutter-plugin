@@ -7,10 +7,10 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   String recentCalledMethod = '';
   final Map<String, String> mockAttributes = {};
   final List<String> mockTags = [];
-  final String mockInboxMsgs = "";
-  final String mockInboxReadMsgs = "";
-  final String mockInboxUnreadMsgs = "";
-  final String mockInboxDeletedMsgs = "";
+  final List<String> mockInboxMsgs = [];
+  final List<String> mockInboxReadMsgs = [];
+  final List<String> mockInboxUnreadMsgs = [];
+  final List<String> mockInboxDeletedMsgs = [];
   final int mockInboxCount = 0;
   final int mockInboxReadCount = 0;
   final int mockInboxUnreadCount = 0;
@@ -146,25 +146,25 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  Future<String> getMessages() {
+  Future<List<String>> getMessages() {
     _logCall('getMessages');
     return Future.value(mockInboxMsgs);
   }
 
   @override
-  Future<String> getReadMessages() {
+  Future<List<String>> getReadMessages() {
     _logCall('getReadMessages');
     return Future.value(mockInboxReadMsgs);
   }
 
   @override
-  Future<String> getUnreadMessages() {
+  Future<List<String>> getUnreadMessages() {
     _logCall('getUnreadMessages');
     return Future.value(mockInboxUnreadMsgs);
   }
 
   @override
-  Future<String> getDeletedMessages() {
+  Future<List<String>> getDeletedMessages() {
     _logCall('getDeletedMessages');
     return Future.value(mockInboxDeletedMsgs);
   }

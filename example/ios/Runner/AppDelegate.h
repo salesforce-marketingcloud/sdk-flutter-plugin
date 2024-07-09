@@ -30,6 +30,6 @@
 #import <UserNotifications/UserNotifications.h>
 #import <SFMCSDK/SFMCSDK.h>
 
-@interface AppDelegate : FlutterAppDelegate <UNUserNotificationCenterDelegate, SFMCSdkURLHandlingDelegate>
+@interface AppDelegate : FlutterAppDelegate<UNUserNotificationCenterDelegate, SFMCSdkURLHandlingDelegate>
 
 @end

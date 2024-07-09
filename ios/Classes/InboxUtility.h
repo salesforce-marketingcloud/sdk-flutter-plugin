@@ -2,9 +2,6 @@
 
 @interface InboxUtility : NSObject
 
-- (NSMutableArray
-   
-   <NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)
-inboxMessages;
+- (NSMutableArray<NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)inboxMessages;
 
 @end

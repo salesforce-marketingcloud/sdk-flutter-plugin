@@ -268,7 +268,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getAllMessages)
-  static Future<String> getMessages() {
+  static Future<List<String>> getMessages() {
     return SfmcPlatform.instance.getMessages();
   }
 
@@ -279,7 +279,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getReadMessages)
-  static Future<String> getReadMessages() {
+  static Future<List<String>> getReadMessages() {
     return SfmcPlatform.instance.getReadMessages();
   }
 
@@ -290,7 +290,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getUnreadMessages)
-  static Future<String> getUnreadMessages() {
+  static Future<List<String>> getUnreadMessages() {
     return SfmcPlatform.instance.getUnreadMessages();
   }
 
@@ -301,7 +301,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getDeletedMessages)
-  static Future<String> getDeletedMessages() {
+  static Future<List<String>> getDeletedMessages() {
     return SfmcPlatform.instance.getDeletedMessages();
   }
 

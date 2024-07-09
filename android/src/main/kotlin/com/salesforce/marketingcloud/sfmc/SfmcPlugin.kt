@@ -303,7 +303,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun getMessages(result: Result) {
         handlePushAction {
             val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getMessages()
-            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
     }
@@ -311,7 +311,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private fun getReadMessages(result: Result) {
         handlePushAction {
             val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getReadMessages()
-            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
     }
@@ -320,7 +320,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val inboxMessages: List<InboxMessage> =
                 it.inboxMessageManager.getUnreadMessages()
-            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
     }
@@ -329,7 +329,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val inboxMessages: List<InboxMessage> =
                 it.inboxMessageManager.getDeletedMessages()
-            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
     }
@@ -414,7 +414,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         return object : InboxMessageManager.InboxResponseListener {
             override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
                 try {
-                    val str: String = InboxUtils.inboxMessagesToString(messages)
+                    val str: List<String> = InboxUtils.inboxMessagesToString(messages)
                     channel.invokeMethod("onInboxMessagesChanged", str)
                 } catch (e: Exception) {
                     result.error(

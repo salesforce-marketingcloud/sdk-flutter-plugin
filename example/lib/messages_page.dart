@@ -61,7 +61,6 @@ class _MessagesPageState extends State<MessagesPage> {
     _readMessageCount = await fetchReadMessageCount();
     _unreadMessageCount = await fetchUnreadMessageCount();
     _deletedMessageCount = await fetchDeletedMessageCount();
-
     _readMessages = await fetchReadMessages();
     _unreadMessages = await fetchUnreadMessages();
     _deletedMessages = await fetchDeletedMessages();
@@ -92,8 +91,9 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Future<void> _fetchMessages() async {
     try {
-      final String messages = await SFMCSdk.getMessages();
-      final List<InboxMessage> messagesList = parseMessages(messages);
+      final List<String> messages = await SFMCSdk.getMessages();
+      final List<InboxMessage> messagesList =
+          InboxMessage.parseMessages(messages);
       setState(() {
         widget.messages.clear();
         widget.messages.addAll(messagesList);
@@ -176,170 +176,174 @@ class _MessagesPageState extends State<MessagesPage> {
               onRefresh: _handleRefresh,
               child: filteredMessages.isEmpty
                   ? SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Container(
-                  height: MediaQuery.of(context).size.height ,
-                  child: const Center(
-                    child: Text(
-                      'There are no messages to show',
-                      style: TextStyle(fontSize: 20, color: Colors.grey),
-                    ),
-                  ),
-                ),
-              )
-                  :ListView.builder(
-                itemCount: filteredMessages.length,
-                itemBuilder: (context, index) {
-                  final message = filteredMessages[index];
-                  final Uri url = Uri.parse(message.url);
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    child: Card(
-                      elevation: 3,
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 16),
-                        leading: Icon(
-                          message.read
-                              ? Icons.mark_email_read
-                              : Icons.mark_email_unread,
-                          color: message.read ? Colors.blue : Colors.red,
-                          size: 28,
-                        ),
-                        title: Text(
-                          message.subject ?? 'No subject',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        child: const Center(
+                          child: Text(
+                            'There are no messages to show',
+                            style: TextStyle(fontSize: 20, color: Colors.grey),
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              message.alert ?? 'No alert',
-                              style: TextStyle(
-                                color: Colors.grey[700],
-                                fontSize: 16,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                const Icon(Icons.access_time,
-                                    size: 16, color: Colors.grey),
-                                const SizedBox(width: 4),
-                                Text(
-                                  message.sendDateUtc != null
-                                      ? formatTime(message.sendDateUtc!)
-                                      : 'Not available',
-                                  style: TextStyle(
-                                    color: Colors.grey[700],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        trailing: _selectedMessageType != 'deleted'
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                      icon: Icon(
-                                        message.read
-                                            ? Icons.mark_email_read
-                                            : Icons.mark_email_unread,
-                                        color: message.read
-                                            ? Colors.blue
-                                            : Colors.grey,
-                                        size: 24,
-                                      ),
-                                      onPressed: () async {
-                                        if (message.read) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text('Already read')),
-                                          );
-                                        } else {
-                                          await setMessagesRead(message.id);
-                                          await _initializeMessages();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                                content: Text(
-                                                    'Message marked as read')),
-                                          );
-                                          setState(() {
-                                            message.read = true;
-                                          });
-                                        }
-                                      }),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.grey, size: 24),
-                                    onPressed: () async {
-                                      await deleteMessage(message.id);
-                                      widget.messages.removeWhere(
-                                          (msg) => msg.id == message.id);
-                                      await _initializeMessages();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                            content: Text('Message deleted')),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              )
-                            : null,
-                        onTap: () async {
-                          if (await launchUrl(url)) {
-                            setState(() {
-                              setMessagesRead(message.id);
-                              message.read = true;
-                            });
-                            await _initializeMessages();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Could not launch $url')),
-                            );
-                          }
-                        },
-                        onLongPress: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text('Message'),
-                                content: SingleChildScrollView(
-                                  child: Text(
-                                    jsonEncode(message.toJson()),
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Close'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
                       ),
+                    )
+                  : ListView.builder(
+                      itemCount: filteredMessages.length,
+                      itemBuilder: (context, index) {
+                        final message = filteredMessages[index];
+                        final Uri url = Uri.parse(message.url);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                          child: Card(
+                            elevation: 3,
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 16),
+                              leading: Icon(
+                                message.read
+                                    ? Icons.mark_email_read
+                                    : Icons.mark_email_unread,
+                                color: message.read ? Colors.blue : Colors.red,
+                                size: 28,
+                              ),
+                              title: Text(
+                                message.subject ?? 'No subject',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    message.alert ?? 'No alert',
+                                    style: TextStyle(
+                                      color: Colors.grey[700],
+                                      fontSize: 16,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.access_time,
+                                          size: 16, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        message.sendDateUtc != null
+                                            ? formatTime(message.sendDateUtc!)
+                                            : 'Not available',
+                                        style: TextStyle(
+                                          color: Colors.grey[700],
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              trailing: _selectedMessageType != 'deleted'
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                            icon: Icon(
+                                              message.read
+                                                  ? Icons.mark_email_read
+                                                  : Icons.mark_email_unread,
+                                              color: message.read
+                                                  ? Colors.blue
+                                                  : Colors.grey,
+                                              size: 24,
+                                            ),
+                                            onPressed: () async {
+                                              if (message.read) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content:
+                                                          Text('Already read')),
+                                                );
+                                              } else {
+                                                await setMessagesRead(
+                                                    message.id);
+                                                await _initializeMessages();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Message marked as read')),
+                                                );
+                                                setState(() {
+                                                  message.read = true;
+                                                });
+                                              }
+                                            }),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.grey, size: 24),
+                                          onPressed: () async {
+                                            await deleteMessage(message.id);
+                                            widget.messages.removeWhere(
+                                                (msg) => msg.id == message.id);
+                                            await _initializeMessages();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                  content:
+                                                      Text('Message deleted')),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    )
+                                  : null,
+                              onTap: () async {
+                                if (await launchUrl(url)) {
+                                  setState(() {
+                                    setMessagesRead(message.id);
+                                    message.read = true;
+                                  });
+                                  await _initializeMessages();
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Could not launch $url')),
+                                  );
+                                }
+                              },
+                              onLongPress: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Message'),
+                                      content: SingleChildScrollView(
+                                        child: Text(
+                                          jsonEncode(message.toJson()),
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Close'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ),
         ],
