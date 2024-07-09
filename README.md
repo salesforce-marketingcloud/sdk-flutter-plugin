@@ -406,12 +406,12 @@ Checks if Predictive Intelligence analytics is enabled in the Marketing Cloud SD
 
 <a name="SFMCSdk.getMessages"></a>
 
-### SFMCSdk.getMessages() ⇒ <code>Future&lt;&lt;String&gt;&gt;</code>
+### SFMCSdk.getMessages() ⇒ <code>Future&lt;List&lt;String&gt;&gt;</code>
 
-Returns the String of Active, Read & Unread, not Deleted Inbox Messages.
+Returns the list of Active, Read & Unread, not Deleted Inbox Messages.
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;String&gt;&gt;</code> - A future to the String representing Active, Read & Unread, not Deleted Inbox Messages.
+**Returns**: <code>Future&lt;List&lt;String&gt;&gt;</code> - A future to the String representing Active, Read & Unread, not Deleted Inbox Messages.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
@@ -419,12 +419,12 @@ Returns the String of Active, Read & Unread, not Deleted Inbox Messages.
 
 <a name="SFMCSdk.getReadMessages"></a>
 
-### SFMCSdk.getReadMessages() ⇒ <code>Future&lt;String&gt;&gt;</code>
+### SFMCSdk.getReadMessages() ⇒ <code>Future&lt;List&lt;String&gt;&gt;</code>
 
-Returns the String of Active, Read, not Deleted Inbox Messages
+Returns the list of Active, Read, not Deleted Inbox Messages
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;String&gt;&gt;</code> - A future to the String representing Active, Read, not Deleted Inbox Messages.
+**Returns**: <code>Future&lt;List&lt;String&gt;&gt;</code> - A future to the String representing Active, Read, not Deleted Inbox Messages.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
@@ -432,12 +432,12 @@ Returns the String of Active, Read, not Deleted Inbox Messages
 
 <a name="SFMCSdk.getUnreadMessages"></a>
 
-### SFMCSdk.getUnreadMessages() ⇒ <code>Future&lt;String&gt;&gt;</code>
+### SFMCSdk.getUnreadMessages() ⇒ <code>Future&lt;List&lt;String&gt;&gt;</code>
 
-Returns the String of Active, Unread, not Deleted Inbox Messages
+Returns the list of Active, Unread, not Deleted Inbox Messages
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;String&gt;&gt;</code> - A future to the String representing Active, Unread, not Deleted Inbox Messages.
+**Returns**: <code>Future&lt;List&lt;String&gt;&gt;</code> - A future to the String representing Active, Unread, not Deleted Inbox Messages.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
@@ -445,12 +445,12 @@ Returns the String of Active, Unread, not Deleted Inbox Messages
 
 <a name="SFMCSdk.getDeletedMessages"></a>
 
-### SFMCSdk.getDeletedMessages() ⇒ <code>Future&lt;String&gt;&gt;</code>
+### SFMCSdk.getDeletedMessages() ⇒ <code>Future&lt;List&lt;String&gt;&gt;</code>
 
-Returns the String of Active, Deleted Inbox Messages
+Returns the list of Active, Deleted Inbox Messages
 
 **Kind**: static method of [<code>SFMCSdk</code>](#SFMCSdk)  
-**Returns**: <code>Future&lt;String&gt;&gt;</code> - A future to the String representing Active, Deleted Inbox Messages.
+**Returns**: <code>Future&lt;List&lt;String&gt;&gt;</code> - A future to the String representing Active, Deleted Inbox Messages.
 **See**
 
 - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
