@@ -2,10 +2,8 @@
 
 @implementation InboxUtility
 
-- (NSMutableArray
-
-<NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)inboxMessages {
-    NSMutableArray < NSDictionary * > *updatedMessages = [NSMutableArray array];
+- (NSMutableArray<NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)inboxMessages {
+    NSMutableArray<NSDictionary *> *updatedMessages = [NSMutableArray array];
 
     for (NSDictionary *message in inboxMessages) {
         NSMutableDictionary *updatedMessage = [message mutableCopy];
@@ -16,6 +14,17 @@
     }
 
     return updatedMessages;
+}
+
+- (NSString *)convertDictionaryToJSONString:(NSDictionary *)dictionary {
+    NSError *jsonError;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&jsonError];
+    if (jsonData) {
+        return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    } else {
+        NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
+        return nil;
+    }
 }
 
 - (void)convertDatesInMessage:(NSMutableDictionary *)message {

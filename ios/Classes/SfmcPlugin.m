@@ -301,19 +301,19 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)getMessagesWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSArray<NSDictionary *> *inboxMessages = [mp getAllMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
         InboxUtility *utility = [[InboxUtility alloc] init];
         NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
         NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
         for (NSDictionary *message in updatedMessages) {
-            NSError *jsonError;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
-            if (jsonData) {
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
                 [jsonStrings addObject:jsonString];
-            } else {
-                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
             }
         }
         result(jsonStrings);
@@ -321,19 +321,19 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)getReadMessagesWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSArray<NSDictionary *> *inboxMessages = [mp getReadMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
         InboxUtility *utility = [[InboxUtility alloc] init];
         NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
         NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
         for (NSDictionary *message in updatedMessages) {
-            NSError *jsonError;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
-            if (jsonData) {
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
                 [jsonStrings addObject:jsonString];
-            } else {
-                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
             }
         }
         result(jsonStrings);
@@ -341,19 +341,19 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)getUnreadMessagesWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSArray<NSDictionary *> *inboxMessages = [mp getUnreadMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
         InboxUtility *utility = [[InboxUtility alloc] init];
         NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
         NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
         for (NSDictionary *message in updatedMessages) {
-            NSError *jsonError;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
-            if (jsonData) {
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
                 [jsonStrings addObject:jsonString];
-            } else {
-                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
             }
         }
         result(jsonStrings);
@@ -361,19 +361,19 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)getDeletedMessagesWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSArray<NSDictionary *> *inboxMessages = [mp getDeletedMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
         InboxUtility *utility = [[InboxUtility alloc] init];
         NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
         NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
         for (NSDictionary *message in updatedMessages) {
-            NSError *jsonError;
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
-            if (jsonData) {
-                NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
                 [jsonStrings addObject:jsonString];
-            } else {
-                NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
             }
         }
         result(jsonStrings);
@@ -381,56 +381,56 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)setMessageRead:(NSString * _Nonnull)messageId result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL success = [mp markMessageWithIdReadWithMessageId:messageId];
         result(@(success));
     }];
 }
 
 - (void)deleteMessage:(NSString * _Nonnull)messageId result:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL success = [mp markMessageWithIdDeletedWithMessageId:messageId];
         result(@(success));
     }];
 }
 
 - (void)getMessagesCountWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSUInteger count = [mp getAllMessagesCount];
         result(@(count));
     }];
 }
 
 - (void)getReadMessagesCountWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSUInteger count = [mp getReadMessagesCount];
         result(@(count));
     }];
 }
 
 - (void)getUnreadMessagesCountWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSUInteger count = [mp getUnreadMessagesCount];
         result(@(count));
     }];
 }
 
 - (void)getDeletedMessagesCountWithResult:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         NSUInteger count = [mp getDeletedMessagesCount];
         result(@(count));
     }];
 }
 
 - (void)setAllMessageRead:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL success = [mp markAllMessagesRead];
         result(@(success));
     }];
 }
 
 - (void)deleteAllMessages:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL success = [mp markAllMessagesDeleted];
         result(@(success));
     }];
@@ -440,18 +440,19 @@ const int LOG_LENGTH = 800;
     NSDictionary *userInfo = [notification userInfo];
     NSDictionary *responsePayload = userInfo[@"responsePayload"];
     NSArray < NSDictionary * > *arrayOfDictionaries = @[responsePayload];
+    if ([arrayOfDictionaries count] == 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:@[]];
+            });
+            return;
+        }
     InboxUtility *utility = [[InboxUtility alloc] init];
-    NSMutableArray < NSDictionary * >
-    *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
+    NSMutableArray < NSDictionary * > *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
     NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
     for (NSDictionary *message in updatedMessages) {
-        NSError *jsonError;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:message options:NSJSONWritingPrettyPrinted error:&jsonError];
-        if (jsonData) {
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        NSString *jsonString = [utility convertDictionaryToJSONString:message];
+        if (jsonString) {
             [jsonStrings addObject:jsonString];
-        } else {
-            NSLog(@"Error converting dictionary to JSON string: %@", jsonError.localizedDescription);
         }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
