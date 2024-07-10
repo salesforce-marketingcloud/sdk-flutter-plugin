@@ -14,6 +14,7 @@ class InboxUtils {
 
             }
         }
+
         fun Map<String, String>?.asKeyValueJsonArray(): JSONArray? {
             val jsonArray = JSONArray()
             this?.forEach { (key, value) ->
@@ -50,8 +51,8 @@ class InboxUtils {
             }
         }
 
-        fun inboxMessagesToString(messages: List<InboxMessage>): String {
-            return JSONArray(messages.mapNotNull { it.toJson() }).toString()
+        fun inboxMessagesToString(messages: List<InboxMessage>): List<String> {
+            return messages.mapNotNull { it.toJson().toString() }
         }
     }
 }

@@ -56,15 +56,12 @@ class _MyAppState extends State<MyApp> {
   String _contactKey = 'Not available';
   bool _analyticsEnabled = false;
   bool _piAnalyticsEnabled = false;
-  List<InboxMessage> messagesList = [];
   List<InboxMessage> _messages = [];
 
   @override
   void initState() {
     super.initState();
-
     _updateAnalyticsToggle();
-    //enable logging
     if (kDebugMode) {
       SFMCSdk.enableLogging();
     }
@@ -126,14 +123,16 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  List<InboxMessage> parseMessages(String jsonString) {
-    final List<dynamic> jsonArray = jsonDecode(jsonString);
-    return jsonArray.map((json) => InboxMessage.fromJson(json)).toList();
+  List<InboxMessage> parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
   }
 
   Future<void> _fetchMessages() async {
     try {
-      final String messages = await SFMCSdk.getMessages();
+      final List<String> messages = await SFMCSdk.getMessages();
       final List<InboxMessage> messagesList = parseMessages(messages);
       setState(() {
         _messages = messagesList;
@@ -281,18 +280,10 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: const Color.fromARGB(255, 11, 95, 200),
         ),
         body: Container(
-          color: const Color.fromARGB(
-              255, 210, 229, 248), // Set background color for ListView
+          color: const Color.fromARGB(255, 210, 229, 248),
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
             children: <Widget>[
-              buildCard(
-                "Get Messages",
-                "Get Messages from the SFMC SDK using SFMCSdk.getMessages().",
-                _fetchMessages,
-                'GET MESSAGES',
-                content: _messages.isNotEmpty ? _messages[0].id : 'No Mesages',
-              ),
               buildCard(
                 "System Token",
                 "Get the system token from the SFMC SDK using SFMCSdk.getSystemToken().",
@@ -418,6 +409,14 @@ class _MyAppState extends State<MyApp> {
                 "Track custom event using SFMCSdk.trackEvent(event).",
                 _trackCustomEvent,
                 'TRACK EVENT',
+              ),
+              buildCard(
+                "Get Messages",
+                "Get Messages from the SFMC SDK using SFMCSdk.getMessages().",
+                _fetchMessages,
+                'GET MESSAGES',
+                content:
+                    _messages.isNotEmpty ? _messages.toString() : 'No Messages',
               ),
               buildToggleCard(
                 "Analytics Enabled",

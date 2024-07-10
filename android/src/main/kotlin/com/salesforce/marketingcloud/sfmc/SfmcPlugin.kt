@@ -28,8 +28,8 @@
 package com.salesforce.marketingcloud.sfmc
 
 import com.salesforce.marketingcloud.messages.inbox.*
-
 import android.content.Context
+import android.content.SyncResult
 import android.util.Log
 import androidx.annotation.NonNull
 import com.salesforce.marketingcloud.MCLogListener
@@ -46,6 +46,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import java.util.HashMap
+
 
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
@@ -61,7 +63,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "sfmc")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
-        //Add default tag
         handlePushAction {
             it.registrationManager.edit().addTag("Flutter").commit()
         }
@@ -79,7 +80,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "disablePush" -> disablePush(result)
             "getDeviceId" -> getDeviceId(result)
             "getTags" -> getTags(result)
-            "getMessages" -> getMessages(result)
             "addTag" -> addTag(call, result)
             "removeTag" -> removeTag(call, result)
             "getContactKey" -> getContactKey(result)
@@ -92,8 +92,21 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             "setAnalyticsEnabled" -> setAnalyticsEnabled(call, result)
             "isPiAnalyticsEnabled" -> isPiAnalyticsEnabled(result)
             "setPiAnalyticsEnabled" -> setPiAnalyticsEnabled(call, result)
+            "getMessages" -> getMessages(result)
+            "getReadMessages" -> getReadMessages(result)
+            "getUnreadMessages" -> getUnreadMessages(result)
+            "getDeletedMessages" -> getDeletedMessages(result)
+            "getMessageCount" -> getMessageCount(result)
+            "getReadMessageCount" -> getReadMessageCount(result)
+            "getUnreadMessageCount" -> getUnreadMessageCount(result)
+            "getDeletedMessageCount" -> getDeletedMessageCount(result)
             "setMessageRead" -> setMessageRead(call, result)
             "deleteMessage" -> deleteMessage(call, result)
+            "markAllMessagesRead" -> markAllMessagesRead(result)
+            "markAllMessagesDeleted" -> markAllMessagesDeleted(result)
+            "refreshInbox" -> refreshInbox(result)
+            "registerInboxResponseListener" -> registerInboxResponseListener(result)
+            "unregisterInboxResponseListener" -> unregisterInboxResponseListener(result)
             else -> result.notImplemented()
         }
     }
@@ -158,7 +171,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         handlePushAction {
             val deviceId = it.registrationManager.getDeviceId()
             result.success(deviceId)
-
         }
     }
 
@@ -250,7 +262,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun isAnalyticsEnabled(result: Result) {
         handlePushAction {
             val isEnabled = it.analyticsManager.areAnalyticsEnabled()
@@ -277,7 +288,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun setPiAnalyticsEnabled(call: MethodCall, result: Result) {
         val enable: Boolean = call.argument("analyticsEnabled") ?: false
         handlePushAction {
@@ -290,11 +300,36 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-
     private fun getMessages(result: Result) {
         handlePushAction {
-            val inboxMessages: MutableList<InboxMessage> = it.inboxMessageManager.getMessages()
-            val str: String = InboxUtils.inboxMessagesToString(inboxMessages)
+            val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getMessages()
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
+            result.success(str)
+        }
+    }
+
+    private fun getReadMessages(result: Result) {
+        handlePushAction {
+            val inboxMessages: List<InboxMessage> = it.inboxMessageManager.getReadMessages()
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
+            result.success(str)
+        }
+    }
+
+    private fun getUnreadMessages(result: Result) {
+        handlePushAction {
+            val inboxMessages: List<InboxMessage> =
+                it.inboxMessageManager.getUnreadMessages()
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
+            result.success(str)
+        }
+    }
+
+    private fun getDeletedMessages(result: Result) {
+        handlePushAction {
+            val inboxMessages: List<InboxMessage> =
+                it.inboxMessageManager.getDeletedMessages()
+            val str: List<String> = InboxUtils.inboxMessagesToString(inboxMessages)
             result.success(str)
         }
     }
@@ -317,6 +352,100 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             }
         } ?: result.error("INVALID_ARGUMENTS", "messageId is null", null)
 
+    }
+
+    private fun getMessageCount(result: Result) {
+        handlePushAction {
+            val count = it.inboxMessageManager.getMessageCount()
+            result.success(count)
+        }
+    }
+
+    private fun getReadMessageCount(result: Result) {
+        handlePushAction {
+            val count = it.inboxMessageManager.getReadMessageCount()
+            result.success(count)
+        }
+    }
+
+    private fun getUnreadMessageCount(result: Result) {
+        handlePushAction {
+            val count = it.inboxMessageManager.getUnreadMessageCount()
+            result.success(count)
+        }
+    }
+
+    private fun getDeletedMessageCount(result: Result) {
+        handlePushAction {
+            val count = it.inboxMessageManager.getDeletedMessageCount()
+            result.success(count)
+        }
+    }
+
+    private fun markAllMessagesRead(result: Result) {
+        handlePushAction {
+            it.inboxMessageManager.markAllMessagesRead()
+            result.success(null)
+        }
+    }
+
+    private fun markAllMessagesDeleted(result: Result) {
+        handlePushAction {
+            it.inboxMessageManager.markAllMessagesDeleted()
+            result.success(null)
+        }
+    }
+
+    private fun refreshInbox(result: Result) {
+        handlePushAction {
+            it.inboxMessageManager.refreshInbox(object :
+                InboxMessageManager.InboxRefreshListener {
+                override fun onRefreshComplete(successful: Boolean) {
+                    result.success(successful)
+                    Log.d(TAG, "Inbox refresh completed successfully: $successful")
+                }
+            })
+        }
+    }
+
+    private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
+
+    private fun createInboxResponseListener(result: Result): InboxMessageManager.InboxResponseListener {
+        return object : InboxMessageManager.InboxResponseListener {
+            override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
+                try {
+                    val str: List<String> = InboxUtils.inboxMessagesToString(messages)
+                    channel.invokeMethod("onInboxMessagesChanged", str)
+                } catch (e: Exception) {
+                    result.error(
+                        "UNREGISTER_ERROR",
+                        "Failed to unregister listener: ${e.message}",
+                        null
+                    )
+                }
+            }
+        }.also { inboxResponseListener = it }
+    }
+
+    private fun registerInboxResponseListener(result: Result) {
+        val listener = createInboxResponseListener(result)
+        handlePushAction {
+            it.inboxMessageManager.registerInboxResponseListener(listener)
+            result.success(null)
+        }
+    }
+
+    private fun unregisterInboxResponseListener(result: Result) {
+        val listener = inboxResponseListener
+        if (listener != null) {
+            handlePushAction {
+                it.inboxMessageManager.unregisterInboxResponseListener(listener)
+                inboxResponseListener = null
+                result.success(null)
+            }
+        } else {
+            result.error("Error", "Listener not found", null)
+        }
     }
 
     private fun handleSFMCAction(action: (SFMCSdk) -> Unit) {
@@ -342,6 +471,4 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
-
-
 }

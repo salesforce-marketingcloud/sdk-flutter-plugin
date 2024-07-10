@@ -129,8 +129,20 @@ abstract class SfmcPlatform extends PlatformInterface {
         'isPiAnalyticsEnabled() has not been implemented.');
   }
 
-  Future<String> getMessages() async {
+  Future<List<String>> getMessages() async {
     throw UnimplementedError('getMessages() has not been implemented.');
+  }
+
+  Future<List<String>> getReadMessages() async {
+    throw UnimplementedError('getReadMessages() has not been implemented.');
+  }
+
+  Future<List<String>> getUnreadMessages() async {
+    throw UnimplementedError('getUnreadMessages() has not been implemented.');
+  }
+
+  Future<List<String>> getDeletedMessages() async {
+    throw UnimplementedError('getDeletedMessages() has not been implemented.');
   }
 
   Future<void> setMessageRead(String id) {
@@ -139,5 +151,45 @@ abstract class SfmcPlatform extends PlatformInterface {
 
   Future<void> deleteMessage(String id) {
     throw UnimplementedError('deleteMessage() has not been implemented.');
+  }
+
+  Future<int?> getMessageCount() {
+    throw UnimplementedError('getMessageCount() has not been implemented.');
+  }
+
+  Future<int?> getReadMessageCount() {
+    throw UnimplementedError('getReadMessageCount() has not been implemented.');
+  }
+
+  Future<int?> getUnreadMessageCount() {
+    throw UnimplementedError('getReadMessageCount() has not been implemented.');
+  }
+
+  Future<int?> getDeletedMessageCount() {
+    throw UnimplementedError(
+        'getDeletedMessageCount() has not been implemented.');
+  }
+
+  Future<void> markAllMessagesRead() {
+    throw UnimplementedError('markAllMessagesRead() has not been implemented.');
+  }
+
+  Future<void> markAllMessagesDeleted() {
+    throw UnimplementedError(
+        'markAllMessagesDeleted() has not been implemented.');
+  }
+
+  Future<bool> refreshInbox(InboxRefreshListener callback) {
+    throw UnimplementedError('refreshInbox() has not been implemented.');
+  }
+
+  void registerInboxResponseListener(InboxResponseListener callback) {
+    throw UnimplementedError(
+        'registerInboxResponseListener()has not been implemented.');
+  }
+
+  void unregisterInboxResponseListener(InboxResponseListener callback) {
+    throw UnimplementedError(
+        'unregisterInboxResponseListener()has not been implemented.');
   }
 }
