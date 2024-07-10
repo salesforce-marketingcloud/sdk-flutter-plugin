@@ -9,7 +9,7 @@
         NSMutableDictionary *updatedMessage = [message mutableCopy];
         [self convertDatesInMessage:updatedMessage];
         [self convertFlagsInMessage:updatedMessage];
-        [self convertCustomDataInMessage:updatedMessage];
+        [self convertCustomObjectInMessage:updatedMessage];
         [updatedMessages addObject:updatedMessage];
     }
 
@@ -47,15 +47,15 @@
     message[@"read"] = @([message[@"read"] boolValue]);
 }
 
-- (void)convertCustomDataInMessage:(NSMutableDictionary *)message {
-    id customData = message[@"custom"];
-    if (!customData || customData == [NSNull null]) {
-        customData = @{};
+- (void)convertCustomObjectInMessage:(NSMutableDictionary *)message {
+    id customObject = message[@"custom"];
+    if (!customObject || customObject == [NSNull null]) {
+        customObject = @{};
     }
 
-    if ([customData isKindOfClass:[NSDictionary class]]) {
+    if ([customObject isKindOfClass:[NSDictionary class]]) {
         NSError *jsonError;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:customData options:NSJSONWritingPrettyPrinted error:&jsonError];
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:customObject options:NSJSONWritingPrettyPrinted error:&jsonError];
         if (jsonData) {
             NSString *customString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             message[@"custom"] = customString;

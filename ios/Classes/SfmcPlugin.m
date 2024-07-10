@@ -70,7 +70,7 @@ const int LOG_LENGTH = 800;
     }
 }
 
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"logSdkState" isEqualToString:call.method]) {
         [self logSdkStateWithResult:result];
     } else if ([@"getSystemToken" isEqualToString:call.method]) {
@@ -468,7 +468,7 @@ const int LOG_LENGTH = 800;
 }
 
 - (void)refreshInbox:(FlutterResult)result {
-    [SFMCSdk requestPushSdk:^(id <PushInterface> mp) {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
         BOOL success = [mp refreshMessages];
         if (success) {
             [[NSNotificationCenter defaultCenter] addObserver:self
