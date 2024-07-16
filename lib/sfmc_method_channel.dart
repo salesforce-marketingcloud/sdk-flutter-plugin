@@ -26,7 +26,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'inbox_message.dart';
 import 'sfmc_platform_interface.dart';
@@ -41,6 +41,7 @@ class MethodChannelSfmc extends SfmcPlatform {
   final methodChannel = const MethodChannel('sfmc');
 
   MethodChannelSfmc() {
+    WidgetsFlutterBinding.ensureInitialized();
     methodChannel.setMethodCallHandler(_handleNativeCall);
   }
 
