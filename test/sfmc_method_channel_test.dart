@@ -8,7 +8,6 @@ void main() {
 
   MethodChannelSfmc platform = MethodChannelSfmc();
   const MethodChannel channel = MethodChannel('sfmc');
-
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
@@ -544,6 +543,216 @@ void main() {
 
     test('isPiAnalyticsEnabled', () async {
       expect(await platform.isPiAnalyticsEnabled(), true);
+    });
+  });
+
+  group('Inbox Methods Tests', () {
+    test('getMessages', () async {
+      const testMessages = ["message1", "message2"];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getMessages') {
+          return testMessages;
+        }
+        return null;
+      });
+
+      expect(await platform.getMessages(), testMessages);
+    });
+
+    test('getReadMessages', () async {
+      const testMessages = ["messageRead1", "messageRead2"];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getReadMessages') {
+          return testMessages;
+        }
+        return null;
+      });
+
+      expect(await platform.getReadMessages(), testMessages);
+    });
+
+    test('getUnreadMessages', () async {
+      const testMessages = ["messageUnread1", "messageUnread2"];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getUnreadMessages') {
+          return testMessages;
+        }
+        return null;
+      });
+
+      expect(await platform.getUnreadMessages(), testMessages);
+    });
+
+    test('getDeletedMessages', () async {
+      const testMessages = ["messageDeleted1", "messageDeleted2"];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getDeletedMessages') {
+          return testMessages;
+        }
+        return null;
+      });
+
+      expect(await platform.getDeletedMessages(), testMessages);
+    });
+
+    test('setMessageRead', () async {
+      bool methodCalled = false;
+      const String messageId = "testMessageReadId";
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'setMessageRead' &&
+            methodCall.arguments["messageId"] == messageId) {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.setMessageRead(messageId);
+      expect(methodCalled, true);
+    });
+
+    test('deleteMessage', () async {
+      bool methodCalled = false;
+      const String messageId = "testMessageDeletedId";
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'deleteMessage' &&
+            methodCall.arguments["messageId"] == messageId) {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.deleteMessage(messageId);
+      expect(methodCalled, true);
+    });
+
+    test('getMessageCount', () async {
+      const int expectedCount = 5;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getMessageCount') {
+          return expectedCount;
+        }
+        return null;
+      });
+
+      expect(await platform.getMessageCount(), expectedCount);
+    });
+
+    test('getReadMessageCount', () async {
+      const int expectedCount = 3;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getReadMessageCount') {
+          return expectedCount;
+        }
+        return null;
+      });
+
+      expect(await platform.getReadMessageCount(), expectedCount);
+    });
+
+    test('getUnreadMessageCount', () async {
+      const int expectedCount = 2;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getUnreadMessageCount') {
+          return expectedCount;
+        }
+        return null;
+      });
+
+      expect(await platform.getUnreadMessageCount(), expectedCount);
+    });
+
+    test('getDeletedMessageCount', () async {
+      const int expectedCount = 90;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getDeletedMessageCount') {
+          return expectedCount;
+        }
+        return null;
+      });
+
+      expect(await platform.getDeletedMessageCount(), expectedCount);
+    });
+
+    test('markAllMessagesRead', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'markAllMessagesRead') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.markAllMessagesRead();
+      expect(methodCalled, true);
+    });
+
+    test('markAllMessagesDeleted', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'markAllMessagesDeleted') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.markAllMessagesDeleted();
+      expect(methodCalled, true);
+    });
+
+    test('refreshInbox', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'refreshInbox') {
+          methodCalled = true;
+        }
+        return true;
+      });
+
+      await platform.refreshInbox((success) {});
+      expect(methodCalled, true);
+    });
+
+    responseObject(response) {}
+
+    test('registerInboxResponseListener', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'registerInboxResponseListener') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.registerInboxResponseListener(responseObject);
+      expect(methodCalled, true);
+    });
+
+    test('unregisterInboxResponseListener', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'unregisterInboxResponseListener') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.unregisterInboxResponseListener(responseObject);
+      expect(methodCalled, true);
     });
   });
 }
