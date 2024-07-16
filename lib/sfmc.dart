@@ -411,7 +411,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/register-inbox-response-listener.html)
   /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
-  static void registerInboxResponseListener(InboxResponseListener callback) {
+  static Future<void> registerInboxResponseListener(InboxResponseListener callback) {
     return SfmcPlatform.instance.registerInboxResponseListener(callback);
   }
 
@@ -422,7 +422,7 @@ class SFMCSdk {
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/unregister-inbox-response-listener.html)
   /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
-  static void unregisterInboxResponseListener(InboxResponseListener callback) {
+  static Future<void> unregisterInboxResponseListener(InboxResponseListener callback) {
     return SfmcPlatform.instance.unregisterInboxResponseListener(callback);
   }
 }

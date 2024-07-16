@@ -232,7 +232,7 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  void registerInboxResponseListener(InboxResponseListener callback) async {
+  Future<void> registerInboxResponseListener(InboxResponseListener callback) async {
     _callbacksById.add(callback);
     if (_callbacksById.length == 1) {
       await methodChannel.invokeMethod('registerInboxResponseListener');
@@ -240,7 +240,7 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  void unregisterInboxResponseListener(InboxResponseListener callback) async {
+  Future<void> unregisterInboxResponseListener(InboxResponseListener callback) async {
     try {
       _callbacksById.remove(callback);
       if (_callbacksById.isEmpty) {

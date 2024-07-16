@@ -220,12 +220,12 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  void registerInboxResponseListener(InboxResponseListener callback) {
+  Future<void> registerInboxResponseListener(InboxResponseListener callback) async{
     _logCall('registerInboxResponseListener');
   }
 
   @override
-  void unregisterInboxResponseListener(InboxResponseListener callback) {
+  Future<void> unregisterInboxResponseListener(InboxResponseListener callback) async{
     _logCall('unregisterInboxResponseListener');
   }
 
