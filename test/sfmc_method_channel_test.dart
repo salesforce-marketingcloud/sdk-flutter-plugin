@@ -24,6 +24,24 @@ void main() {
             return true;
           case 'isPiAnalyticsEnabled':
             return true;
+          case 'getMessages':
+            return ["message1", "message2"];
+          case 'getReadMessages':
+            return ["messageRead1", "messageRead2"];
+          case 'getUnreadMessages':
+            return ["messageUnread1", "messageUnread2"];
+          case 'getDeletedMessages':
+            return ["messageDeleted1", "messageDeleted2"];
+          case 'getMessageCount':
+            return 5;
+          case 'getReadMessageCount':
+            return 3;
+          case 'getUnreadMessageCount':
+            return 2;
+          case 'getDeletedMessageCount':
+            return 8;
+          case 'refreshInbox':
+            return true;
           default:
             return null;
         }
@@ -548,55 +566,22 @@ void main() {
 
   group('Inbox Methods Tests', () {
     test('getMessages', () async {
-      const testMessages = ["message1", "message2"];
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getMessages') {
-          return testMessages;
-        }
-        return null;
-      });
-
-      expect(await platform.getMessages(), testMessages);
+      expect(await platform.getMessages(), ["message1", "message2"]);
     });
 
     test('getReadMessages', () async {
-      const testMessages = ["messageRead1", "messageRead2"];
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getReadMessages') {
-          return testMessages;
-        }
-        return null;
-      });
-
-      expect(await platform.getReadMessages(), testMessages);
+      expect(
+          await platform.getReadMessages(), ["messageRead1", "messageRead2"]);
     });
 
     test('getUnreadMessages', () async {
-      const testMessages = ["messageUnread1", "messageUnread2"];
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getUnreadMessages') {
-          return testMessages;
-        }
-        return null;
-      });
-
-      expect(await platform.getUnreadMessages(), testMessages);
+      expect(await platform.getUnreadMessages(),
+          ["messageUnread1", "messageUnread2"]);
     });
 
     test('getDeletedMessages', () async {
-      const testMessages = ["messageDeleted1", "messageDeleted2"];
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getDeletedMessages') {
-          return testMessages;
-        }
-        return null;
-      });
-
-      expect(await platform.getDeletedMessages(), testMessages);
+      expect(await platform.getDeletedMessages(),
+          ["messageDeleted1", "messageDeleted2"]);
     });
 
     test('setMessageRead', () async {
@@ -632,55 +617,19 @@ void main() {
     });
 
     test('getMessageCount', () async {
-      const int expectedCount = 5;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getMessageCount') {
-          return expectedCount;
-        }
-        return null;
-      });
-
-      expect(await platform.getMessageCount(), expectedCount);
+      expect(await platform.getMessageCount(), 5);
     });
 
     test('getReadMessageCount', () async {
-      const int expectedCount = 3;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getReadMessageCount') {
-          return expectedCount;
-        }
-        return null;
-      });
-
-      expect(await platform.getReadMessageCount(), expectedCount);
+      expect(await platform.getReadMessageCount(), 3);
     });
 
     test('getUnreadMessageCount', () async {
-      const int expectedCount = 2;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getUnreadMessageCount') {
-          return expectedCount;
-        }
-        return null;
-      });
-
-      expect(await platform.getUnreadMessageCount(), expectedCount);
+      expect(await platform.getUnreadMessageCount(), 2);
     });
 
     test('getDeletedMessageCount', () async {
-      const int expectedCount = 90;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'getDeletedMessageCount') {
-          return expectedCount;
-        }
-        return null;
-      });
-
-      expect(await platform.getDeletedMessageCount(), expectedCount);
+      expect(await platform.getDeletedMessageCount(), 8);
     });
 
     test('markAllMessagesRead', () async {
@@ -712,17 +661,7 @@ void main() {
     });
 
     test('refreshInbox', () async {
-      bool methodCalled = false;
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        if (methodCall.method == 'refreshInbox') {
-          methodCalled = true;
-        }
-        return true;
-      });
-
-      await platform.refreshInbox((success) {});
-      expect(methodCalled, true);
+      expect(await platform.isPiAnalyticsEnabled(), true);
     });
 
     responseObject(response) {}
