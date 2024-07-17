@@ -79,6 +79,11 @@ class InboxMessage {
     };
   }
 
+  ///The parseMessages function takes a list of JSON strings, each representing an inbox message, and converts it into a list of InboxMessage objects.
+  ///
+  /// @param messages A list of JSON strings (List<String>), where each string represents the data of an inbox message in JSON format.
+  ///
+  /// Returns a list of InboxMessage objects (List<InboxMessage>).
   static List<InboxMessage> parseMessages(List<String> messages) {
     return messages.map((jsonString) {
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);

@@ -31,7 +31,14 @@ import 'events.dart';
 
 export 'events.dart';
 
+///The InboxResponseListener is a type definition for a callback function that handles a list of InboxMessage objects. It is used to respond to events or actions that return a list of inbox messages.
+///
+/// @param messages A list of InboxMessage objects (List<InboxMessage>).
 typedef InboxResponseListener = void Function(List<InboxMessage> messages);
+
+///The InboxRefreshListener is a type definition for a callback function that handles the result of an inbox refresh operation. It indicates whether the refresh operation was successful or not.
+///
+/// @param successful A boolean value, indicating the success of the refresh operation. true if the refresh was successful, false otherwise.
 typedef InboxRefreshListener = void Function(bool successful);
 
 /// Salesforce Marketing Cloud SDK for Flutter.

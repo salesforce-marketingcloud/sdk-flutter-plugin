@@ -87,10 +87,10 @@ Please find the [API Refrences](#refrence) below.
   - [.isAnalyticsEnabled()](#SFMCSdk.isAnalyticsEnabled) ⇒ <code>Future&lt;bool&gt;</code>
   - [.setPiAnalyticsEnabled(analyticsEnabled)](#SFMCSdk.setPiAnalyticsEnabled) ⇒ <code>Future&lt;void&gt;</code>
   - [.isPiAnalyticsEnabled()](#SFMCSdk.isPiAnalyticsEnabled) ⇒ <code>Future&lt;bool&gt;</code>
-  - [.getMessages()](#SFMCSdk.getMessages) ⇒ <code>Future&lt;String&gt;</code>
-  - [.getReadMessages()](#SFMCSdk.getReadMessages) ⇒ <code>Future&lt;String&gt;</code>
-  - [.getUnreadMessages()](#SFMCSdk.getUnreadMessages) ⇒ <code>Future&lt;String&gt;</code>
-  - [.getDeletedMessages()](#SFMCSdk.getDeletedMessages) ⇒ <code>Future&lt;String&gt;</code>
+  - [.getMessages()](#SFMCSdk.getMessages) ⇒ <code>Future&lt;List<String&gt;&gt;</code>
+  - [.getReadMessages()](#SFMCSdk.getReadMessages) ⇒ <code>Future&lt;List<String&gt;&gt;</code>
+  - [.getUnreadMessages()](#SFMCSdk.getUnreadMessages) ⇒ <code>Future&lt;List<String&gt;&gt;;</code>
+  - [.getDeletedMessages()](#SFMCSdk.getDeletedMessages) ⇒ <code>Future&lt;List<String&gt;&gt;;</code>
   - [.getMessageCount()](#SFMCSdk.getMessageCount) ⇒ <code>Future&lt;int?&gt;</code>
   - [.getReadMessageCount()](#SFMCSdk.getReadMessageCount) ⇒ <code>Future&lt;int?&gt;</code>
   - [.getUnreadMessageCount()](#SFMCSdk.getUnreadMessageCount) ⇒ <code>Future&lt;int?&gt;</code>

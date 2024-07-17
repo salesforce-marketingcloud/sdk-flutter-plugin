@@ -52,6 +52,7 @@ import java.util.HashMap
 class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
+    private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
 
     companion object {
         private const val TAG = "~&SFMCPlugin"
@@ -407,8 +408,6 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
             })
         }
     }
-
-    private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
 
     private fun createInboxResponseListener(result: Result): InboxMessageManager.InboxResponseListener {
         return object : InboxMessageManager.InboxResponseListener {

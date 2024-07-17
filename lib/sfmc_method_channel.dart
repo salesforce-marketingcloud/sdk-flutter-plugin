@@ -233,24 +233,34 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<void> registerInboxResponseListener(InboxResponseListener callback) async {
-    _callbacksById.add(callback);
-    if (_callbacksById.length == 1) {
-      await methodChannel.invokeMethod('registerInboxResponseListener');
+  Future<void> registerInboxResponseListener(
+      InboxResponseListener callback) async {
+    try {
+      _callbacksById.add(callback);
+      if (_callbacksById.length == 1) {
+        await methodChannel.invokeMethod('registerInboxResponseListener');
+      } else {
+        debugPrint(
+            "Cannot Register Listener. Active ${_callbacksById.length} registers left");
+      }
+    } catch (e) {
+      print('Failed to register listener with the Native SDK: $e');
     }
   }
 
   @override
-  Future<void> unregisterInboxResponseListener(InboxResponseListener callback) async {
+  Future<void> unregisterInboxResponseListener(
+      InboxResponseListener callback) async {
     try {
       _callbacksById.remove(callback);
       if (_callbacksById.isEmpty) {
         await methodChannel.invokeMethod('unregisterInboxResponseListener');
       } else {
-        debugPrint("Active ${_callbacksById.length} registers left");
+        debugPrint(
+            "Cannot unregister listener. Active ${_callbacksById.length} registers left");
       }
     } catch (e) {
-      debugPrint('Failed to unregister listener : $e');
+      print('Failed to unregister listener with the Native SDK : $e');
     }
   }
 
