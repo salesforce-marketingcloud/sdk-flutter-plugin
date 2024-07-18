@@ -9,8 +9,8 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   final List<String> mockTags = [];
   List<String> mockInboxMsgs = ["Test1", "Test2"];
   List<String> mockInboxReadMsgs = ["TestRead1", "TestRead2"];
-  List<String> mockInboxUnreadMsgs = ["TestRead1", "TestRead2"];
-  List<String> mockInboxDeletedMsgs = ["TestRead1", "TestRead2"];
+  List<String> mockInboxUnreadMsgs = ["TestUnread1", "TestUnread2"];
+  List<String> mockInboxDeletedMsgs = ["TestDeleted1", "TestDeleted2"];
   int mockInboxCount = 100;
   int mockInboxReadCount = 30;
   int mockInboxUnreadCount = 20;

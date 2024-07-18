@@ -241,7 +241,7 @@ class MethodChannelSfmc extends SfmcPlatform {
         await methodChannel.invokeMethod('registerInboxResponseListener');
       } else {
         debugPrint(
-            "Cannot Register Listener. Active ${_callbacksById.length} registers left");
+            "Skip Register Listener with Native. Active ${_callbacksById.length} registers left");
       }
     } catch (e) {
       print('Failed to register listener with the Native SDK: $e');
@@ -257,7 +257,7 @@ class MethodChannelSfmc extends SfmcPlatform {
         await methodChannel.invokeMethod('unregisterInboxResponseListener');
       } else {
         debugPrint(
-            "Cannot unregister listener. Active ${_callbacksById.length} registers left");
+            "Skip UnRegister Listener with Native. Active ${_callbacksById.length} registers left");
       }
     } catch (e) {
       print('Failed to unregister listener with the Native SDK : $e');
