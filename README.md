@@ -610,6 +610,44 @@ Unregister your InboxMessageManager.InboxResponseListener listener.
 |----------|------------------------------------|--------------------------------------------------------|
 | callback | <code>InboxResponseListener</code> | The InboxResponseListener that you want to unregister. |
 
+<a name="InboxResponseListener"></a>
+
+### InboxResponseListener
+
+The InboxResponseListener is a type definition for a callback function that handles a list of InboxMessage objects. It is used to respond to events or actions that return a list of inbox messages.
+
+**Kind**: typedef
+
+| Param      | Type                            | Description                     |
+|------------|---------------------------------|---------------------------------|
+| messages   | <code>List<InboxMessage></code> | A list of InboxMessage objects. |
+
+<a name="InboxRefreshListener"></a>
+
+### InboxRefreshListener
+
+The InboxRefreshListener is a type definition for a callback function that handles the result of an inbox refresh operation. It indicates whether the refresh operation was successful or not.
+
+**Kind**: typedef
+
+| Param      | Type               | Description                                                                                                            |
+|------------|--------------------|------------------------------------------------------------------------------------------------------------------------|
+| successful | <code>bool</code>  | A boolean value, indicating the success of the refresh operation. true if the refresh was successful, false otherwise. |
+
+<a name="parseMessages"></a>
+
+### parseMessages
+
+The parseMessages function takes a list of JSON strings, each representing an inbox message, and converts it into a list of InboxMessage objects.
+
+***Returns***: <code>List<InboxMessage></code> - A list of InboxMessage objects.
+
+
+| Param      | Type                      | Description                                                                                                       |
+|------------|---------------------------|-------------------------------------------------------------------------------------------------------------------|
+| messages   | <code>List<String></code> | A list of JSON strings (List<String>), where each string represents the data of an inbox message in JSON format.  |
+
+
 ### 3rd Party Product Language Disclaimers
 
 Where possible, we changed noninclusive terms to align with our company value of Equality. We retained noninclusive terms to document a third-party system, but we encourage the developer community to embrace more inclusive language. We can update the term when it’s no longer required for technical accuracy.
