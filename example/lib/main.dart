@@ -125,9 +125,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _fetchMessages() async {
     try {
-      final List<String> messages = await SFMCSdk.getMessages();
-      final List<InboxMessage> messagesList =
-          InboxMessage.parseMessages(messages);
+      final List<InboxMessage> messagesList = await SFMCSdk.getMessages();
       setState(() {
         _messages = messagesList;
       });

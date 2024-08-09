@@ -27,6 +27,7 @@
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'sfmc_method_channel.dart';
+import 'inbox_message.dart';
 
 abstract class SfmcPlatform extends PlatformInterface {
   /// Constructs a SfmcPlatform.
@@ -129,19 +130,19 @@ abstract class SfmcPlatform extends PlatformInterface {
         'isPiAnalyticsEnabled() has not been implemented.');
   }
 
-  Future<List<String>> getMessages() async {
+  Future<List<InboxMessage>> getMessages() async {
     throw UnimplementedError('getMessages() has not been implemented.');
   }
 
-  Future<List<String>> getReadMessages() async {
+  Future<List<InboxMessage>> getReadMessages() async {
     throw UnimplementedError('getReadMessages() has not been implemented.');
   }
 
-  Future<List<String>> getUnreadMessages() async {
+  Future<List<InboxMessage>> getUnreadMessages() async {
     throw UnimplementedError('getUnreadMessages() has not been implemented.');
   }
 
-  Future<List<String>> getDeletedMessages() async {
+  Future<List<InboxMessage>> getDeletedMessages() async {
     throw UnimplementedError('getDeletedMessages() has not been implemented.');
   }
 
@@ -153,19 +154,19 @@ abstract class SfmcPlatform extends PlatformInterface {
     throw UnimplementedError('deleteMessage() has not been implemented.');
   }
 
-  Future<int?> getMessageCount() {
+  Future<int> getMessageCount() {
     throw UnimplementedError('getMessageCount() has not been implemented.');
   }
 
-  Future<int?> getReadMessageCount() {
+  Future<int> getReadMessageCount() {
     throw UnimplementedError('getReadMessageCount() has not been implemented.');
   }
 
-  Future<int?> getUnreadMessageCount() {
+  Future<int> getUnreadMessageCount() {
     throw UnimplementedError('getReadMessageCount() has not been implemented.');
   }
 
-  Future<int?> getDeletedMessageCount() {
+  Future<int> getDeletedMessageCount() {
     throw UnimplementedError(
         'getDeletedMessageCount() has not been implemented.');
   }

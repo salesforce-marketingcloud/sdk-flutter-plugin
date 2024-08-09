@@ -3,8 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
+import 'package:sfmc/sfmc_platform_interface.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'message_utils.dart';
+import 'package:intl/intl.dart';
 
 class MessagesPage extends StatefulWidget {
   final List<InboxMessage> messages;
@@ -56,14 +57,22 @@ class _MessagesPageState extends State<MessagesPage> {
     }
   }
 
+  String formatTime(DateTime sendDateUtc) {
+    final DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
+    String date = dateFormatter.format(sendDateUtc);
+    final DateFormat timeFormatter = DateFormat('hh:mm a');
+    String time = timeFormatter.format(sendDateUtc);
+    return '$date $time';
+  }
+
   Future<void> _initializeMessages() async {
-    _totalMessageCount = await fetchMessageCount();
-    _readMessageCount = await fetchReadMessageCount();
-    _unreadMessageCount = await fetchUnreadMessageCount();
-    _deletedMessageCount = await fetchDeletedMessageCount();
-    _readMessages = await fetchReadMessages();
-    _unreadMessages = await fetchUnreadMessages();
-    _deletedMessages = await fetchDeletedMessages();
+    _totalMessageCount = await SFMCSdk.getMessageCount();
+    _readMessageCount = await SFMCSdk.getReadMessageCount();
+    _unreadMessageCount = await SFMCSdk.getUnreadMessageCount();
+    _deletedMessageCount = await SFMCSdk.getDeletedMessageCount();
+    _readMessages = await SFMCSdk.getReadMessages();
+    _unreadMessages = await SFMCSdk.getUnreadMessages();
+    _deletedMessages = await SFMCSdk.getDeletedMessages();
 
     setState(() {});
   }
@@ -91,9 +100,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
   Future<void> _fetchMessages() async {
     try {
-      final List<String> messages = await SFMCSdk.getMessages();
-      final List<InboxMessage> messagesList =
-          InboxMessage.parseMessages(messages);
+      final List<InboxMessage> messagesList = await SFMCSdk.getMessages();
       setState(() {
         widget.messages.clear();
         widget.messages.addAll(messagesList);
@@ -142,7 +149,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   message.read = true;
                 }
               });
-              await markAllMessagesAsRead();
+              await SFMCSdk.markAllMessagesRead();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('All messages marked as read')),
               );
@@ -158,7 +165,7 @@ class _MessagesPageState extends State<MessagesPage> {
                   message.deleted = true;
                 }
               });
-              await deleteAllMessages();
+              await SFMCSdk.markAllMessagesDeleted();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('All messages deleted')),
               );
@@ -268,7 +275,7 @@ class _MessagesPageState extends State<MessagesPage> {
                                                           Text('Already read')),
                                                 );
                                               } else {
-                                                await setMessagesRead(
+                                                await SFMCSdk.setMessageRead(
                                                     message.id);
                                                 await _initializeMessages();
                                                 ScaffoldMessenger.of(context)
@@ -286,7 +293,8 @@ class _MessagesPageState extends State<MessagesPage> {
                                           icon: const Icon(Icons.delete,
                                               color: Colors.grey, size: 24),
                                           onPressed: () async {
-                                            await deleteMessage(message.id);
+                                            await SFMCSdk.deleteMessage(
+                                                message.id);
                                             widget.messages.removeWhere(
                                                 (msg) => msg.id == message.id);
                                             await _initializeMessages();
@@ -304,7 +312,7 @@ class _MessagesPageState extends State<MessagesPage> {
                               onTap: () async {
                                 if (await launchUrl(url)) {
                                   setState(() {
-                                    setMessagesRead(message.id);
+                                    SFMCSdk.setMessageRead(message.id);
                                     message.read = true;
                                   });
                                   await _initializeMessages();

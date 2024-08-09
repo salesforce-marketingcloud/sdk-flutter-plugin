@@ -160,31 +160,23 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<List<String>> getMessages() async {
-    final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getMessages');
-    return List<String>.from(result);
+  Future<List<InboxMessage>> getMessages() async {
+    return _fetchMessages('getMessages');
   }
 
   @override
-  Future<List<String>> getReadMessages() async {
-    final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getReadMessages');
-    return List<String>.from(result);
+  Future<List<InboxMessage>> getReadMessages() async {
+    return _fetchMessages('getReadMessages');
   }
 
   @override
-  Future<List<String>> getUnreadMessages() async {
-    final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getUnreadMessages');
-    return List<String>.from(result);
+  Future<List<InboxMessage>> getUnreadMessages() async {
+    return _fetchMessages('getUnreadMessages');
   }
 
   @override
-  Future<List<String>> getDeletedMessages() async {
-    final dynamic result =
-        await methodChannel.invokeMethod<dynamic>('getDeletedMessages');
-    return List<String>.from(result);
+  Future<List<InboxMessage>> getDeletedMessages() async {
+    return _fetchMessages('getDeletedMessages');
   }
 
   @override
@@ -198,23 +190,24 @@ class MethodChannelSfmc extends SfmcPlatform {
   }
 
   @override
-  Future<int?> getMessageCount() {
-    return methodChannel.invokeMethod<int?>('getMessageCount');
+  Future<int> getMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getMessageCount') ?? 0;
   }
 
   @override
-  Future<int?> getReadMessageCount() {
-    return methodChannel.invokeMethod<int?>('getReadMessageCount');
+  Future<int> getReadMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getReadMessageCount') ?? 0;
   }
 
   @override
-  Future<int?> getUnreadMessageCount() {
-    return methodChannel.invokeMethod<int?>('getUnreadMessageCount');
+  Future<int> getUnreadMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getUnreadMessageCount') ?? 0;
   }
 
   @override
-  Future<int?> getDeletedMessageCount() {
-    return methodChannel.invokeMethod<int?>('getDeletedMessageCount');
+  Future<int> getDeletedMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getDeletedMessageCount') ??
+        0;
   }
 
   @override
@@ -283,5 +276,23 @@ class MethodChannelSfmc extends SfmcPlatform {
         });
       }
     }
+  }
+
+  Future<List<InboxMessage>> _fetchMessages(String methodName) async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>(methodName);
+    return _parseMessages(List<String>.from(result));
+  }
+
+  ///The parseMessages function takes a list of JSON strings, each representing an inbox message, and converts it into a list of InboxMessage objects.
+  ///
+  /// @param messages A list of JSON strings (List<String>), where each string represents the data of an inbox message in JSON format.
+  ///
+  /// Returns a list of InboxMessage objects (List<InboxMessage>).
+  static List<InboxMessage> _parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
   }
 }
