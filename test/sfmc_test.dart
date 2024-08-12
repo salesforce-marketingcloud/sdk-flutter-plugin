@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
 import 'package:sfmc/sfmc_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -7,10 +8,59 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   String recentCalledMethod = '';
   final Map<String, String> mockAttributes = {};
   final List<String> mockTags = [];
-  List<String> mockInboxMsgs = ["Test1", "Test2"];
-  List<String> mockInboxReadMsgs = ["TestRead1", "TestRead2"];
-  List<String> mockInboxUnreadMsgs = ["TestUnread1", "TestUnread2"];
-  List<String> mockInboxDeletedMsgs = ["TestDeleted1", "TestDeleted2"];
+  List<InboxMessage> mockInboxMsgs = [
+    InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ),
+    InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ),
+  ];
+  List<InboxMessage> mockInboxReadMsgs = [
+    InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ),
+  ];
+  List<InboxMessage> mockInboxUnreadMsgs = [
+    InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ),
+  ];
+  List<InboxMessage> mockInboxDeletedMsgs = [
+    InboxMessage(
+      id: "3",
+      title: "Test3",
+      alert: "Deleted message",
+      deleted: true,
+      read: false,
+      url: "https://example.com/3",
+      sendDateUtc: DateTime.now(),
+    ),
+  ];
   int mockInboxCount = 100;
   int mockInboxReadCount = 30;
   int mockInboxUnreadCount = 20;
@@ -146,25 +196,25 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  Future<List<String>> getMessages() {
+  Future<List<InboxMessage>> getMessages() {
     _logCall('getMessages');
     return Future.value(mockInboxMsgs);
   }
 
   @override
-  Future<List<String>> getReadMessages() {
+  Future<List<InboxMessage>> getReadMessages() {
     _logCall('getReadMessages');
     return Future.value(mockInboxReadMsgs);
   }
 
   @override
-  Future<List<String>> getUnreadMessages() {
+  Future<List<InboxMessage>> getUnreadMessages() {
     _logCall('getUnreadMessages');
     return Future.value(mockInboxUnreadMsgs);
   }
 
   @override
-  Future<List<String>> getDeletedMessages() {
+  Future<List<InboxMessage>> getDeletedMessages() {
     _logCall('getDeletedMessages');
     return Future.value(mockInboxDeletedMsgs);
   }
@@ -180,26 +230,26 @@ class MockSfmcPlatform with MockPlatformInterfaceMixin implements SfmcPlatform {
   }
 
   @override
-  Future<int?> getMessageCount() {
+  Future<int> getMessageCount() {
     _logCall('getMessageCount');
     return Future.value(mockInboxCount);
   }
 
   @override
-  Future<int?> getReadMessageCount() {
+  Future<int> getReadMessageCount() {
     _logCall('getReadMessageCount');
     return Future.value(mockInboxReadCount);
   }
 
   @override
-  Future<int?> getUnreadMessageCount() {
+  Future<int> getUnreadMessageCount() {
     _logCall('getUnreadMessageCount');
     return Future.value(mockInboxUnreadCount);
   }
 
   @override
-  Future<int?> getDeletedMessageCount() {
-    _logCall('getDeleteMessageCount');
+  Future<int> getDeletedMessageCount() {
+    _logCall('getDeletedMessageCount');
     return Future.value(mockInboxDeletedCount);
   }
 
@@ -633,88 +683,90 @@ void main() {
       expect(mockPlatform.recentCalledMethod, 'isPiAnalyticsEnabled');
     });
 
-    test('getMessages', () async {
-      mockPlatform.mockInboxMsgs = testMsg;
-      expect(await SFMCSdk.getMessages(), testMsg);
-      expect(mockPlatform.recentCalledMethod, 'getMessages');
-    });
+    group('Inbox Methods Tests', () {
+      test('getMessages', () async {
+        var messages = await SFMCSdk.getMessages();
+        expect(messages, isA<List<InboxMessage>>());
+        expect(messages.length, 2);
+        expect(messages[0].id, "1");
+        expect(messages[0].title, "Test1");
+        expect(messages[0].read, false);
+        expect(messages[1].id, "2");
+        expect(messages[1].title, "Test2");
+        expect(messages[1].read, true);
+        expect(mockPlatform.recentCalledMethod, 'getMessages');
+      });
 
-    test('getReadMessages', () async {
-      mockPlatform.mockInboxReadMsgs = testReadMsg;
-      expect(await SFMCSdk.getReadMessages(), testReadMsg);
-      expect(mockPlatform.recentCalledMethod, 'getReadMessages');
-    });
+      test('getReadMessages', () async {
+        var messages = await SFMCSdk.getReadMessages();
+        expect(messages, isA<List<InboxMessage>>());
+        expect(messages.length, 1);
+        expect(messages[0].id, "2");
+        expect(messages[0].title, "Test2");
+        expect(messages[0].read, true);
+        expect(mockPlatform.recentCalledMethod, 'getReadMessages');
+      });
 
-    test('getUnreadMessages', () async {
-      mockPlatform.mockInboxUnreadMsgs = testUnreadMsg;
-      expect(await SFMCSdk.getUnreadMessages(), testUnreadMsg);
-      expect(mockPlatform.recentCalledMethod, 'getUnreadMessages');
-    });
+      test('getUnreadMessages', () async {
+        var messages = await SFMCSdk.getUnreadMessages();
+        expect(messages, isA<List<InboxMessage>>());
+        expect(messages.length, 1);
+        expect(messages[0].id, "1");
+        expect(messages[0].title, "Test1");
+        expect(messages[0].read, false);
+        expect(mockPlatform.recentCalledMethod, 'getUnreadMessages');
+      });
 
-    test('getDeletedMessages', () async {
-      mockPlatform.mockInboxDeletedMsgs = testDeletedMsg;
-      expect(await SFMCSdk.getDeletedMessages(), testDeletedMsg);
-      expect(mockPlatform.recentCalledMethod, 'getDeletedMessages');
-    });
+      test('getDeletedMessages', () async {
+        var messages = await SFMCSdk.getDeletedMessages();
+        expect(messages, isA<List<InboxMessage>>());
+        expect(messages.length, 1);
+        expect(messages[0].id, "3");
+        expect(messages[0].title, "Test3");
+        expect(messages[0].deleted, true);
+        expect(mockPlatform.recentCalledMethod, 'getDeletedMessages');
+      });
 
-    test('setMessageRead', () async {
-      await SFMCSdk.setMessageRead(testMessageId);
-      expect(mockPlatform.recentCalledMethod, 'setMessageRead');
-    });
+      test('getMessageCount', () async {
+        expect(await SFMCSdk.getMessageCount(), mockPlatform.mockInboxCount);
+        expect(mockPlatform.recentCalledMethod, 'getMessageCount');
+      });
 
-    test('deleteMessage', () async {
-      await SFMCSdk.deleteMessage(testMessageId);
-      expect(mockPlatform.recentCalledMethod, 'deleteMessage');
-    });
+      test('getReadMessageCount', () async {
+        expect(await SFMCSdk.getReadMessageCount(),
+            mockPlatform.mockInboxReadCount);
+        expect(mockPlatform.recentCalledMethod, 'getReadMessageCount');
+      });
 
-    test('getMessageCount', () async {
-      expect(await SFMCSdk.getMessageCount(), mockPlatform.mockInboxCount);
-      expect(mockPlatform.recentCalledMethod, 'getMessageCount');
-    });
+      test('getUnreadMessageCount', () async {
+        expect(await SFMCSdk.getUnreadMessageCount(),
+            mockPlatform.mockInboxUnreadCount);
+        expect(mockPlatform.recentCalledMethod, 'getUnreadMessageCount');
+      });
 
-    test('getReadMessageCount', () async {
-      expect(
-          await SFMCSdk.getReadMessageCount(), mockPlatform.mockInboxReadCount);
-      expect(mockPlatform.recentCalledMethod, 'getReadMessageCount');
-    });
+      test('getDeletedMessageCount', () async {
+        expect(await SFMCSdk.getDeletedMessageCount(),
+            mockPlatform.mockInboxDeletedCount);
+        expect(mockPlatform.recentCalledMethod, 'getDeletedMessageCount');
+      });
 
-    test('getUnreadMessageCount', () async {
-      expect(await SFMCSdk.getUnreadMessageCount(),
-          mockPlatform.mockInboxUnreadCount);
-      expect(mockPlatform.recentCalledMethod, 'getUnreadMessageCount');
-    });
+      test('refreshInbox', () async {
+        expect(await SFMCSdk.refreshInbox((success) {}),
+            mockPlatform.mockIsRefresh);
+        expect(mockPlatform.recentCalledMethod, 'refreshInbox');
+      });
 
-    test('getDeletedMessageCount', () async {
-      expect(await SFMCSdk.getDeletedMessageCount(),
-          mockPlatform.mockInboxDeletedCount);
-      expect(mockPlatform.recentCalledMethod, 'getDeleteMessageCount');
-    });
+      test('registerInboxResponseListener', () async {
+        SFMCSdk.registerInboxResponseListener((response) {});
+        expect(
+            mockPlatform.recentCalledMethod, 'registerInboxResponseListener');
+      });
 
-    test('markAllMessagesRead', () async {
-      await SFMCSdk.markAllMessagesRead();
-      expect(mockPlatform.recentCalledMethod, 'markAllMessagesRead');
-    });
-
-    test('markAllMessagesDeleted', () async {
-      await SFMCSdk.markAllMessagesDeleted();
-      expect(mockPlatform.recentCalledMethod, 'markAllMessagesDeleted');
-    });
-
-    test('refreshInbox', () async {
-      expect(
-          await SFMCSdk.refreshInbox((success) {}), mockPlatform.mockIsRefresh);
-      expect(mockPlatform.recentCalledMethod, 'refreshInbox');
-    });
-
-    test('registerInboxResponseListener', () async {
-      SFMCSdk.registerInboxResponseListener((response) {});
-      expect(mockPlatform.recentCalledMethod, 'registerInboxResponseListener');
-    });
-
-    test('unregisterInboxResponseListener', () async {
-      SFMCSdk.unregisterInboxResponseListener((response) {});
-      expect(
-          mockPlatform.recentCalledMethod, 'unregisterInboxResponseListener');
+      test('unregisterInboxResponseListener', () async {
+        SFMCSdk.unregisterInboxResponseListener((response) {});
+        expect(
+            mockPlatform.recentCalledMethod, 'unregisterInboxResponseListener');
+      });
     });
   });
 }

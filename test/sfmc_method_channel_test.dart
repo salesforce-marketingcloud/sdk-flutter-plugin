@@ -2,12 +2,70 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sfmc/sfmc_method_channel.dart';
 import 'package:sfmc/sfmc.dart';
+import 'package:sfmc/inbox_message.dart';
+import 'dart:convert';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
   MethodChannelSfmc platform = MethodChannelSfmc();
   const MethodChannel channel = MethodChannel('sfmc');
+  List<String> mockInboxMsgs = [
+    jsonEncode(InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+    jsonEncode(InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxReadMsgs = [
+    jsonEncode(InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxUnreadMsgs = [
+    jsonEncode(InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxDeletedMsgs = [
+    jsonEncode(InboxMessage(
+      id: "3",
+      title: "Test3",
+      alert: "Deleted message",
+      deleted: true,
+      read: false,
+      url: "https://example.com/3",
+      sendDateUtc: DateTime.now().subtract(Duration(days: 2)),
+    ).toJson()),
+  ];
+
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
@@ -25,13 +83,13 @@ void main() {
           case 'isPiAnalyticsEnabled':
             return true;
           case 'getMessages':
-            return ["message1", "message2"];
+            return mockInboxMsgs;
           case 'getReadMessages':
-            return ["messageRead1", "messageRead2"];
+            return mockInboxReadMsgs;
           case 'getUnreadMessages':
-            return ["messageUnread1", "messageUnread2"];
+            return mockInboxUnreadMsgs;
           case 'getDeletedMessages':
-            return ["messageDeleted1", "messageDeleted2"];
+            return mockInboxDeletedMsgs;
           case 'getMessageCount':
             return 5;
           case 'getReadMessageCount':
@@ -566,22 +624,31 @@ void main() {
 
   group('Inbox Methods Tests', () {
     test('getMessages', () async {
-      expect(await platform.getMessages(), ["message1", "message2"]);
+      final messages = await platform.getMessages();
+      expect(messages.length, 2);
+      expect(messages[0].id, "1");
+      expect(messages[1].id, "2");
     });
 
     test('getReadMessages', () async {
-      expect(
-          await platform.getReadMessages(), ["messageRead1", "messageRead2"]);
+      final messages = await platform.getReadMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "2");
+      expect(messages[0].read, true);
     });
 
     test('getUnreadMessages', () async {
-      expect(await platform.getUnreadMessages(),
-          ["messageUnread1", "messageUnread2"]);
+      final messages = await platform.getUnreadMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "1");
+      expect(messages[0].read, false);
     });
 
     test('getDeletedMessages', () async {
-      expect(await platform.getDeletedMessages(),
-          ["messageDeleted1", "messageDeleted2"]);
+      final messages = await platform.getDeletedMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "3");
+      expect(messages[0].deleted, true);
     });
 
     test('setMessageRead', () async {
