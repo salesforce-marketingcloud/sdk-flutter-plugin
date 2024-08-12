@@ -25,14 +25,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-
+import 'inbox_message.dart';
 import 'sfmc_platform_interface.dart';
+
+typedef InboxResponseListener = void Function(List<InboxMessage> messages);
+typedef InboxRefreshListener = void Function(bool successful);
+
+List<InboxResponseListener> _callbacksById = [];
 
 class MethodChannelSfmc extends SfmcPlatform {
   @visibleForTesting
   final methodChannel = const MethodChannel('sfmc');
+
+  MethodChannelSfmc() {
+    WidgetsFlutterBinding.ensureInitialized();
+    methodChannel.setMethodCallHandler(_handleNativeCall);
+  }
 
   @override
   Future<String?> getSystemToken() {
@@ -146,5 +157,142 @@ class MethodChannelSfmc extends SfmcPlatform {
   Future<bool> isPiAnalyticsEnabled() async {
     return await methodChannel.invokeMethod<bool>('isPiAnalyticsEnabled') ??
         false;
+  }
+
+  @override
+  Future<List<InboxMessage>> getMessages() async {
+    return _fetchMessages('getMessages');
+  }
+
+  @override
+  Future<List<InboxMessage>> getReadMessages() async {
+    return _fetchMessages('getReadMessages');
+  }
+
+  @override
+  Future<List<InboxMessage>> getUnreadMessages() async {
+    return _fetchMessages('getUnreadMessages');
+  }
+
+  @override
+  Future<List<InboxMessage>> getDeletedMessages() async {
+    return _fetchMessages('getDeletedMessages');
+  }
+
+  @override
+  Future<void> setMessageRead(String id) {
+    return methodChannel.invokeMethod('setMessageRead', {'messageId': id});
+  }
+
+  @override
+  Future<void> deleteMessage(String id) {
+    return methodChannel.invokeMethod('deleteMessage', {'messageId': id});
+  }
+
+  @override
+  Future<int> getMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getMessageCount') ?? 0;
+  }
+
+  @override
+  Future<int> getReadMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getReadMessageCount') ?? 0;
+  }
+
+  @override
+  Future<int> getUnreadMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getUnreadMessageCount') ?? 0;
+  }
+
+  @override
+  Future<int> getDeletedMessageCount() async {
+    return await methodChannel.invokeMethod<int?>('getDeletedMessageCount') ??
+        0;
+  }
+
+  @override
+  Future<void> markAllMessagesRead() {
+    return methodChannel.invokeMethod('markAllMessagesRead');
+  }
+
+  @override
+  Future<void> markAllMessagesDeleted() {
+    return methodChannel.invokeMethod('markAllMessagesDeleted');
+  }
+
+  @override
+  Future<bool> refreshInbox(InboxRefreshListener callback) async {
+    return await methodChannel.invokeMethod('refreshInbox');
+  }
+
+  @override
+  Future<void> registerInboxResponseListener(
+      InboxResponseListener callback) async {
+    try {
+      _callbacksById.add(callback);
+      if (_callbacksById.length == 1) {
+        await methodChannel.invokeMethod('registerInboxResponseListener');
+      } else {
+        debugPrint(
+            "Skip Register Listener with Native. Active ${_callbacksById.length} registers left");
+      }
+    } catch (e) {
+      debugPrint('Failed to Register listener with the Native SDK: $e');
+    }
+  }
+
+  @override
+  Future<void> unregisterInboxResponseListener(
+      InboxResponseListener callback) async {
+    try {
+      _callbacksById.remove(callback);
+      if (_callbacksById.isEmpty) {
+        await methodChannel.invokeMethod('unregisterInboxResponseListener');
+      } else {
+        debugPrint(
+            "Skip Unregister Listener with Native. Active ${_callbacksById.length} registers left");
+      }
+    } catch (e) {
+      debugPrint('Failed to Unregister listener with the Native SDK : $e');
+    }
+  }
+
+  Future<void> _handleNativeCall(MethodCall call) async {
+    if (call.method == 'onInboxMessagesChanged') {
+      final List<dynamic> jsonStringList = call.arguments;
+      if (jsonStringList.every((element) => element is String)) {
+        final List<InboxMessage> inboxMessages = jsonStringList
+            .where((jsonString) => jsonString != null)
+            .map((jsonString) {
+          final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+          return InboxMessage.fromJson(jsonMap);
+        }).toList();
+        _callbacksById.forEach((listener) {
+          if (listener != null) {
+            listener(inboxMessages);
+          } else {
+            debugPrint('Listener not found ');
+          }
+        });
+      }
+    }
+  }
+
+  Future<List<InboxMessage>> _fetchMessages(String methodName) async {
+    final dynamic result =
+        await methodChannel.invokeMethod<dynamic>(methodName);
+    return _parseMessages(List<String>.from(result));
+  }
+
+  ///The parseMessages function takes a list of JSON strings, each representing an inbox message, and converts it into a list of InboxMessage objects.
+  ///
+  /// @param messages A list of JSON strings (List<String>), where each string represents the data of an inbox message in JSON format.
+  ///
+  /// Returns a list of InboxMessage objects (List<InboxMessage>).
+  static List<InboxMessage> _parseMessages(List<String> messages) {
+    return messages.map((jsonString) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return InboxMessage.fromJson(jsonMap);
+    }).toList();
   }
 }

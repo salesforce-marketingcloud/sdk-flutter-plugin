@@ -2,12 +2,69 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sfmc/sfmc_method_channel.dart';
 import 'package:sfmc/sfmc.dart';
+import 'package:sfmc/inbox_message.dart';
+import 'dart:convert';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
   MethodChannelSfmc platform = MethodChannelSfmc();
   const MethodChannel channel = MethodChannel('sfmc');
+  List<String> mockInboxMsgs = [
+    jsonEncode(InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+    jsonEncode(InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxReadMsgs = [
+    jsonEncode(InboxMessage(
+      id: "2",
+      title: "Test2",
+      alert: "New message 2",
+      deleted: false,
+      read: true,
+      url: "https://example.com/2",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxUnreadMsgs = [
+    jsonEncode(InboxMessage(
+      id: "1",
+      title: "Test1",
+      alert: "New message 1",
+      deleted: false,
+      read: false,
+      url: "https://example.com/1",
+      sendDateUtc: DateTime.now(),
+    ).toJson()),
+  ];
+
+  List<String> mockInboxDeletedMsgs = [
+    jsonEncode(InboxMessage(
+      id: "3",
+      title: "Test3",
+      alert: "Deleted message",
+      deleted: true,
+      read: false,
+      url: "https://example.com/3",
+      sendDateUtc: DateTime.now().subtract(Duration(days: 2)),
+    ).toJson()),
+  ];
 
   setUp(() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -24,6 +81,24 @@ void main() {
           case 'isAnalyticsEnabled':
             return true;
           case 'isPiAnalyticsEnabled':
+            return true;
+          case 'getMessages':
+            return mockInboxMsgs;
+          case 'getReadMessages':
+            return mockInboxReadMsgs;
+          case 'getUnreadMessages':
+            return mockInboxUnreadMsgs;
+          case 'getDeletedMessages':
+            return mockInboxDeletedMsgs;
+          case 'getMessageCount':
+            return 5;
+          case 'getReadMessageCount':
+            return 3;
+          case 'getUnreadMessageCount':
+            return 2;
+          case 'getDeletedMessageCount':
+            return 8;
+          case 'refreshInbox':
             return true;
           default:
             return null;
@@ -544,6 +619,146 @@ void main() {
 
     test('isPiAnalyticsEnabled', () async {
       expect(await platform.isPiAnalyticsEnabled(), true);
+    });
+  });
+
+  group('Inbox Methods Tests', () {
+    test('getMessages', () async {
+      final messages = await platform.getMessages();
+      expect(messages.length, 2);
+      expect(messages[0].id, "1");
+      expect(messages[1].id, "2");
+    });
+
+    test('getReadMessages', () async {
+      final messages = await platform.getReadMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "2");
+      expect(messages[0].read, true);
+    });
+
+    test('getUnreadMessages', () async {
+      final messages = await platform.getUnreadMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "1");
+      expect(messages[0].read, false);
+    });
+
+    test('getDeletedMessages', () async {
+      final messages = await platform.getDeletedMessages();
+      expect(messages.length, 1);
+      expect(messages[0].id, "3");
+      expect(messages[0].deleted, true);
+    });
+
+    test('setMessageRead', () async {
+      bool methodCalled = false;
+      const String messageId = "testMessageReadId";
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'setMessageRead' &&
+            methodCall.arguments["messageId"] == messageId) {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.setMessageRead(messageId);
+      expect(methodCalled, true);
+    });
+
+    test('deleteMessage', () async {
+      bool methodCalled = false;
+      const String messageId = "testMessageDeletedId";
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'deleteMessage' &&
+            methodCall.arguments["messageId"] == messageId) {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.deleteMessage(messageId);
+      expect(methodCalled, true);
+    });
+
+    test('getMessageCount', () async {
+      expect(await platform.getMessageCount(), 5);
+    });
+
+    test('getReadMessageCount', () async {
+      expect(await platform.getReadMessageCount(), 3);
+    });
+
+    test('getUnreadMessageCount', () async {
+      expect(await platform.getUnreadMessageCount(), 2);
+    });
+
+    test('getDeletedMessageCount', () async {
+      expect(await platform.getDeletedMessageCount(), 8);
+    });
+
+    test('markAllMessagesRead', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'markAllMessagesRead') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.markAllMessagesRead();
+      expect(methodCalled, true);
+    });
+
+    test('markAllMessagesDeleted', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'markAllMessagesDeleted') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.markAllMessagesDeleted();
+      expect(methodCalled, true);
+    });
+
+    test('refreshInbox', () async {
+      expect(await platform.isPiAnalyticsEnabled(), true);
+    });
+
+    responseObject(response) {}
+
+    test('registerInboxResponseListener', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'registerInboxResponseListener') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.registerInboxResponseListener(responseObject);
+      expect(methodCalled, true);
+    });
+
+    test('unregisterInboxResponseListener', () async {
+      bool methodCalled = false;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'unregisterInboxResponseListener') {
+          methodCalled = true;
+        }
+        return null;
+      });
+
+      await platform.unregisterInboxResponseListener(responseObject);
+      expect(methodCalled, true);
     });
   });
 }

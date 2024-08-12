@@ -26,8 +26,8 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-
 import 'sfmc_method_channel.dart';
+import 'inbox_message.dart';
 
 abstract class SfmcPlatform extends PlatformInterface {
   /// Constructs a SfmcPlatform.
@@ -128,5 +128,69 @@ abstract class SfmcPlatform extends PlatformInterface {
   Future<bool> isPiAnalyticsEnabled() {
     throw UnimplementedError(
         'isPiAnalyticsEnabled() has not been implemented.');
+  }
+
+  Future<List<InboxMessage>> getMessages() async {
+    throw UnimplementedError('getMessages() has not been implemented.');
+  }
+
+  Future<List<InboxMessage>> getReadMessages() async {
+    throw UnimplementedError('getReadMessages() has not been implemented.');
+  }
+
+  Future<List<InboxMessage>> getUnreadMessages() async {
+    throw UnimplementedError('getUnreadMessages() has not been implemented.');
+  }
+
+  Future<List<InboxMessage>> getDeletedMessages() async {
+    throw UnimplementedError('getDeletedMessages() has not been implemented.');
+  }
+
+  Future<void> setMessageRead(String id) {
+    throw UnimplementedError('setMessageRead() has not been implemented.');
+  }
+
+  Future<void> deleteMessage(String id) {
+    throw UnimplementedError('deleteMessage() has not been implemented.');
+  }
+
+  Future<int> getMessageCount() {
+    throw UnimplementedError('getMessageCount() has not been implemented.');
+  }
+
+  Future<int> getReadMessageCount() {
+    throw UnimplementedError('getReadMessageCount() has not been implemented.');
+  }
+
+  Future<int> getUnreadMessageCount() {
+    throw UnimplementedError('getReadMessageCount() has not been implemented.');
+  }
+
+  Future<int> getDeletedMessageCount() {
+    throw UnimplementedError(
+        'getDeletedMessageCount() has not been implemented.');
+  }
+
+  Future<void> markAllMessagesRead() {
+    throw UnimplementedError('markAllMessagesRead() has not been implemented.');
+  }
+
+  Future<void> markAllMessagesDeleted() {
+    throw UnimplementedError(
+        'markAllMessagesDeleted() has not been implemented.');
+  }
+
+  Future<bool> refreshInbox(InboxRefreshListener callback) {
+    throw UnimplementedError('refreshInbox() has not been implemented.');
+  }
+
+  Future<void> registerInboxResponseListener(InboxResponseListener callback) {
+    throw UnimplementedError(
+        'registerInboxResponseListener()has not been implemented.');
+  }
+
+  Future<void> unregisterInboxResponseListener(InboxResponseListener callback) {
+    throw UnimplementedError(
+        'unregisterInboxResponseListener()has not been implemented.');
   }
 }

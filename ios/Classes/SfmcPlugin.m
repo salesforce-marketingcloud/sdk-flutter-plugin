@@ -29,6 +29,13 @@
 #import <SFMCSDK/SFMCSDK.h>
 #import <MarketingCloudSDK/MarketingCloudSDK.h>
 #import "NSDictionary+SFMCEvent.h"
+#import "InboxUtility.h"
+
+@interface SfmcPlugin ()
+@property(strong, nonatomic) FlutterMethodChannel *channel;
+@property(copy, nonatomic) FlutterResult refreshResult;
+@property bool value;
+@end
 
 @implementation SfmcPlugin
 const int LOG_LENGTH = 800;
@@ -40,11 +47,12 @@ const int LOG_LENGTH = 800;
     SfmcPlugin* instance = [[SfmcPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     [registrar addApplicationDelegate:instance];
-    
+    instance.channel = channel;
     //Add default tag.
     [SFMCSdk requestPushSdk:^(id<PushInterface> _Nonnull mp) {
         (void)[mp addTag:@"Flutter"];
     }];
+
 }
 
 - (void)log:(NSString *)msg {
@@ -80,42 +88,74 @@ const int LOG_LENGTH = 800;
     } else if ([@"getDeviceId" isEqualToString:call.method]) {
         [self getDeviceIdWithResult:result];
     } else if ([@"setContactKey" isEqualToString:call.method]) {
-        NSString* contactKey = call.arguments[@"contactKey"];
+        NSString *contactKey = call.arguments[@"contactKey"];
         [self setContactKey:contactKey result:result];
     } else if ([@"getContactKey" isEqualToString:call.method]) {
         [self getContactKeyWithResult:result];
     } else if ([@"addTag" isEqualToString:call.method]) {
-        NSString* tag = call.arguments[@"tag"];
+        NSString *tag = call.arguments[@"tag"];
         [self addTag:tag result:result];
     } else if ([@"removeTag" isEqualToString:call.method]) {
-        NSString* tag = call.arguments[@"tag"];
+        NSString *tag = call.arguments[@"tag"];
         [self removeTag:tag result:result];
     } else if ([@"getTags" isEqualToString:call.method]) {
         [self getTagsWithResult:result];
     } else if ([@"setAttribute" isEqualToString:call.method]) {
-        NSDictionary* args = call.arguments;
-        NSString* key = args[@"key"];
-        NSString* value = args[@"value"];
+        NSDictionary *args = call.arguments;
+        NSString *key = args[@"key"];
+        NSString *value = args[@"value"];
         [self setAttributeWithKey:key value:value result:result];
         result(nil);
     } else if ([@"clearAttribute" isEqualToString:call.method]) {
-        NSString* key = call.arguments[@"key"];
+        NSString *key = call.arguments[@"key"];
         [self clearAttributeWithKey:key result:result];
     } else if ([@"getAttributes" isEqualToString:call.method]) {
         [self getAttributesWithResult:result];
     } else if ([@"trackEvent" isEqualToString:call.method]) {
-        NSDictionary* eventJson = call.arguments;
+        NSDictionary *eventJson = call.arguments;
         [self trackEventWithJson:eventJson result:result];
     } else if ([@"setAnalyticsEnabled" isEqualToString:call.method]) {
-        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        NSNumber *analyticsEnabled = call.arguments[@"analyticsEnabled"];
         [self setAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
     } else if ([@"isAnalyticsEnabled" isEqualToString:call.method]) {
         [self isAnalyticsEnabledWithResult:result];
     } else if ([@"setPiAnalyticsEnabled" isEqualToString:call.method]) {
-        NSNumber* analyticsEnabled = call.arguments[@"analyticsEnabled"];
+        NSNumber *analyticsEnabled = call.arguments[@"analyticsEnabled"];
         [self setPiAnalyticsEnabled:[analyticsEnabled boolValue] result:result];
     } else if ([@"isPiAnalyticsEnabled" isEqualToString:call.method]) {
         [self isPiAnalyticsEnabledWithResult:result];
+    } else if ([@"getMessages" isEqualToString:call.method]) {
+        [self getMessagesWithResult:result];
+    } else if ([@"getReadMessages" isEqualToString:call.method]) {
+        [self getReadMessagesWithResult:result];
+    } else if ([@"getUnreadMessages" isEqualToString:call.method]) {
+        [self getUnreadMessagesWithResult:result];
+    } else if ([@"getDeletedMessages" isEqualToString:call.method]) {
+        [self getDeletedMessagesWithResult:result];
+    } else if ([@"getMessageCount" isEqualToString:call.method]) {
+        [self getMessagesCountWithResult:result];
+    } else if ([@"getReadMessageCount" isEqualToString:call.method]) {
+        [self getReadMessagesCountWithResult:result];
+    } else if ([@"getUnreadMessageCount" isEqualToString:call.method]) {
+        [self getUnreadMessagesCountWithResult:result];
+    } else if ([@"getDeletedMessageCount" isEqualToString:call.method]) {
+        [self getDeletedMessagesCountWithResult:result];
+    } else if ([@"setMessageRead" isEqualToString:call.method]) {
+        NSString *messageId = call.arguments[@"messageId"];
+        [self setMessageRead:messageId result:result];
+    } else if ([@"deleteMessage" isEqualToString:call.method]) {
+        NSString *messageId = call.arguments[@"messageId"];
+        [self deleteMessage:messageId result:result];
+    } else if ([@"markAllMessagesRead" isEqualToString:call.method]) {
+        [self setAllMessageRead:result];
+    } else if ([@"markAllMessagesDeleted" isEqualToString:call.method]) {
+        [self deleteAllMessages:result];
+    } else if ([@"refreshInbox" isEqualToString:call.method]) {
+        [self refreshInbox:result];
+    } else if ([@"registerInboxResponseListener" isEqualToString:call.method]) {
+        [self registerListeners];
+    } else if ([@"unregisterInboxResponseListener" isEqualToString:call.method]) {
+        [self unregisterListeners];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -258,6 +298,204 @@ const int LOG_LENGTH = 800;
         BOOL isEnabled = [mp isPiAnalyticsEnabled];
         result(@(isEnabled));
     }];
+}
+
+- (void)getMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSArray<NSDictionary *> *inboxMessages = [mp getAllMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
+                [jsonStrings addObject:jsonString];
+            }
+        }
+        result(jsonStrings);
+    }];
+}
+
+- (void)getReadMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSArray<NSDictionary *> *inboxMessages = [mp getReadMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
+                [jsonStrings addObject:jsonString];
+            }
+        }
+        result(jsonStrings);
+    }];
+}
+
+- (void)getUnreadMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSArray<NSDictionary *> *inboxMessages = [mp getUnreadMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
+                [jsonStrings addObject:jsonString];
+            }
+        }
+        result(jsonStrings);
+    }];
+}
+
+- (void)getDeletedMessagesWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSArray<NSDictionary *> *inboxMessages = [mp getDeletedMessages];
+        if ([inboxMessages count] == 0) {
+                    result(@[]);
+                    return;
+                }
+        InboxUtility *utility = [[InboxUtility alloc] init];
+        NSMutableArray<NSDictionary *> *updatedMessages = [utility processInboxMessages:inboxMessages];
+        NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+        for (NSDictionary *message in updatedMessages) {
+            NSString *jsonString = [utility convertDictionaryToJSONString:message];
+            if (jsonString) {
+                [jsonStrings addObject:jsonString];
+            }
+        }
+        result(jsonStrings);
+    }];
+}
+
+- (void)setMessageRead:(NSString * _Nonnull)messageId result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL success = [mp markMessageWithIdReadWithMessageId:messageId];
+        result(@(success));
+    }];
+}
+
+- (void)deleteMessage:(NSString * _Nonnull)messageId result:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL success = [mp markMessageWithIdDeletedWithMessageId:messageId];
+        result(@(success));
+    }];
+}
+
+- (void)getMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSUInteger count = [mp getAllMessagesCount];
+        result(@(count));
+    }];
+}
+
+- (void)getReadMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSUInteger count = [mp getReadMessagesCount];
+        result(@(count));
+    }];
+}
+
+- (void)getUnreadMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSUInteger count = [mp getUnreadMessagesCount];
+        result(@(count));
+    }];
+}
+
+- (void)getDeletedMessagesCountWithResult:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        NSUInteger count = [mp getDeletedMessagesCount];
+        result(@(count));
+    }];
+}
+
+- (void)setAllMessageRead:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL success = [mp markAllMessagesRead];
+        result(@(success));
+    }];
+}
+
+- (void)deleteAllMessages:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL success = [mp markAllMessagesDeleted];
+        result(@(success));
+    }];
+}
+
+- (void)onInboxResponse:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    NSDictionary *responsePayload = userInfo[@"responsePayload"];
+    NSArray < NSDictionary * > *arrayOfDictionaries = @[responsePayload];
+    if ([arrayOfDictionaries count] == 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:@[]];
+            });
+            return;
+        }
+    InboxUtility *utility = [[InboxUtility alloc] init];
+    NSMutableArray < NSDictionary * > *updatedMessages = [utility processInboxMessages:arrayOfDictionaries];
+    NSMutableArray<NSString *> *jsonStrings = [NSMutableArray array];
+    for (NSDictionary *message in updatedMessages) {
+        NSString *jsonString = [utility convertDictionaryToJSONString:message];
+        if (jsonString) {
+            [jsonStrings addObject:jsonString];
+        }
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+                [self.channel invokeMethod:@"onInboxMessagesChanged" arguments:jsonStrings];
+    });
+}
+
+- (void)onInboxRefresh:(NSNotification *)notification {
+    if (self.refreshResult != nil) {
+        self.refreshResult(@(YES));
+        self.refreshResult = nil;
+    }
+}
+
+- (void)refreshInbox:(FlutterResult)result {
+    [SFMCSdk requestPushSdk:^(id<PushInterface> mp) {
+        BOOL success = [mp refreshMessages];
+        if (success) {
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(
+                                                             onInboxRefresh:)
+                                                         name:@"SFMCInboxMessagesRefreshCompleteNotification"
+                                                       object:nil];
+            NSLog(@"Inbox refresh completed successfully.");
+            self.refreshResult = result;
+        } else {
+            result(@(NO));
+        }
+    }];
+}
+
+- (void)registerListeners {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(
+                                                     onInboxResponse:)
+                                                 name:@"SFMCInboxMessagesMessageResponseSucceededNotification"
+                                               object:nil];
+    NSLog(@"Registered Successfully");
+}
+
+- (void)unregisterListeners {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"SFMCInboxMessagesMessageResponseSucceededNotification" object:nil];
+    NSLog(@"Unregistered Successfully");
 }
 
 // https://github.com/flutter/flutter/issues/52895
