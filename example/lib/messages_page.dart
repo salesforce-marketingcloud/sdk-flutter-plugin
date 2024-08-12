@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sfmc/inbox_message.dart';
 import 'package:sfmc/sfmc.dart';
-import 'package:sfmc/sfmc_platform_interface.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
