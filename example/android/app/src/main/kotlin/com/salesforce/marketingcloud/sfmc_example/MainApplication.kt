@@ -40,6 +40,7 @@ import com.salesforce.marketingcloud.notifications.NotificationMessage
 import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
+import com.salesforce.marketingcloud.UrlHandler
 import io.flutter.app.FlutterApplication
 import java.util.Random
 
@@ -58,6 +59,13 @@ class MainApplication : FlutterApplication() {
                 setSenderId(BuildConfig.PUSH_SENDER_ID)
                 setAnalyticsEnabled(true)
                 setInboxEnabled(true)
+                setUrlHandler(UrlHandler { context, url, _ ->
+                    PendingIntent.getActivity(context,
+                    Random().nextInt(),
+                    Intent(Intent.ACTION_VIEW, Uri.parse(url)),
+                    provideIntentFlags()
+                    )
+                })
                 setNotificationCustomizationOptions(NotificationCustomizationOptions.create { context: Context, notificationMessage: NotificationMessage ->
                     NotificationManager.createDefaultNotificationChannel(context).let { channelId ->
                         NotificationManager.getDefaultNotificationBuilder(
