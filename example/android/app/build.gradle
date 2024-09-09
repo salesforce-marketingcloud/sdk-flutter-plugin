@@ -26,12 +26,12 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def min_sdk_version = 21
-def target_sdk_version = flutter.targetSdkVersion
+def target_sdk_version = 34
 def compile_sdk_Version = 34
 
 def appplication_id = "com.salesforce.marketingcloud.sfmc_example"
 
-def marketingcloud_sdk_version = '8.1.+'
+def marketingcloud_sdk_version = '8.2.+'
 
 // SFMC Sdk Config Values.
 // It first try to retrieve each value from the `local.properties` file.
@@ -47,12 +47,12 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     sourceSets {
