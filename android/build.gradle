@@ -13,7 +13,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "com.android.tools:r8:$r8_version"
     }
@@ -32,6 +32,8 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion compile_sdk_version
+
+    namespace 'com.salesforce.marketingcloud.sfmc'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
