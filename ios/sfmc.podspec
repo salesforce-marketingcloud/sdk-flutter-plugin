@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'sfmc'
-  s.version          = '8.1.1'
+  s.version          = '8.1.3'
   s.summary          = 'Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.'
   s.description      = <<-DESC
   Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'MarketingCloudSDK','~> 8.1.1'
+  s.dependency 'MarketingCloudSDK','~> 8.1.3'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.

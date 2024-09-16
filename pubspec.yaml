@@ -1,6 +1,6 @@
 name: sfmc
 description: Flutter Plugin to access the native Salesforce Marketing Cloud MobilePush SDKs.
-version: 8.1.1
+version: 8.2.0
 homepage: https://github.com/salesforce-marketingcloud/sdk-flutter-plugin
 
 environment:
