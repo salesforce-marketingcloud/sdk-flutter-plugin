@@ -41,6 +41,8 @@ def PUSH_SENDER_ID = localProperties.getProperty('PUSH_SENDER_ID') ?: System.get
 def PUSH_ACCESS_TOKEN = localProperties.getProperty('PUSH_ACCESS_TOKEN') ?: System.getenv('PUSH_ACCESS_TOKEN')
 def PUSH_TSE = localProperties.getProperty('PUSH_TSE') ?: System.getenv('PUSH_TSE')
 
+android.buildFeatures.buildConfig true
+
 android {
     namespace "com.salesforce.marketingcloud.sfmc_example"
     compileSdkVersion compile_sdk_Version
