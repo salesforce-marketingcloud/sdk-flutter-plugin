@@ -270,7 +270,7 @@ class SFMCSdk {
 
   /// Retrieves the list of Active, Read & Unread, not Deleted Inbox Messages.
   ///
-  /// Returns a Future to the list of String representing Active, Read & Unread, not Deleted Inbox Messages.
+  /// Returns a Future to the list of InboxMessage representing Active, Read & Unread, not Deleted Inbox Messages.
   ///
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
@@ -281,7 +281,7 @@ class SFMCSdk {
 
   /// Retrieves the list of Active, Read, not Deleted Inbox Messages
   ///
-  /// Returns a Future to the list of String representing Active, Read, not Deleted Inbox Messages.
+  /// Returns a Future to the list of InboxMessage representing Active, Read, not Deleted Inbox Messages.
   ///
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
@@ -292,7 +292,7 @@ class SFMCSdk {
 
   /// Retrieves the list of Active, Unread, not Deleted Inbox Messages
   ///
-  /// Returns a Future to the list of String representing Active, Unread, not Deleted Inbox Messages.
+  /// Returns a Future to the list of InboxMessage representing Active, Unread, not Deleted Inbox Messages.
   ///
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
@@ -303,7 +303,7 @@ class SFMCSdk {
 
   /// Retrieves the list of Active, Deleted Inbox Messages
   ///
-  /// Returns a Future to the list of String representing Active, Deleted Inbox Messages.
+  /// Returns a Future to the list of InboxMessage representing Active, Deleted Inbox Messages.
   ///
   /// See also:
   /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
