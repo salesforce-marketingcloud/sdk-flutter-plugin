@@ -1,6 +1,6 @@
 ### Version 8.2.0
 
-- Added Inbox APIs for persistent Inbox Messaging.
+- Added APIs to support persistent Inbox and combined Alert+Inbox messaging functionality.
 - This release includes bug fixes and improvements.
 
 ### Version 8.1.0
