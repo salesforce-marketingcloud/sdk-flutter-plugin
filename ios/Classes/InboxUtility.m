@@ -30,6 +30,7 @@
 - (void)convertDatesInMessage:(NSMutableDictionary *)message {
     [self convertDateField:@"startDateUtc" inMessage:message];
     [self convertDateField:@"sendDateUtc" inMessage:message];
+    [self convertDateField:@"endDateUtc" inMessage:message];
 }
 
 - (void)convertDateField:(NSString *)field inMessage:(NSMutableDictionary *)message {
