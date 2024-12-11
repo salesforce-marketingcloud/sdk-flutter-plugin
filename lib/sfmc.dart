@@ -48,7 +48,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to the system token string.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-system-token.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/get-system-token.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)deviceToken)
   static Future<String?> getSystemToken() {
     return SfmcPlatform.instance.getSystemToken();
@@ -59,7 +59,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to a boolean indicating if push is enabled.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.push/-push-message-manager/is-push-enabled.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.push/-push-message-manager/is-push-enabled.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)pushEnabled)
   static Future<bool?> isPushEnabled() {
     return SfmcPlatform.instance.isPushEnabled();
@@ -68,7 +68,7 @@ class SFMCSdk {
   /// Enables push messaging in the native Marketing Cloud SDK.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.push/-push-message-manager/enable-push.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.push/-push-message-manager/enable-push.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)setPushEnabled:)
   static Future<void> enablePush() {
     return SfmcPlatform.instance.enablePush();
@@ -77,7 +77,7 @@ class SFMCSdk {
   /// Disables push messaging in the native Marketing Cloud SDK.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.push/-push-message-manager/disable-push.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.push/-push-message-manager/disable-push.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)setPushEnabled:)
   static Future<void> disablePush() {
     return SfmcPlatform.instance.disablePush();
@@ -86,8 +86,8 @@ class SFMCSdk {
   /// Enables verbose logging within the native Marketing Cloud SDK and Unified SFMC SDK.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/trouble-shooting/loginterface.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/SFMCSdk.html#/c:@M@SFMCSDK@objc(cs)SFMCSdk(cm)setLoggerWithLogLevel:logOutputter:)
+  /// - [Android Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/troubleshooting-android.html#check-the-sdks-log-output)
+  /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/troubleshooting-ios.html#check-the-sdks-log-output)
   static Future<void> enableLogging() {
     return SfmcPlatform.instance.enableLogging();
   }
@@ -95,8 +95,8 @@ class SFMCSdk {
   /// Disables verbose logging within the native Marketing Cloud SDK.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/trouble-shooting/loginterface.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/SFMCSdk.html#/c:@M@SFMCSDK@objc(cs)SFMCSdk(cm)setLoggerWithLogLevel:logOutputter:)
+  /// - [Android Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/troubleshooting-android.html#check-the-sdks-log-output)
+  /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/troubleshooting-ios.html#check-the-sdks-log-output)
   static Future<void> disableLogging() {
     return SfmcPlatform.instance.disableLogging();
   }
@@ -105,7 +105,7 @@ class SFMCSdk {
   /// This can help diagnose most issues within the SDK and is often requested by the Marketing Cloud support team.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/com.salesforce.marketingcloud.sfmcsdk/-s-f-m-c-sdk/get-sdk-state.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/-s-f-m-c%20-s-d-k/com.salesforce.marketingcloud.sfmcsdk/-s-f-m-c-sdk/get-sdk-state.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/SFMCSdk.html#/c:@M@SFMCSDK@objc(cs)SFMCSdk(cm)state)
   static Future<void> logSdkState() {
     return SfmcPlatform.instance.logSdkState();
@@ -116,7 +116,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to the device ID.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-device-id.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/get-device-id.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)deviceIdentifier)
   static Future<String?> getDeviceId() {
     return SfmcPlatform.instance.getDeviceId();
@@ -127,7 +127,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to a map of attributes.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-attributes.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/get-attributes.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)attributes)
   static Future<Map<String, String>> getAttributes() {
     return SfmcPlatform.instance.getAttributes();
@@ -139,7 +139,7 @@ class SFMCSdk {
   /// @param value The value of the attribute to be set.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/com.salesforce.marketingcloud.sfmcsdk.components.identity/-identity/set-profile-attribute.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/-s-f-m-c%20-s-d-k/com.salesforce.marketingcloud.sfmcsdk.components.identity/-identity/set-profile-attribute.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)setProfileAttributes:)
   static Future<void> setAttribute(String key, String value) {
     return SfmcPlatform.instance.setAttribute(key, value);
@@ -150,7 +150,7 @@ class SFMCSdk {
   /// @param key The name of the attribute whose value should be cleared.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/clear-attribute.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/-editor/clear-attribute.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)clearProfileAttributeWithKey:)
   static Future<void> clearAttribute(String key) {
     return SfmcPlatform.instance.clearAttribute(key);
@@ -161,7 +161,7 @@ class SFMCSdk {
   /// @param tag The tag to be added.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/add-tag.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/-editor/add-tag.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)addTag:)
   static Future<void> addTag(String tag) {
     return SfmcPlatform.instance.addTag(tag);
@@ -172,7 +172,7 @@ class SFMCSdk {
   /// @param tag The tag to be removed.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/-editor/remove-tag.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/-editor/remove-tag.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)removeTag:)
   static Future<void> removeTag(String tag) {
     return SfmcPlatform.instance.removeTag(tag);
@@ -183,7 +183,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to a list of tags.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-tags.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/get-tags.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)tags)
   static Future<List<String>> getTags() {
     return SfmcPlatform.instance.getTags();
@@ -194,7 +194,7 @@ class SFMCSdk {
   /// @param contactKey The value to be set as the contact key.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/com.salesforce.marketingcloud.sfmcsdk.components.identity/-identity/set-profile-id.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/SFMCSdk/8.0/-s-f-m-c%20-s-d-k/com.salesforce.marketingcloud.sfmcsdk.components.identity/-identity/set-profile-id.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/SFMCSdk/8.0/Classes/IDENTITY.html#/c:@M@SFMCSDK@objc(cs)SFMCSdkIDENTITY(im)setProfileId:)
   static Future<void> setContactKey(String contactKey) {
     return SfmcPlatform.instance.setContactKey(contactKey);
@@ -205,7 +205,7 @@ class SFMCSdk {
   /// Returns a Future that resolves to the current contact key.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.registration/-registration-manager/get-contact-key.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.registration/-registration-manager/get-contact-key.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.0/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)contactKey)
   static Future<String?> getContactKey() {
     return SfmcPlatform.instance.getContactKey();
@@ -216,8 +216,7 @@ class SFMCSdk {
   /// @param event The event to be tracked.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/event-tracking/event-tracking-event-tracking.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/event-tracking/event-tracking-event-tracking.html)
+  /// - [Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/event-tracking.html)
 
   static Future<void> trackEvent(CustomEvent event) {
     // Implement event tracking logic
@@ -229,8 +228,7 @@ class SFMCSdk {
   /// @param analyticsEnabled A flag indicating whether analytics should be enabled.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  /// - [Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/runtime-toggles.html)
   static Future<void> setAnalyticsEnabled(bool analyticsEnabled) {
     return SfmcPlatform.instance.setAnalyticsEnabled(analyticsEnabled);
   }
@@ -240,8 +238,7 @@ class SFMCSdk {
   /// Returns a Future to the boolean representation of whether analytics is enabled.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  /// - [Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/runtime-toggles.html)
   static Future<bool> isAnalyticsEnabled() {
     return SfmcPlatform.instance.isAnalyticsEnabled();
   }
@@ -251,8 +248,7 @@ class SFMCSdk {
   /// [analyticsEnabled] A flag indicating whether PI analytics should be enabled.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  /// - [Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/runtime-toggles.html)
   static Future<void> setPiAnalyticsEnabled(bool analyticsEnabled) {
     return SfmcPlatform.instance.setPiAnalyticsEnabled(analyticsEnabled);
   }
@@ -262,8 +258,7 @@ class SFMCSdk {
   /// Returns a Future to the boolean representation of whether PI analytics is enabled.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/sdk-implementation/runtime-toggles.html)
-  /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/runtime-toggles.html)
+  /// - [Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/runtime-toggles.html)
   static Future<bool> isPiAnalyticsEnabled() {
     return SfmcPlatform.instance.isPiAnalyticsEnabled();
   }
@@ -273,7 +268,7 @@ class SFMCSdk {
   /// Returns a Future to the list of InboxMessage representing Active, Read & Unread, not Deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getAllMessages)
   static Future<List<InboxMessage>> getMessages() {
     return SfmcPlatform.instance.getMessages();
@@ -284,7 +279,7 @@ class SFMCSdk {
   /// Returns a Future to the list of InboxMessage representing Active, Read, not Deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getReadMessages)
   static Future<List<InboxMessage>> getReadMessages() {
     return SfmcPlatform.instance.getReadMessages();
@@ -295,7 +290,7 @@ class SFMCSdk {
   /// Returns a Future to the list of InboxMessage representing Active, Unread, not Deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getUnreadMessages)
   static Future<List<InboxMessage>> getUnreadMessages() {
     return SfmcPlatform.instance.getUnreadMessages();
@@ -306,7 +301,7 @@ class SFMCSdk {
   /// Returns a Future to the list of InboxMessage representing Active, Deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-messages.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getDeletedMessages)
   static Future<List<InboxMessage>> getDeletedMessages() {
     return SfmcPlatform.instance.getDeletedMessages();
@@ -317,7 +312,7 @@ class SFMCSdk {
   /// @param id The InboxMessage#id() of the InboxMessage to mark as read.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/set-message-read.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/set-message-read.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markMessageWithIdReadWithMessageId:)
   static Future<void> setMessageRead(String id) {
     return SfmcPlatform.instance.setMessageRead(id);
@@ -328,7 +323,7 @@ class SFMCSdk {
   /// @param id The InboxMessage#id() of the InboxMessage to mark as deleted.
   ///
   /// See:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/delete-message.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/delete-message.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markMessageWithIdDeletedWithMessageId:)
   static Future<void> deleteMessage(String id) {
     return SfmcPlatform.instance.deleteMessage(id);
@@ -339,7 +334,7 @@ class SFMCSdk {
   /// Returns a Future to the int representing total number of not deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-message-count.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-message-count.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getAllMessagesCount)
   static Future<int> getMessageCount() {
     return SfmcPlatform.instance.getMessageCount();
@@ -350,7 +345,7 @@ class SFMCSdk {
   /// Returns a Future to the int representing total number of read, not deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-message-count.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-read-message-count.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getReadMessagesCount)
   static Future<int> getReadMessageCount() {
     return SfmcPlatform.instance.getReadMessageCount();
@@ -361,7 +356,7 @@ class SFMCSdk {
   /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-message-count.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-unread-message-count.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getUnreadMessagesCount)
   static Future<int> getUnreadMessageCount() {
     return SfmcPlatform.instance.getUnreadMessageCount();
@@ -372,7 +367,7 @@ class SFMCSdk {
   /// Returns a Future to the int representing total number of unread, not deleted Inbox Messages.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-message-count.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/get-deleted-message-count.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)getDeletedMessagesCount)
   static Future<int> getDeletedMessageCount() {
     return SfmcPlatform.instance.getDeletedMessageCount();
@@ -383,7 +378,7 @@ class SFMCSdk {
   /// Returns a Future to the void that marks all active, unread InboxMessages as read.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-read.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-read.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markAllMessagesRead)
   static Future<void> markAllMessagesRead() {
     return SfmcPlatform.instance.markAllMessagesRead();
@@ -394,7 +389,7 @@ class SFMCSdk {
   /// Returns a Future to to the void that Marks all active InboxMessages as deleted.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-deleted.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/mark-all-messages-deleted.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)markAllMessagesDeleted)
   static Future<void> markAllMessagesDeleted() {
     return SfmcPlatform.instance.markAllMessagesDeleted();
@@ -405,7 +400,7 @@ class SFMCSdk {
   /// Returns a Future to the boolean representation if inbox has been refreshed or not.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/refresh-inbox.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/refresh-inbox.html)
   /// - [iOS Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/appledocs/MarketingCloudSdk/8.1/Classes/PushModule.html#/c:@M@MarketingCloudSDK@objc(cs)SFMCSdkPushModule(im)refreshMessages)
   static Future<bool> refreshInbox(InboxRefreshListener callback) {
     return SfmcPlatform.instance.refreshInbox(callback);
@@ -416,7 +411,7 @@ class SFMCSdk {
   /// @param callback The InboxResponseListener that you want to register.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/register-inbox-response-listener.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/register-inbox-response-listener.html)
   /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
   static Future<void> registerInboxResponseListener(
       InboxResponseListener callback) {
@@ -428,7 +423,7 @@ class SFMCSdk {
   ///@param callback The InboxResponseListener that you want to unregister.
   ///
   /// See also:
-  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/unregister-inbox-response-listener.html)
+  /// - [Android Docs](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-Android/javadocs/MarketingCloudSdk/8.0/-marketing%20-cloud%20-s-d-k/com.salesforce.marketingcloud.messages.inbox/-inbox-message-manager/unregister-inbox-response-listener.html)
   /// - [iOS Docs](https://developer.salesforce.com/docs/marketing/mobilepush/guide/implement-inbox-messaging-ios.html)
   static Future<void> unregisterInboxResponseListener(
       InboxResponseListener callback) {
