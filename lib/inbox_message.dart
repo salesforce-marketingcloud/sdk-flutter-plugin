@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'notification_message.dart';
 
 class InboxMessage {
   final String id;
@@ -13,25 +14,34 @@ class InboxMessage {
   final String? sound;
   final DateTime? startDateUtc;
   final String? subject;
-  final String url;
+  final String? url;
   final Media? media;
+  final String? subtitle;
+  final String? inboxMessage;
+  final String? inboxSubtitle;
+  final NotificationMessage? notificationMessage;
+  final int? messageType;
 
-  InboxMessage({
-    required this.id,
-    this.title,
-    this.alert,
-    this.custom,
-    this.customKeys,
-    required this.deleted,
-    this.endDateUtc,
-    required this.read,
-    this.sendDateUtc,
-    this.sound,
-    this.startDateUtc,
-    this.subject,
-    required this.url,
-    this.media,
-  });
+  InboxMessage(
+      {required this.id,
+      this.title,
+      this.alert,
+      this.custom,
+      this.customKeys,
+      required this.deleted,
+      this.endDateUtc,
+      required this.read,
+      this.sendDateUtc,
+      this.sound,
+      this.startDateUtc,
+      this.subject,
+      this.url,
+      this.media,
+      this.subtitle,
+      this.inboxMessage,
+      this.inboxSubtitle,
+      this.notificationMessage,
+      this.messageType});
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
     return InboxMessage(
@@ -52,30 +62,41 @@ class InboxMessage {
           : null,
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
-      customKeys: json['customKeys'] != null
-          ? Map<String, String>.from(json['customKeys'])
-          : null,
+      customKeys:
+          (json['keys'] is Map) ? Map<String, String>.from(json['keys']) : null,
       deleted: json['deleted'] ?? false,
       read: json['read'] ?? false,
+      subtitle: json['subtitle'],
+      inboxMessage: json['inboxMessage'],
+      inboxSubtitle: json['inboxSubtitle'],
+      notificationMessage: json['notificationMessage'] != null
+          ? NotificationMessage.fromJson(json['notificationMessage'])
+          : null,
+      messageType: json['messageType'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'subject': subject,
       'title': title,
       'alert': alert,
+      'sound': sound,
+      'media': media?.toJson(),
+      'startDateUtc': startDateUtc?.toIso8601String(),
+      'endDateUtc': endDateUtc?.toIso8601String(),
+      'sendDateUtc': sendDateUtc?.toIso8601String(),
+      'url': url,
       'custom': custom,
       'customKeys': customKeys,
       'deleted': deleted,
-      'endDateUtc': endDateUtc?.toIso8601String(),
       'read': read,
-      'sendDateUtc': sendDateUtc?.toIso8601String(),
-      'sound': sound,
-      'startDateUtc': startDateUtc?.toIso8601String(),
-      'subject': subject,
-      'url': url,
-      'media': media?.toJson(),
+      'subtitle': subtitle,
+      'inboxMessage': inboxMessage,
+      'inboxSubtitle': inboxSubtitle,
+      'notificationMessage': notificationMessage?.toJson(),
+      'messageType': messageType
     };
   }
 }

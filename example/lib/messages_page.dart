@@ -197,7 +197,7 @@ class _MessagesPageState extends State<MessagesPage> {
                       itemCount: filteredMessages.length,
                       itemBuilder: (context, index) {
                         final message = filteredMessages[index];
-                        final Uri url = Uri.parse(message.url);
+                        final Uri url = Uri.parse(message.url ?? "");
                         return Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 8),
@@ -309,42 +309,15 @@ class _MessagesPageState extends State<MessagesPage> {
                                     )
                                   : null,
                               onTap: () async {
-                                if (await launchUrl(url)) {
-                                  setState(() {
-                                    SFMCSdk.setMessageRead(message.id);
-                                    message.read = true;
-                                  });
-                                  await _initializeMessages();
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Could not launch $url')),
-                                  );
+                                if (url.isAbsolute) { // check if valid url
+                                  launchUrlOnBrowser(url, message);
+                                }else{
+                                  showMessageContent(context, message);
+                                   await markMessageRead(message);
                                 }
                               },
                               onLongPress: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Message'),
-                                      content: SingleChildScrollView(
-                                        child: Text(
-                                          jsonEncode(message.toJson()),
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Close'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                showMessageContent(context, message);
                               },
                             ),
                           ),
@@ -355,6 +328,31 @@ class _MessagesPageState extends State<MessagesPage> {
           ),
         ],
       ),
+    );
+  }
+
+  void showMessageContent(BuildContext context, InboxMessage message) {
+        showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Message'),
+          content: SingleChildScrollView(
+            child: Text(
+              jsonEncode(message.toJson()),
+              style: const TextStyle(fontSize: 14),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -403,5 +401,23 @@ class _MessagesPageState extends State<MessagesPage> {
         ),
       ),
     );
+  }
+
+  void launchUrlOnBrowser(Uri url, InboxMessage message) async {
+    if (await launchUrl(url)) {
+      await markMessageRead(message);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not launch $url')),
+      );
+    }
+  }
+
+  Future<void> markMessageRead(InboxMessage message) async {
+     setState(() {
+      SFMCSdk.setMessageRead(message.id);
+      message.read = true;
+    });
+    await _initializeMessages();
   }
 }
