@@ -45,19 +45,21 @@ class InboxUtils {
                 custom?.let { put("custom", it) }
                 payload?.let { put("payload", mapToJson(it)) }
                 // richFeatures?.let { put("richFeatures", it.toJson()) }
-
              }
         }
 
         fun InboxMessage.toJson(): JSONObject {
             return JSONObject().apply {
                 put("id", id)
+                put("calculatedType", messageType)
+                put("deleted", deleted) 
+                messageType?.let { put("messageType", it) }
+                url?.let {put("url", it)}
                 subject?.let { put("subject", it) }
                 title?.let { put("title", it) }
                 alert?.let { put("alert", it) }
                 sound?.let { put("sound", it) }
                 put("read", read) 
-                put("deleted", deleted) 
                 media?.let {
                     val mediaJsonObject = JSONObject().apply {
                         put("altText", it.altText)
@@ -68,14 +70,12 @@ class InboxUtils {
                 startDateUtc?.asDateString()?.let { put("startDateUtc", it) }
                 sendDateUtc?.asDateString()?.let { put("sendDateUtc", it) }
                 endDateUtc?.asDateString()?.let { put("endDateUtc", it) }
-                url?.let {put("url", it)}
                 custom?.let { put("custom", it) }
                 customKeys?.asKeyValueJsonArray()?.let { put("keys", it) }
                 subtitle?.let { put("subtitle", it) }
                 inboxMessage?.let { put("inboxMessage", it) }
                 inboxSubtitle?.let { put("inboxSubtitle", it) }
                 notificationMessage?.let { put("notificationMessage", it.toJson()) }
-                messageType?.let { put("messageType", it) }
             }
         }
 
