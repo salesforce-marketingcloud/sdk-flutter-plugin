@@ -284,7 +284,7 @@ This section will guide you through setting up and configuring the Notification 
 Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
 
 ### Create a Notification Service Extension
-Skip the setup steps if you've already integrated Notification Service Extension during the [MobilePush Extension SDK integration](#integrate-the-MobilePush-Extension-SDK) and refer the [sample code for integration with Extension SDK](#with-Extension-SDK-Integration).
+Skip the setup steps if you've already integrated Notification Service Extension during the [MobilePush Extension SDK integration](#5-integrate-the-mobilepush-extension-sdk) and refer the [sample code for integration with Extension SDK](#with-Extension-SDK-Integration).
 
 1.  In Xcode, click **File**
 2.  Click **New**
