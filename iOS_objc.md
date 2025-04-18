@@ -269,7 +269,7 @@ This section will guide you through setting up and configuring the Notification 
 - [Add a Content Extension Target](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#add-a-content-extension-target)
   
 - Integrate the Extension SDK with Your Content Extension
-  The process for integrating the MCExtensionSDK into your Content Extension mirrors the steps taken for your Service Extension. For detailed instructions, see [Integrate the Extension SDK with the Service Extension](https://git.soma.salesforce.com/abhinav-mathur/sdk-flutter-plugin/edit/W-18190235/iOS_objc.md#2-integrate-the-extension-sdk-with-the-service-extension).
+  The process for integrating the MCExtensionSDK into your Content Extension mirrors the steps taken for your Service Extension. For detailed instructions, see [Integrate the Extension SDK with the Service Extension](integrate-the-extension-sdk-with-the-service-extension).
 
 - [Inherit from SFMCNotificationViewController](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#inherit-from-sfmcnotificationviewcontroller)
   
@@ -284,7 +284,7 @@ This section will guide you through setting up and configuring the Notification 
 Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
 
 ### Create a Notification Service Extension
-Skip these steps if you've already integrated Notification Service Extension during the [MobilePush Extension SDK integration](https://git.soma.salesforce.com/abhinav-mathur/sdk-flutter-plugin/edit/W-18190235/iOS_objc.md#5-integrate-the-mobilepush-extension-sdk).
+Skip the setup steps if you've already integrated Notification Service Extension during the [MobilePush Extension SDK integration](#integrate-the-MobilePush-Extension-SDK) and refer the [sample code for integration with Extension SDK](#with-Extension-SDK-Integration).
 
 1.  In Xcode, click **File**
 2.  Click **New**
@@ -298,7 +298,7 @@ This service extension checks for a “\_mediaUrl” element in request.content.
 
 A service extension can timeout when it is unable to download. In this code sample, the service extension delivers the original content with the body text changed to the value in “\_mediaAlt”.
 
-**<ins>Without Extension SDK Integration</ins>**
+#### **<ins>Without Extension SDK Integration</ins>**
 ```objc
 #import <CoreGraphics/CoreGraphics.h>
 #import "NotificationService.h"
@@ -456,7 +456,7 @@ A service extension can timeout when it is unable to download. In this code samp
 @end
 ```
 
-**<ins>With Extension SDK Integration</ins>**
+#### **<ins>With Extension SDK Integration</ins>**
 ```objc
 #import "NotificationService.h"
 
