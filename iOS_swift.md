@@ -142,7 +142,7 @@ import MarketingCloudSDK
         // Required: tell the MarketingCloudSDK about the notification. This will collect MobilePush analytics
         // and process the notification on behalf of your application.
         SFMCSdk.requestPushSdk { mp in
-            mp.setNotificationRequest(response.notification.request)
+            mp.setNotificationResponse(response)
         }
 
         completionHandler()
@@ -222,9 +222,52 @@ extension AppDelegate: URLHandlingDelegate {
 
 Please also see additional documentation on URL Handling for [iOS](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/sdk-implementation/implementation-urlhandling.html).
 
-## 5. Enable Rich Notifications (Optional)
+## 5. Integrate the MobilePush Extension SDK
 
-**Enable Rich Notifications:** Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
+The MobilePush SDK version 9.0.0 introduces two push notification features — Push Delivery events and support for Carousel template. To function properly, these features require iOS [Service Extension](https://developer.apple.com/documentation/usernotifications/unnotificationserviceextension) and [Content Extension](https://developer.apple.com/documentation/usernotificationsui/unnotificationcontentextension) added as additional targets in the main app.
+Then, integrate the MobilePush iOS Extension SDK MCExtensionSDK.
+
+>Implementing the **Service Extension** is required to enable **Push Delivery events**.    
+>Implementing both the **Service Extension** and **Content Extension** is required to support **Carousel template-based Push Notifications**.
+
+#### 1. Configure the Service Extension 
+This section will guide you through setting up and configuring the Notification Service Extension for use with the MobilePush iOS Extension SDK.
+
+ - [Add a Service Extension Target](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#add-a-service-extension-target)
+   
+ - Integrate the Extension SDK with the Service Extension
+   **Integrate the SDK with CocoaPods**: To add the SDK as a dependency in your app's Podfile, follow the instructions for [Adding pods to an Xcode project](https://guides.cocoapods.org/using/using-cocoapods.html) on the CocoaPods documentation site.  
+
+   <img width="827" alt="Screenshot 2025-04-18 at 5 11 37 PM" src="https://git.soma.salesforce.com/abhinav-mathur/sdk-flutter-plugin/assets/54985/c40aa91a-ad94-4886-8adb-e4c583588610">
+
+   After the installation process, open the `.xcworkspace` file created by CocoaPods using Xcode.  
+   **__Avoid opening .xcodeproj directly. Opening a project file instead of a workspace can lead to errors.__**
+   
+ - [Inherit from SFMCNotificationService](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#inherit-from-sfmcnotificationservice)
+   
+ - [Additional Configuration](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#additional-configuration-options)
+
+#### 2. Configure the Content Extension 
+This section will guide you through setting up and configuring the Notification Content Extension for use with the MobilePush iOS Extension SDK.
+- [Add a Content Extension Target](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#add-a-content-extension-target)
+  
+- Integrate the Extension SDK with Your Content Extension
+  The process for integrating the MCExtensionSDK into your Content Extension mirrors the steps taken for your Service Extension. For detailed instructions, see [Integrate the Extension SDK with the Service Extension](https://git.soma.salesforce.com/abhinav-mathur/sdk-flutter-plugin/edit/W-18190235/iOS_objc.md#2-integrate-the-extension-sdk-with-the-service-extension).
+
+- [Inherit from SFMCNotificationViewController](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#inherit-from-sfmcnotificationviewcontroller)
+  
+- [Project and Info.plist Configuration](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#project-and-infoplist-configuration)
+  
+- [Additional Configuration](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#additional-configuration)
+
+#### 3. [Enable App Groups Capability](https://developer.salesforce.com/docs/marketing/mobilepush/guide/ios-extension-sdk-integration.html#enable-app-groups-capability) 
+
+## 6. Enable Rich Notifications (Optional)
+
+Rich notifications include images, videos, titles and subtitles from the MobilePush app, and mutable content. Mutable content can include personalization in the title, subtitle, or body of your message.
+
+### Create a Notification Service Extension
+Skip the setup steps if you've already integrated Notification Service Extension during the [MobilePush Extension SDK integration](5-integrate-the-mobilepush-extension-sdk) and refer the [sample code for integration with Extension SDK](#with-extension-sdk-integration).
 
 1.  In Xcode, click **File**
 2.  Click **New**
@@ -236,6 +279,7 @@ This service extension checks for a “\_mediaUrl” element in request.content.
 
 A service extension can timeout when it is unable to download. In this code sample, the service extension delivers the original content with the body text changed to the value in “\_mediaAlt”.
 
+#### **<ins>Without Extension SDK Integration</ins>**
 ```swift
 import CoreGraphics
 import UserNotifications
@@ -377,6 +421,105 @@ class NotificationService: UNNotificationServiceExtension {
 
         // tell the OS we are done and here is the new content
         contentHandler!(modifiedNotificationContent!)
+    }
+}
+```
+
+#### **<ins>With Extension SDK Integration</ins>**
+```swift
+import UserNotifications
+import MCExtensionSDK
+
+class NotificationService: SFMCNotificationService {
+
+    // Use this method to enable logging, change logging levels, etc. , if required.
+    override func sfmcProvideConfig() -> SFNotificationServiceConfig {
+        var logLevel: LogLevel = .none
+#if DEBUG
+        logLevel = .debug
+#endif
+        return SFNotificationServiceConfig(logLevel: logLevel)
+    }
+
+    // Use this method only if you need to perform any custom processing for images, video downloads, inserting custom keys in notification userInfo, and so on.
+    // Don't modify  `mutableContent.request.content.userInfo` directly. Doing so may trigger an exception.
+    // To add any custom key in notification userInfo, return a dictionary in the completion handler.
+
+
+    // Like the `UNNotificationServiceExtension` method - func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) → Void), you'll only have limited time from the system for processing.
+    override func sfmcDidReceive(_ request: UNNotificationRequest, mutableContent: UNMutableNotificationContent, withContentHandler contentHandler: @escaping ([AnyHashable : Any]?) -> Void) {
+        // Your custom code here
+        //...
+        self.addMedia(mutableContent) {
+            // To add any custom key:value pair(s) in notifications userInfo object, then
+            var customUserInfo: [AnyHashable : Any] = [:]
+            customUserInfo["MyCustomKey"] = "MyCustomValue"
+
+            // Finally, call the content handler to signal the end of your processing operation.
+            //
+            contentHandler(customUserInfo)
+        }
+    }
+
+    private func addMedia(_ mutableContent: UNMutableNotificationContent, completion: @escaping () -> Void) {
+        guard let mediaUrlString = mutableContent.userInfo["_mediaUrl"] as? String,
+                !mediaUrlString.isEmpty  else {
+            completion()
+            return
+        }
+
+        guard let mediaUrl = URL(string: mediaUrlString) else {
+            completion()
+            return
+        }
+
+        let session = URLSession(configuration: URLSessionConfiguration.default)
+        let downloadTask = session.downloadTask(with: mediaUrl) { [weak self]
+            location, response, error in
+            if let _ = error {
+                completion()
+                return
+            }
+
+            guard let theLocation = location else {
+                completion()
+                return
+            }
+
+            guard let theResponse = response as? HTTPURLResponse else {
+                completion()
+                return
+            }
+
+            let statusCode = theResponse.statusCode
+            guard (statusCode >= 200 && statusCode <= 299) else {
+                completion()
+                return
+            }
+
+            let localMediaUrl = URL.init(fileURLWithPath: theLocation.path + mediaUrl.lastPathComponent)
+
+            // Remove any existing file with the same name
+            try? FileManager.default.removeItem(at: localMediaUrl)
+
+            do {
+                try FileManager.default.moveItem(at: theLocation, to: localMediaUrl)
+            } catch {
+                completion()
+                return
+            }
+
+            guard let mediaAttachment = try? UNNotificationAttachment(identifier: "SomeAttachmentId",
+                                                                      url: localMediaUrl) else {
+                completion()
+                return;
+            }
+
+            mutableContent.attachments = [mediaAttachment]
+            completion()
+        }
+
+        downloadTask.resume()
     }
 }
 ```
