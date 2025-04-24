@@ -47,5 +47,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>SF_MARKETINGCLOUD_APP_GROUP_KEY</key>
+	<string>group.com.runner.example.sfmarketingcloudsdk</string>
 </dict>
 </plist>
