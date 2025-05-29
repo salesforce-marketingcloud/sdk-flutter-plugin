@@ -18,8 +18,8 @@ For release notes, please refer to [CHANGELOG.md](./CHANGELOG.md).
 
 ### Android
 
-- minSdkVersion `21+`
-- compileSdkVersion `34+`
+- minSdkVersion `23+`
+- compileSdkVersion `35+`
 
 ## Installation
 

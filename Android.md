@@ -39,9 +39,9 @@ dependencies {
 
 ## 4. Update `compileSdk or compileSdkVersion` and `minSdkVersion`
 
-Ensure in your `android/app/build.gradle` that `compileSdk or compileSdkVersion` is `34` and `minSdkVersion` is `21`.
+Ensure in your `android/app/build.gradle` that `compileSdk or compileSdkVersion` is `35` and `minSdkVersion` is `23`.
 
-If not, update the `compileSdk or compileSdkVersion` and `minSdkVersion` in `android/app/build.gradle` to `34` and `21` respectively.
+If not, update the `compileSdk or compileSdkVersion` and `minSdkVersion` in `android/app/build.gradle` to `35` and `23` respectively.
 
 ## 5. Update `kotlin version`
 
