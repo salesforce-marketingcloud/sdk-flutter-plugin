@@ -1,3 +1,6 @@
+### Version 9.0.0
+- Support for the v9.0 versions of the Android and iOS Marketing Cloud SDK.
+
 ### Version 8.2.0
 
 - Added APIs to support persistent Inbox and combined Alert+Inbox messaging functionality.

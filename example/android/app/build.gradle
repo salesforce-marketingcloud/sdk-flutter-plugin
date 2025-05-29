@@ -25,9 +25,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def min_sdk_version = 21
-def target_sdk_version = 34
-def compile_sdk_Version = 34
+def min_sdk_version = 23
+def target_sdk_version = 35
+def compile_sdk_Version = 35
 
 def appplication_id = "com.salesforce.marketingcloud.sfmc_example"
 
