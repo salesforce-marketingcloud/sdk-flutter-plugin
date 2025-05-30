@@ -14,7 +14,7 @@ flutter pub add sfmc
 
 Enable push notifications in your target’s Capabilities settings in Xcode.
 
-![push enablement](https://salesforce-marketingcloud.github.io/MarketingCloudSDK-iOS/assets/SDKConfigure6.png)
+![push enablement](/assets/SDKConfigure6.png)
 
 ## 3. Update the `AppDelegate`
 
@@ -237,7 +237,7 @@ This section will guide you through setting up and configuring the Notification 
    
  - Integrate the Extension SDK with the Service Extension: Add the SDK as a dependency in your app's Podfile, follow the instructions for [Adding pods to an Xcode project](https://guides.cocoapods.org/using/using-cocoapods.html) on the CocoaPods documentation site.  
 
-   <img width="827" alt="Screenshot 2025-04-18 at 5 11 37 PM" src="https://git.soma.salesforce.com/abhinav-mathur/sdk-flutter-plugin/assets/54985/c40aa91a-ad94-4886-8adb-e4c583588610">
+   ![extension sdk enablement](/assets/SDKPodfile.png)
 
    After the installation process, open the `.xcworkspace` file created by CocoaPods using Xcode.  
    **__Avoid opening .xcodeproj directly. Opening a project file instead of a workspace can lead to errors.__**
