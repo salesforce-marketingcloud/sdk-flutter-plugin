@@ -215,8 +215,8 @@ class _MyAppState extends State<MyApp> {
 
   void _trackCustomEvent() {
     try {
-      var customEvent = CustomEvent('purchase',
-          attributes: {'total': 999});
+      var customEvent = CustomEvent('Purchase',
+          attributes: {'Total': 1234});
       SFMCSdk.trackEvent(customEvent);
       _showToast("Event tracked successfully");
     } catch (e) {

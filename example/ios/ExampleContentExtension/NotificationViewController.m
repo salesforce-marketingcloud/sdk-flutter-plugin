@@ -1,6 +1,6 @@
-// NotificationService.h
+// NotificationViewController.m
 //
-// Copyright (c) 2024 Salesforce, Inc
+// Copyright (c) 2025 Salesforce, Inc
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -25,10 +25,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-
+#import "NotificationViewController.h"
 #import <UserNotifications/UserNotifications.h>
-#import <MCExtensionSDK/MCExtensionSDK.h>
+#import <UserNotificationsUI/UserNotificationsUI.h>
 
-@interface NotificationService: SFMCNotificationService
+@implementation NotificationViewController
+
+- (SFMCContentExtensionConfig *)sfmcProvideConfig {
+    SFMCExtensionSdkLogLevel logLevel = SFMCExtensionSdkLogLevelNone;
+#if DEBUG
+    logLevel = SFMCExtensionSdkLogLevelDebug;
+#endif
+    return [[SFMCContentExtensionConfig alloc] initWithLogLevel:logLevel timeoutIntervalForRequest:30.0];
+}
 
 @end

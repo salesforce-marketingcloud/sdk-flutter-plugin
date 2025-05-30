@@ -4,7 +4,7 @@ version '1.0-SNAPSHOT'
 buildscript {
     ext.kotlin_version = '1.9.10'
     ext.r8_version = '8.2.42' 
-    ext.marketingcloud_sdk_version = '8.2.+'
+    ext.marketingcloud_sdk_version = '9.0.+'
     ext.compile_sdk_version = 34
     ext.min_sdk_version = 21
     repositories {
@@ -15,7 +15,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.android.tools:r8:$r8_version"
     }
 }
 

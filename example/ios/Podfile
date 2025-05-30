@@ -29,9 +29,18 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  pod 'MarketingCloud-ExtensionSDK'
   target 'RunnerTests' do
     inherit! :search_paths
   end
+end
+
+target 'ExampleServiceExtension' do
+  pod 'MarketingCloud-ExtensionSDK'
+end
+
+target 'ExampleContentExtension' do
+  pod 'MarketingCloud-ExtensionSDK'
 end
 
 post_install do |installer|
