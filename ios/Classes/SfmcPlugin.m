@@ -501,9 +501,16 @@ const int LOG_LENGTH = 800;
 // https://github.com/flutter/flutter/issues/52895
 // Flutter overrides `respondToSelector` and does shady things. There is issue in flutter where `didReceiveRemoteNotification`
 // not getting called on AppDelegate. This is workaround to make sure AppDeleage `didReceiveRemoteNotification` gets called.
-- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
-    completionHandler(UIBackgroundFetchResultNoData);
-    return YES;
+- (BOOL)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(
+        UIBackgroundFetchResult result))completionHandler {
+    if (userInfo[@"_sid"] != nil || userInfo[@"_m"] != nil) {
+        // SFMC notification - handle it
+        completionHandler(UIBackgroundFetchResultNoData);
+        return YES;
+    }
+
+    // If not SFMC notification, pass it to next handler
+    return NO;
 }
 
 @end
