@@ -44,6 +44,19 @@ class InboxMessage {
       this.messageType});
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
+    final customKeyList = (json['keys'] is List) ? json['keys'] as List : null;
+    final parsedKeyEntries = customKeyList
+        ?.whereType<Map>()
+        .map((entry) => switch (entry) {
+              {'key': String key, 'value': String value} =>
+                MapEntry(key, value),
+              _ => null,
+            })
+        .nonNulls;
+    final customKeys = switch(parsedKeyEntries) {
+      Iterable<MapEntry<String, String>>() => Map.fromEntries(parsedKeyEntries),
+      _ => null,
+    };
     return InboxMessage(
       id: json['id'] ?? '',
       subject: json['subject'] ?? '',
@@ -62,8 +75,7 @@ class InboxMessage {
           : null,
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
-      customKeys:
-          (json['keys'] is Map) ? Map<String, String>.from(json['keys']) : null,
+      customKeys: customKeys,
       deleted: json['deleted'] ?? false,
       read: json['read'] ?? false,
       subtitle: json['subtitle'],
