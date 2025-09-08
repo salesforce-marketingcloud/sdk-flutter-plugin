@@ -767,6 +767,90 @@ void main() {
         expect(
             mockPlatform.recentCalledMethod, 'unregisterInboxResponseListener');
       });
+
+      test('fromJson - parses inbox message correctly', () {
+        final json = {
+          'id': '000000000000000000000000000000000000000000',
+          'subject': 'Dummy message',
+          'inboxMessage': 'Inbox message',
+          'messageDeleted': 0,
+          'read': false,
+          'startDateUtc': '1970-01-01 00:00:00',
+          'contentType': 0,
+          'messageHash': '0000000000000000000000000000',
+          'requestId': '00000000-0000-0000-0000-00000000',
+          'deleted': false,
+          'inboxMessageType': 1,
+          'keys': [
+            {
+              'key': 'customKey',
+              'value': 'customValue'
+            },
+          ],
+          'sendDateUtc': '1970-01-01 00:00:01',
+          'statusDirty': 0,
+          'endDateUtc': '1970-01-01 00:00:02',
+          'name': ''
+        };
+        final expected = InboxMessage(
+            id: '000000000000000000000000000000000000000000',
+            title: '',
+            alert: '',
+            custom: '',
+            sound: '',
+            customKeys: {
+              'customKey': 'customValue'
+            },
+            deleted: false,
+            endDateUtc: DateTime.parse('1970-01-01T00:00:02'),
+            read: false,
+            sendDateUtc: DateTime.parse('1970-01-01T00:00:01'),
+            startDateUtc: DateTime.parse('1970-01-01T00:00:00'),
+            subject: 'Dummy message',
+            url: '',
+            media: null,
+            subtitle: null,
+            inboxMessage: 'Inbox message',
+            inboxSubtitle: null,
+            notificationMessage: null,
+            messageType: null,
+        );
+        final cases = {
+          json: expected,
+        };
+
+        cases.forEach((input, expected) {
+          expect(
+            InboxMessage.fromJson(input),
+            isA<InboxMessage>()
+                .having(
+                  (it) => it.id,
+                  "expected id",
+                  expected.id,
+                )
+                .having((it) => it.title, "expected title", expected.title)
+                .having((it) => it.customKeys?['customKey'],
+                    'expected custom key', expected.customKeys?['customKey'])
+                .having((it) => it.customKeys?.length,
+                    'expected custom keys length', expected.customKeys?.length)
+                .having((it) => it.endDateUtc, 'expected end date',
+                    expected.endDateUtc)
+                .having((it) => it.sendDateUtc, 'expected send date',
+                    expected.sendDateUtc)
+                .having((it) => it.startDateUtc, 'expected start date',
+                    expected.startDateUtc)
+                .having((it) => it.read, 'expected read status', expected.read)
+                .having((it) => it.deleted, 'expected deleted status',
+                    expected.deleted)
+                .having(
+                    (it) => it.subject, 'expected subject', expected.subject)
+                .having((it) => it.inboxMessage, 'expected inbox message',
+                    expected.inboxMessage)
+                .having((it) => it.inboxSubtitle, 'expected inbox subtitle',
+                    expected.inboxSubtitle),
+          );
+        });
+      });
     });
   });
 }
