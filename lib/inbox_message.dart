@@ -44,6 +44,7 @@ class InboxMessage {
       this.messageType});
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
+    final customKeys = _parseCustomKeys(json['keys']);
     return InboxMessage(
       id: json['id'] ?? '',
       subject: json['subject'] ?? '',
@@ -62,8 +63,7 @@ class InboxMessage {
           : null,
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
-      customKeys:
-          (json['keys'] is Map) ? Map<String, String>.from(json['keys']) : null,
+      customKeys: customKeys,
       deleted: json['deleted'] ?? false,
       read: json['read'] ?? false,
       subtitle: json['subtitle'],
@@ -74,6 +74,17 @@ class InboxMessage {
           : null,
       messageType: json['messageType'],
     );
+  }
+
+static Map<String, String>? _parseCustomKeys(dynamic keysData) {
+    if (keysData is! List) return null;
+    final entries = <String, String>{
+      for (final item in keysData)
+        if (item is Map)
+          if (item['key'] is String && item['value'] is String)
+            item['key'] as String: item['value'] as String
+    };
+    return entries.isEmpty ? null : entries;
   }
 
   Map<String, dynamic> toJson() {

@@ -1,3 +1,9 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -21,13 +27,9 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
-def min_sdk_version = 23
-def target_sdk_version = 35
-def compile_sdk_Version = 35
+def min_sdk_version = 24
+def target_sdk_version = 36
+def compile_sdk_Version = 36
 
 def appplication_id = "com.salesforce.marketingcloud.sfmc_example"
 
