@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'notification_message.dart';
+import 'custom_keys_parser.dart';
 
 class InboxMessage {
   final String id;
@@ -44,7 +45,7 @@ class InboxMessage {
       this.messageType});
 
   factory InboxMessage.fromJson(Map<String, dynamic> json) {
-    final customKeys = _parseCustomKeys(json['keys']);
+    final customKeys = CustomKeysParser.parseCustomKeys(json['keys']);
     return InboxMessage(
       id: json['id'] ?? '',
       subject: json['subject'] ?? '',
@@ -74,17 +75,6 @@ class InboxMessage {
           : null,
       messageType: json['messageType'],
     );
-  }
-
-static Map<String, String>? _parseCustomKeys(dynamic keysData) {
-    if (keysData is! List) return null;
-    final entries = <String, String>{
-      for (final item in keysData)
-        if (item is Map)
-          if (item['key'] is String && item['value'] is String)
-            item['key'] as String: item['value'] as String
-    };
-    return entries.isEmpty ? null : entries;
   }
 
   Map<String, dynamic> toJson() {
