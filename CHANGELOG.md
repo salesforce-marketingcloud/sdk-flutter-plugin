@@ -1,3 +1,7 @@
+### Version 9.1.0
+- Changed parsing logic for custom keys in inbox.
+- Fixed custom key parsing issue for copy to inbox.
+
 ### Version 9.0.0
 - Support for the v9.0 versions of the Android and iOS Marketing Cloud SDK.
 
