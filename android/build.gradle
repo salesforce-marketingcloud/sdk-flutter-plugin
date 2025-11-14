@@ -2,18 +2,17 @@ group 'com.salesforce.marketingcloud.sfmc'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.9.10'
-    ext.r8_version = '8.2.42' 
+    ext.kotlin_version = '1.9.22'
     ext.marketingcloud_sdk_version = '9.0.+'
-    ext.compile_sdk_version = 34
-    ext.min_sdk_version = 21
+    ext.compile_sdk_version = 36
+    ext.min_sdk_version = 24
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.android.tools.build:gradle:8.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
