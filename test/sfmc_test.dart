@@ -295,6 +295,29 @@ void main() {
   const List<String> testDeletedMsg = ['testDeletedMsg'];
   String testMessageId = 'messageId';
 
+  test('InboxMessage.fromJson parses ISO date strings', () {
+    final message = InboxMessage.fromJson({
+      'id': 'message-1',
+      'sendDateUtc': '2026-05-02T10:30:00Z',
+      'startDateUtc': '2026-05-01T10:30:00Z',
+      'endDateUtc': '2026-05-03T10:30:00Z',
+    });
+
+    expect(message.sendDateUtc, DateTime.parse('2026-05-02T10:30:00Z'));
+    expect(message.startDateUtc, DateTime.parse('2026-05-01T10:30:00Z'));
+    expect(message.endDateUtc, DateTime.parse('2026-05-03T10:30:00Z'));
+  });
+
+  test('InboxMessage.fromJson accepts DateTime values', () {
+    final sendDate = DateTime.utc(2026, 5, 2, 10, 30);
+    final message = InboxMessage.fromJson({
+      'id': 'message-2',
+      'sendDateUtc': sendDate,
+    });
+
+    expect(message.sendDateUtc, sendDate);
+  });
+
   setUp(() {
     mockPlatform = MockSfmcPlatform();
     SfmcPlatform.instance = mockPlatform;

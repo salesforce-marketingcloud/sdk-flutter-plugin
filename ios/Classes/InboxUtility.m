@@ -2,6 +2,19 @@
 
 @implementation InboxUtility
 
+- (NSDateFormatter *)inboxDateFormatter {
+    static NSDateFormatter *dateFormatter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dateFormatter = [[NSDateFormatter alloc] init];
+        dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+        dateFormatter.timeZone = [NSTimeZone timeZoneWithAbbreviation:@"UTC"];
+        dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
+    });
+
+    return dateFormatter;
+}
+
 - (NSMutableArray<NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)inboxMessages {
     NSMutableArray<NSDictionary *> *updatedMessages = [NSMutableArray array];
 
@@ -34,13 +47,32 @@
 }
 
 - (void)convertDateField:(NSString *)field inMessage:(NSMutableDictionary *)message {
-    if ([message[field] isKindOfClass:[NSDate class]]) {
-        NSDate *date = message[field];
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-        NSString *dateString = [dateFormatter stringFromDate:date];
+    NSString *dateString = [self normalizedDateStringFromValue:message[field]];
+    if (dateString != nil) {
         message[field] = dateString;
     }
+}
+
+- (nullable NSString *)normalizedDateStringFromValue:(nullable id)value {
+    if (value == nil || value == [NSNull null]) {
+        return nil;
+    }
+
+    if ([value isKindOfClass:[NSDate class]]) {
+        return [[self inboxDateFormatter] stringFromDate:(NSDate *)value];
+    }
+
+    if ([value isKindOfClass:[NSString class]]) {
+        NSString *dateString = [(NSString *)value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        return dateString.length > 0 ? dateString : nil;
+    }
+
+    if ([value respondsToSelector:@selector(stringValue)]) {
+        NSString *dateString = [[value stringValue] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        return dateString.length > 0 ? dateString : nil;
+    }
+
+    return nil;
 }
 
 - (void)convertFlagsInMessage:(NSMutableDictionary *)message {
