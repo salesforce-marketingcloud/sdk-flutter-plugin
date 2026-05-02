@@ -2,6 +2,25 @@ import 'dart:convert';
 import 'notification_message.dart';
 import 'custom_keys_parser.dart';
 
+DateTime? _readNullableDate(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is String) {
+    final parsed = DateTime.tryParse(value);
+    if (parsed != null) {
+      return parsed;
+    }
+    throw FormatException('Failed to parse inbox message date: $value');
+  }
+  throw FormatException(
+    'Unexpected inbox message date type ${value.runtimeType}: $value',
+  );
+}
+
 class InboxMessage {
   final String id;
   final String? title;
@@ -53,15 +72,9 @@ class InboxMessage {
       alert: json['alert'] ?? '',
       sound: json['sound'] ?? '',
       media: json['media'] != null ? Media.fromJson(json['media']) : null,
-      startDateUtc: json['startDateUtc'] != null
-          ? DateTime.parse(json['startDateUtc'])
-          : null,
-      endDateUtc: json['endDateUtc'] != null
-          ? DateTime.parse(json['endDateUtc'])
-          : null,
-      sendDateUtc: json['sendDateUtc'] != null
-          ? DateTime.parse(json['sendDateUtc'])
-          : null,
+        startDateUtc: _readNullableDate(json['startDateUtc']),
+        endDateUtc: _readNullableDate(json['endDateUtc']),
+        sendDateUtc: _readNullableDate(json['sendDateUtc']),
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
       customKeys: customKeys,

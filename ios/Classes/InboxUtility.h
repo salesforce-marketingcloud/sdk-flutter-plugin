@@ -4,5 +4,6 @@
 
 - (NSMutableArray<NSDictionary *> *)processInboxMessages:(NSArray<NSDictionary *> *)inboxMessages;
 - (NSString *)convertDictionaryToJSONString:(NSDictionary *)dictionary;
+- (nullable NSString *)normalizedDateStringFromValue:(nullable id)value;
 
 @end
