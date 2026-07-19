@@ -651,6 +651,50 @@ void main() {
       expect(messages[0].deleted, true);
     });
 
+    test('getMessages parses notificationMessage payload for both wire shapes',
+        () async {
+      final List<String> mockMsgsWithPayload = [
+        jsonEncode({
+          "id": "10",
+          "deleted": false,
+          "read": false,
+          "notificationMessage": {
+            "id": "n10",
+            "alert": "Alert 10",
+            "type": "OTHER",
+            "trigger": "PUSH",
+            "payload": {"_m": "m10", "key": "value"}
+          }
+        }),
+        jsonEncode({
+          "id": "11",
+          "deleted": false,
+          "read": false,
+          "notificationMessage": {
+            "id": "n11",
+            "alert": "Alert 11",
+            "type": "OTHER",
+            "trigger": "PUSH",
+            "payload": jsonEncode({"_m": "m11", "key": "value"})
+          }
+        }),
+      ];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'getMessages') {
+          return mockMsgsWithPayload;
+        }
+        return null;
+      });
+
+      final messages = await platform.getMessages();
+      expect(messages.length, 2);
+      expect(messages[0].notificationMessage?.payload,
+          {"_m": "m10", "key": "value"});
+      expect(messages[1].notificationMessage?.payload,
+          {"_m": "m11", "key": "value"});
+    });
+
     test('setMessageRead', () async {
       bool methodCalled = false;
       const String messageId = "testMessageReadId";

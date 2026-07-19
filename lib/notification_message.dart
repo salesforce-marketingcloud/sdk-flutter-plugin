@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'custom_keys_parser.dart';
 
 class NotificationMessage {
@@ -37,7 +36,6 @@ class NotificationMessage {
 
   factory NotificationMessage.fromJson(Map<String, dynamic> json) {
     final customKeys = CustomKeysParser.parseCustomKeys(json['customKeys']);
-    debugPrint(json.toString());
     return NotificationMessage(
       id: json['id'] ?? '',
       alert: json['alert'] ?? '',
@@ -52,10 +50,19 @@ class NotificationMessage {
       mediaAltText: json['mediaAltText'],
       customKeys: customKeys,
       custom: json['custom'],
-      payload: json['payload'] != null
-          ? Map<String, String>.from(json['payload'])
-          : null,
+      payload: _parsePayload(json['payload']),
     );
+  }
+
+  static Map<String, String>? _parsePayload(dynamic payload) {
+    if (payload is String) {
+      payload = jsonDecode(payload);
+    }
+    if (payload is Map) {
+      return payload
+          .map((key, value) => MapEntry(key.toString(), value.toString()));
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
