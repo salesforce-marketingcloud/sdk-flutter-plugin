@@ -43,7 +43,7 @@ class InboxUtils {
                 mediaAltText?.let { put("mediaAltText", it) }
                 customKeys.asKeyValueJsonArray()?.let { put("customKeys", it) }
                 custom?.let { put("custom", it) }
-                payload?.let { put("payload", mapToJson(it)) }
+                payload?.let { put("payload", JSONObject(it)) }
                 // richFeatures?.let { put("richFeatures", it.toJson()) }
              }
         }
@@ -82,10 +82,6 @@ class InboxUtils {
         fun inboxMessagesToString(messages: List<InboxMessage>): List<String> {
             var messageString = messages.mapNotNull { it.toJson().toString() }
             return messageString
-        }
-
-        fun mapToJson(map: Map<String, String>): String {
-            return JSONObject(map).toString()
         }
     }
 }
