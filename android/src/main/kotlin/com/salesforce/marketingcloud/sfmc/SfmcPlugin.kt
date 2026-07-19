@@ -30,6 +30,8 @@ package com.salesforce.marketingcloud.sfmc
 import com.salesforce.marketingcloud.messages.inbox.*
 import android.content.Context
 import android.content.SyncResult
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
 import com.salesforce.marketingcloud.MCLogListener
@@ -53,6 +55,7 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private var inboxResponseListener: InboxMessageManager.InboxResponseListener? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     companion object {
         private const val TAG = "~&SFMCPlugin"
@@ -409,25 +412,27 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun createInboxResponseListener(result: Result): InboxMessageManager.InboxResponseListener {
+    private fun createInboxResponseListener(): InboxMessageManager.InboxResponseListener {
         return object : InboxMessageManager.InboxResponseListener {
             override fun onInboxMessagesChanged(messages: MutableList<InboxMessage>) {
                 try {
                     val str: List<String> = InboxUtils.inboxMessagesToString(messages)
-                    channel.invokeMethod("onInboxMessagesChanged", str)
+                    mainHandler.post {
+                        channel.invokeMethod("onInboxMessagesChanged", str)
+                    }
                 } catch (e: Exception) {
-                    result.error(
-                        "UNREGISTER_ERROR",
-                        "Failed to unregister listener: ${e.message}",
-                        null
-                    )
+                    Log.e(TAG, "Error handling inbox response: ${e.message}")
                 }
             }
         }.also { inboxResponseListener = it }
     }
 
     private fun registerInboxResponseListener(result: Result) {
-        val listener = createInboxResponseListener(result)
+        if (inboxResponseListener != null) {
+            result.success(null)
+            return
+        }
+        val listener = createInboxResponseListener()
         handlePushAction {
             it.inboxMessageManager.registerInboxResponseListener(listener)
             result.success(null)
@@ -469,5 +474,11 @@ class SfmcPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+        inboxResponseListener?.let { listener ->
+            handlePushAction {
+                it.inboxMessageManager.unregisterInboxResponseListener(listener)
+            }
+            inboxResponseListener = null
+        }
     }
 }
