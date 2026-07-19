@@ -727,8 +727,47 @@ void main() {
       expect(methodCalled, true);
     });
 
-    test('refreshInbox', () async {
-      expect(await platform.isPiAnalyticsEnabled(), true);
+    test('refreshInbox invokes callback with true when refresh succeeds',
+        () async {
+      bool? callbackResult;
+      final result = await platform.refreshInbox((successful) {
+        callbackResult = successful;
+      });
+      expect(result, true);
+      expect(callbackResult, true);
+    });
+
+    test('refreshInbox invokes callback with false when refresh fails',
+        () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        if (methodCall.method == 'refreshInbox') {
+          return false;
+        }
+        return null;
+      });
+
+      bool? callbackResult;
+      final result = await platform.refreshInbox((successful) {
+        callbackResult = successful;
+      });
+      expect(result, false);
+      expect(callbackResult, false);
+    });
+
+    test('refreshInbox invokes callback with false when native returns null',
+        () async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+        return null;
+      });
+
+      bool? callbackResult;
+      final result = await platform.refreshInbox((successful) {
+        callbackResult = successful;
+      });
+      expect(result, false);
+      expect(callbackResult, false);
     });
 
     responseObject(response) {}

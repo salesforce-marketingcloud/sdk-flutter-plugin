@@ -222,7 +222,10 @@ class MethodChannelSfmc extends SfmcPlatform {
 
   @override
   Future<bool> refreshInbox(InboxRefreshListener callback) async {
-    return await methodChannel.invokeMethod('refreshInbox');
+    final bool successful =
+        await methodChannel.invokeMethod<bool?>('refreshInbox') ?? false;
+    callback(successful);
+    return successful;
   }
 
   @override
