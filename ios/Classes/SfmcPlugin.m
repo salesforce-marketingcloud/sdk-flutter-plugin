@@ -105,7 +105,6 @@ const int LOG_LENGTH = 800;
         NSString *key = args[@"key"];
         NSString *value = args[@"value"];
         [self setAttributeWithKey:key value:value result:result];
-        result(nil);
     } else if ([@"clearAttribute" isEqualToString:call.method]) {
         NSString *key = call.arguments[@"key"];
         [self clearAttributeWithKey:key result:result];
@@ -154,8 +153,10 @@ const int LOG_LENGTH = 800;
         [self refreshInbox:result];
     } else if ([@"registerInboxResponseListener" isEqualToString:call.method]) {
         [self registerListeners];
+        result(nil);
     } else if ([@"unregisterInboxResponseListener" isEqualToString:call.method]) {
         [self unregisterListeners];
+        result(nil);
     } else {
         result(FlutterMethodNotImplemented);
     }
