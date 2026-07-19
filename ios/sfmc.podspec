@@ -13,8 +13,8 @@ Pod::Spec.new do |s|
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Salesforce Marketing Cloud' => 'mobilepushsdk@salesforce.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'sfmc/Sources/sfmc/**/*.{h,m}'
+  s.public_header_files = 'sfmc/Sources/sfmc/include/sfmc/*.h'
   s.dependency 'Flutter'
   s.dependency 'MarketingCloudSDK','~> 9.0.0'
   s.platform = :ios, '12.0'
