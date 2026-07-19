@@ -63,7 +63,7 @@ Navigate to the `AppDelegate.m` and update the file.
     PushConfigBuilder *pushConfigBuilder = [[PushConfigBuilder alloc] initWithAppId:@"{MC_APP_ID}"];
     [pushConfigBuilder setAccessToken:@"{MC_ACCESS_TOKEN}"];
     [pushConfigBuilder setMarketingCloudServerUrl:[NSURL URLWithString:@"{MC_APP_SERVER_URL}"]];
-    [pushConfigBuilder setMid:@"MC_MID"];
+    [pushConfigBuilder setMid:@"{MC_MID}"];
     [pushConfigBuilder setAnalyticsEnabled:YES];
 
     // Once you've created the mobile push configuration, intialize the SDK.

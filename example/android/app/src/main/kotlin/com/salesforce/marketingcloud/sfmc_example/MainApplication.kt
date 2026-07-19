@@ -27,6 +27,7 @@
 
 package com.salesforce.marketingcloud.sfmc_example
 
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -41,10 +42,9 @@ import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
 import com.salesforce.marketingcloud.UrlHandler
-import io.flutter.app.FlutterApplication
 import java.util.Random
 
-class MainApplication : FlutterApplication() {
+class MainApplication : Application() {
     companion object {
         private const val TAG = "~&SFMC Example App"
     }

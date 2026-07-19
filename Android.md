@@ -98,7 +98,7 @@ apply plugin: 'com.google.gms.google-services'
 
 ## 7. Update `MainApplication.kt`
 
-> If `MainApplication.kt` is not there in your app create `MainApplication` extending `FlutterApplication` class and also update the `AndroidManifest.xml`.
+> If `MainApplication.kt` is not there in your app create `MainApplication` extending `Application` class and also update the `AndroidManifest.xml`.
 
 ```xml
 // add ".MainApplication" entry in main/AndroidManifest.xml
@@ -120,9 +120,9 @@ import com.salesforce.marketingcloud.notifications.NotificationCustomizationOpti
 import com.salesforce.marketingcloud.sfmcsdk.InitializationStatus
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdk
 import com.salesforce.marketingcloud.sfmcsdk.SFMCSdkModuleConfig
-import io.flutter.app.FlutterApplication
+import android.app.Application
 
-class MainApplication : FlutterApplication() {
+class MainApplication : Application() {
 
     //Update onCreate
     override fun onCreate() {
