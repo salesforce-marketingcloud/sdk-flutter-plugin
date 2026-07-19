@@ -62,7 +62,7 @@ void main() {
       deleted: true,
       read: false,
       url: "https://example.com/3",
-      sendDateUtc: DateTime.now().subtract(Duration(days: 2)),
+      sendDateUtc: DateTime.now().subtract(const Duration(days: 2)),
     ).toJson()),
   ];
 

@@ -36,8 +36,6 @@ extension EventCategoryExtension on EventCategory {
         return 'identity';
       case EventCategory.system:
         return 'system';
-      default:
-        return '';
     }
   }
 }
@@ -88,8 +86,6 @@ extension CartEventTypeExtension on CartEventType {
         return "Remove From Cart";
       case CartEventType.replace:
         return "Replace Cart";
-      default:
-        return "";
     }
   }
 }
@@ -151,8 +147,6 @@ extension CatalogObjectEventNameExtension on CatalogObjectEventName {
         return "View Catalog Object";
       case CatalogObjectEventName.quickView:
         return "Quick View Catalog Object";
-      default:
-        return "";
     }
   }
 }

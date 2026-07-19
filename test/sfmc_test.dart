@@ -289,11 +289,7 @@ void main() {
   const String testValue = 'testValue';
   const String testTag = 'testTag';
   const String testContactKey = 'testContactKey';
-  const List<String> testMsg = ['testMsg'];
-  const List<String> testReadMsg = ['testReadMsg'];
-  const List<String> testUnreadMsg = ['testUnreadMsg'];
-  const List<String> testDeletedMsg = ['testDeletedMsg'];
-  String testMessageId = 'messageId';
+  const String testMessageId = 'messageId';
 
   setUp(() {
     mockPlatform = MockSfmcPlatform();
@@ -748,6 +744,26 @@ void main() {
         expect(await SFMCSdk.getDeletedMessageCount(),
             mockPlatform.mockInboxDeletedCount);
         expect(mockPlatform.recentCalledMethod, 'getDeletedMessageCount');
+      });
+
+      test('setMessageRead', () async {
+        await SFMCSdk.setMessageRead(testMessageId);
+        expect(mockPlatform.recentCalledMethod, 'setMessageRead');
+      });
+
+      test('deleteMessage', () async {
+        await SFMCSdk.deleteMessage(testMessageId);
+        expect(mockPlatform.recentCalledMethod, 'deleteMessage');
+      });
+
+      test('markAllMessagesRead', () async {
+        await SFMCSdk.markAllMessagesRead();
+        expect(mockPlatform.recentCalledMethod, 'markAllMessagesRead');
+      });
+
+      test('markAllMessagesDeleted', () async {
+        await SFMCSdk.markAllMessagesDeleted();
+        expect(mockPlatform.recentCalledMethod, 'markAllMessagesDeleted');
       });
 
       test('refreshInbox', () async {
