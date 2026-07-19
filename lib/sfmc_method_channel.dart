@@ -261,12 +261,18 @@ class MethodChannelSfmc extends SfmcPlatform {
     if (call.method == 'onInboxMessagesChanged') {
       final List<dynamic> jsonStringList = call.arguments;
       if (jsonStringList.every((element) => element is String)) {
-        final List<InboxMessage> inboxMessages = jsonStringList
-            .where((jsonString) => jsonString != null)
-            .map((jsonString) {
-          final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-          return InboxMessage.fromJson(jsonMap);
-        }).toList();
+        final List<InboxMessage> inboxMessages = [];
+        for (final jsonString in jsonStringList) {
+          if (jsonString == null) {
+            continue;
+          }
+          try {
+            final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+            inboxMessages.add(InboxMessage.fromJson(jsonMap));
+          } catch (e) {
+            debugPrint('Skipping inbox message that could not be parsed: $e');
+          }
+        }
         _callbacksById.forEach((listener) {
           if (listener != null) {
             listener(inboxMessages);
@@ -289,10 +295,18 @@ class MethodChannelSfmc extends SfmcPlatform {
   /// @param messages A list of JSON strings (List<String>), where each string represents the data of an inbox message in JSON format.
   ///
   /// Returns a list of InboxMessage objects (List<InboxMessage>).
+  /// Messages that cannot be parsed are skipped so a single malformed
+  /// message does not fail the entire list.
   static List<InboxMessage> _parseMessages(List<String> messages) {
-    return messages.map((jsonString) {
-      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-      return InboxMessage.fromJson(jsonMap);
-    }).toList();
+    final List<InboxMessage> parsedMessages = [];
+    for (final jsonString in messages) {
+      try {
+        final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+        parsedMessages.add(InboxMessage.fromJson(jsonMap));
+      } catch (e) {
+        debugPrint('Skipping inbox message that could not be parsed: $e');
+      }
+    }
+    return parsedMessages;
   }
 }

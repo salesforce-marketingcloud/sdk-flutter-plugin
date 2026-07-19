@@ -53,15 +53,9 @@ class InboxMessage {
       alert: json['alert'] ?? '',
       sound: json['sound'] ?? '',
       media: json['media'] != null ? Media.fromJson(json['media']) : null,
-      startDateUtc: json['startDateUtc'] != null
-          ? DateTime.parse(json['startDateUtc'])
-          : null,
-      endDateUtc: json['endDateUtc'] != null
-          ? DateTime.parse(json['endDateUtc'])
-          : null,
-      sendDateUtc: json['sendDateUtc'] != null
-          ? DateTime.parse(json['sendDateUtc'])
-          : null,
+      startDateUtc: _parseDate(json['startDateUtc']),
+      endDateUtc: _parseDate(json['endDateUtc']),
+      sendDateUtc: _parseDate(json['sendDateUtc']),
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
       customKeys: customKeys,
@@ -75,6 +69,71 @@ class InboxMessage {
           : null,
       messageType: json['messageType'],
     );
+  }
+
+  /// Leniently parses a date value received from the native SDKs.
+  ///
+  /// Both native bridges now emit ISO-8601 UTC strings
+  /// (`yyyy-MM-dd'T'HH:mm:ss'Z'`), which [DateTime.tryParse] handles directly.
+  /// Older plugin versions emitted locale-dependent strings such as
+  /// `2026-05-02 05:28:00`, `2026-05-02 05:28:00.000` or the 12-hour
+  /// `2026-05-02 3:56:00 AM +0000` form produced by iOS devices with a
+  /// 12-hour clock, so those are tolerated as a fallback. Returns `null`
+  /// instead of throwing when the value cannot be parsed, so a single
+  /// malformed date can never fail an entire message list.
+  static DateTime? _parseDate(dynamic value) {
+    if (value is! String || value.isEmpty) {
+      return null;
+    }
+    final trimmed = value.trim();
+    final parsed = DateTime.tryParse(trimmed);
+    if (parsed != null) {
+      return parsed;
+    }
+    final match = RegExp(
+            r'^(\d{4})-(\d{1,2})-(\d{1,2})[ T](\d{1,2}):(\d{2}):(\d{2})(?:\.(\d+))?(?:\s*([AaPp][Mm]))?(?:\s*(Z|[+-]\d{2}:?\d{2}))?$')
+        .firstMatch(trimmed);
+    if (match == null) {
+      return null;
+    }
+    final year = int.parse(match.group(1)!);
+    final month = int.parse(match.group(2)!);
+    final day = int.parse(match.group(3)!);
+    var hour = int.parse(match.group(4)!);
+    final minute = int.parse(match.group(5)!);
+    final second = int.parse(match.group(6)!);
+    final fraction = match.group(7);
+    final millisecond = fraction != null
+        ? int.parse(fraction.padRight(3, '0').substring(0, 3))
+        : 0;
+    final meridiem = match.group(8);
+    if (meridiem != null) {
+      if (hour < 1 || hour > 12) {
+        return null;
+      }
+      final isPm = meridiem.toLowerCase() == 'pm';
+      if (hour == 12) {
+        hour = isPm ? 12 : 0;
+      } else if (isPm) {
+        hour += 12;
+      }
+    }
+    final offset = match.group(9);
+    if (offset == null) {
+      // No zone designator: keep the legacy behavior of DateTime.parse and
+      // interpret the wall-clock time as local time.
+      return DateTime(year, month, day, hour, minute, second, millisecond);
+    }
+    final utc = DateTime.utc(year, month, day, hour, minute, second, millisecond);
+    if (offset == 'Z') {
+      return utc;
+    }
+    final sign = offset.startsWith('-') ? -1 : 1;
+    final digits = offset.substring(1).replaceAll(':', '');
+    final offsetDuration = Duration(
+        hours: int.parse(digits.substring(0, 2)),
+        minutes: int.parse(digits.substring(2, 4)));
+    return sign == 1 ? utc.subtract(offsetDuration) : utc.add(offsetDuration);
   }
 
   Map<String, dynamic> toJson() {
