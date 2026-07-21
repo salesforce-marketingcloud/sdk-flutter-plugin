@@ -40,35 +40,13 @@ void main() {
       expect(message.sendDateUtc, DateTime(2026, 5, 2, 5, 28, 0));
     });
 
-    test('parses legacy 12-hour AM format with offset', () {
+    test('applies UTC offsets', () {
       final message = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 3:56:00 AM +0000'));
-      expect(message.sendDateUtc, DateTime.utc(2026, 5, 2, 3, 56, 0));
-    });
-
-    test('parses legacy 12-hour PM format with offset', () {
-      final message = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 3:56:00 PM +0000'));
-      expect(message.sendDateUtc, DateTime.utc(2026, 5, 2, 15, 56, 0));
-    });
-
-    test('parses legacy 12-hour edge cases 12 AM and 12 PM', () {
-      final midnight = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 12:05:00 AM +0000'));
-      expect(midnight.sendDateUtc, DateTime.utc(2026, 5, 2, 0, 5, 0));
-
-      final noon = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 12:05:00 PM +0000'));
-      expect(noon.sendDateUtc, DateTime.utc(2026, 5, 2, 12, 5, 0));
-    });
-
-    test('applies non-zero UTC offsets', () {
-      final message = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 8:56:00 AM +05:30'));
+          messageJson('1', sendDateUtc: '2026-05-02T08:56:00+05:30'));
       expect(message.sendDateUtc, DateTime.utc(2026, 5, 2, 3, 26, 0));
 
       final negative = InboxMessage.fromJson(
-          messageJson('1', sendDateUtc: '2026-05-02 3:56:00 AM -0400'));
+          messageJson('1', sendDateUtc: '2026-05-02T03:56:00-0400'));
       expect(negative.sendDateUtc, DateTime.utc(2026, 5, 2, 7, 56, 0));
     });
 
@@ -80,6 +58,20 @@ void main() {
       final nonLatin = InboxMessage.fromJson(
           messageJson('1', sendDateUtc: '٢٠٢٦-٠٥-٠٢ ٠٥:٢٨:٠٠'));
       expect(nonLatin.sendDateUtc, null);
+    });
+
+    test('returns null for locale-dependent legacy 12-hour strings', () {
+      // These crashed the old unguarded DateTime.parse, so null is the
+      // intended (non-regressing) outcome rather than a best-effort rescue.
+      for (final legacy in [
+        '2026-05-02 3:56:00 AM +0000',
+        '2026-05-02 3:56:00 PM +0000',
+        '2026-05-02 12:05:00 AM +0000',
+        '2026-05-02 午前3:56:00',
+      ]) {
+        expect(InboxMessage.fromJson(messageJson('1', sendDateUtc: legacy))
+            .sendDateUtc, null, reason: legacy);
+      }
     });
 
     test('returns null for non-string and empty values', () {
@@ -94,7 +86,7 @@ void main() {
       final json = messageJson('1');
       json['startDateUtc'] = '2026-05-01T00:00:00Z';
       json['sendDateUtc'] = '2026-05-02T05:28:00Z';
-      json['endDateUtc'] = '2026-05-03 3:56:00 AM +0000';
+      json['endDateUtc'] = '2026-05-03T03:56:00Z';
       final message = InboxMessage.fromJson(json);
       expect(message.startDateUtc, DateTime.utc(2026, 5, 1));
       expect(message.sendDateUtc, DateTime.utc(2026, 5, 2, 5, 28, 0));
@@ -147,7 +139,7 @@ void main() {
       final messages = await platform.getMessages();
       expect(messages.length, 2);
       expect(messages[0].id, 'legacy');
-      expect(messages[0].sendDateUtc, DateTime.utc(2026, 5, 2, 3, 56, 0));
+      expect(messages[0].sendDateUtc, null);
       expect(messages[1].id, 'broken');
       expect(messages[1].sendDateUtc, null);
     });
