@@ -5,12 +5,18 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class InboxUtils {
     companion object {
         fun Date?.asDateString(): String? {
             return this?.let {
-                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                // Fixed locale, timezone and pattern so the emitted string is
+                // always ISO-8601 UTC, regardless of the device locale,
+                // calendar or digit set, and matches the iOS plugin output.
+                val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
+                format.timeZone = TimeZone.getTimeZone("UTC")
                 val formattedDate = format.format(it)
                 formattedDate
             }

@@ -53,15 +53,9 @@ class InboxMessage {
       alert: json['alert'] ?? '',
       sound: json['sound'] ?? '',
       media: json['media'] != null ? Media.fromJson(json['media']) : null,
-      startDateUtc: json['startDateUtc'] != null
-          ? DateTime.parse(json['startDateUtc'])
-          : null,
-      endDateUtc: json['endDateUtc'] != null
-          ? DateTime.parse(json['endDateUtc'])
-          : null,
-      sendDateUtc: json['sendDateUtc'] != null
-          ? DateTime.parse(json['sendDateUtc'])
-          : null,
+      startDateUtc: _parseDate(json['startDateUtc']),
+      endDateUtc: _parseDate(json['endDateUtc']),
+      sendDateUtc: _parseDate(json['sendDateUtc']),
       url: json['url'] ?? '',
       custom: json['custom'] ?? '',
       customKeys: customKeys,
@@ -75,6 +69,22 @@ class InboxMessage {
           : null,
       messageType: json['messageType'],
     );
+  }
+
+  /// Parses a date value received from the native SDKs.
+  ///
+  /// Both native bridges emit ISO-8601 UTC strings, and the legacy 24-hour
+  /// forms (`2026-05-02 05:28:00`, with `.SSS` or a `±hhmm` offset) are also
+  /// valid [DateTime.tryParse] input. Anything else — such as the
+  /// locale-dependent 12-hour strings old plugin versions produced on
+  /// 12-hour-clock devices — returns `null` instead of throwing, so a single
+  /// unparseable date can never fail a message list. Those strings crashed
+  /// the old unguarded `DateTime.parse` anyway, so `null` is no regression.
+  static DateTime? _parseDate(dynamic value) {
+    if (value is! String || value.isEmpty) {
+      return null;
+    }
+    return DateTime.tryParse(value.trim());
   }
 
   Map<String, dynamic> toJson() {
